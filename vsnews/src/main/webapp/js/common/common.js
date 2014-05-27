@@ -336,10 +336,10 @@
     /*******************************************/
     var _common_plugins = {
         // jqGrid默认参数
-        jqGrid: _plugin_jqGrid,
-        validator: _plugin_validator,
+//        jqGrid: _plugin_jqGrid,
+//        validator: _plugin_validator,
         jqui: _plugin_jqui,
-        jstree: _plugin_jstree,
+//        jstree: _plugin_jstree,
         workflow: _plugin_workflow
     };
 
