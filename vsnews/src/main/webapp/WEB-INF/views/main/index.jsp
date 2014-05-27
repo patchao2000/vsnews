@@ -16,7 +16,8 @@
 	</script>
 	<%@ include file="/common/meta.jsp" %>
     <title>VSNews</title>
-    <%-- <%@ include file="/common/include-base-styles.jsp" %> --%>
+    
+    <%@ include file="/common/include-base-styles.jsp" %>
 	<%@ include file="/common/include-jquery-ui-theme.jsp" %>
     <link rel="stylesheet" type="text/css" href="${ctx }/css/menu.css" />
     <%@ include file="/common/include-custom-styles.jsp" %>
@@ -28,25 +29,26 @@
 	#add_tab { cursor: pointer; }
 	</style>
 
-    <script src="${ctx }/js/common/jquery-1.8.3.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/plugins/jui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/plugins/jui/extends/themeswitcher/jquery.ui.switcher.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/plugins/tools/jquery.cookie.js" type="text/javascript"></script>
-	<script src="${ctx }/js/common/plugins/jui/extends/layout/jquery.layout.min.js?v=1.3" type="text/javascript"></script>
+    <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
+    <script src="${ctx }/js/common/plugins/jquery-ui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>
+	<script src="${ctx }/js/common/plugins/jquery-ui/extends/layout/jquery.layout.min.js?v=1.3" type="text/javascript"></script>
 	<script src='${ctx }/js/common/common.js' type="text/javascript"></script>
-    <script src='${ctx }/js/module/main/main-frame.js' type="text/javascript"></script>
+    <script src='${ctx }/js/module/main/mainframe.js' type="text/javascript"></script>
+
 </head>
+
 <body>
 <!-- #TopPane -->
 <div id="topPane" class="ui-layout-north ui-widget ui-widget-header ui-widget-content">
 	<div style="padding-left:5px; font-size: 16px; margin-top: 1px;">
-       	<table id="topTable" style="padding: 0px;margin: 0px;margin-top: -5px" width="100%">
+       	<table id="topTable" style="padding: 0px;margin: 0px; margin-top: -5px; width: 100%">
        		<tr>
-       			<td width="40px">
-       				<img src="${ctx }/images/logo.png" height="48" align="top"  style="margin-top:5px" />
+       			<td><!--  width="40px"> -->
+       				<%-- <img src="${ctx }/images/logo.png" align="top"  style="margin-top:5px" /> --%>
+       				<span style="font-size: 17px;color:#FFFFFF">Videostar  </span>
        			</td>
        			<td>
-       				<span style="font-size: 17px;color:#FFFF33">Activiti<br/>演示系统</span><br/>
+       				<span style="font-size: 17px;color:#FFFFFF">VSNews</span><br/>
        			</td>
        			<td>
        				<div style="float:right; color: #fff;font-size: 12px;margin-top: 2px">
@@ -55,7 +57,7 @@
 		        			<span title="角色：${groupNames }">${user.firstName } ${user.lastName }/${user.id }</span>
 		        		</div>
 		        		<div style="text-align: right;">
-		        			<a id="chang-theme" href="#">切换风格</a>
+		        			<!-- <a id="chang-theme" href="#">切换风格</a> -->
 		       				<a href="#" id="loginOut">安全退出</a>
 		        		</div>
 		        	</div>
@@ -70,7 +72,7 @@
 	<div id="tabs">
 		<ul><li><a class="tabs-title" href="#tab-index">首页</a><span class='ui-icon ui-icon-close' title='关闭标签页'></span></li></ul>
 		<div id="tab-index">
-			<iframe id="mainIframe" name="mainIframe" src="welcome" class="module-iframe" scrolling="auto" frameborder="0" style="width:100%;height:100%;"></iframe>
+			<!-- <iframe id="mainIframe" name="mainIframe" src="welcome" class="module-iframe" scrolling="auto" frameborder="0" style="width:100%;height:100%;"></iframe> -->
 		</div>
 	</div>
 </div>
@@ -78,12 +80,13 @@
 <!-- #BottomPane -->
 <div id="bottomPane" class="ui-layout-south ui-widget ui-widget-content">
 	<div class="footer ui-state-default">
-		<a href="http://www.kafeitu.me" target="_blank">咖啡兔</a>
-		<span class="copyright">©2008-2014</span>
+		<a href="http://www.videostar.com" target="_blank">Videostar</a>
+		<span class="copyright">©2014</span>
 		<span class="version">Version：${prop['system.version']}</span>
 	</div>
 </div>
-<%@ include file="menu.jsp" %>
+<%-- <%@ include file="menu.jsp" %>
 <div id="themeswitcherDialog"><div id="themeSwitcher"></div></div>
-</body>
+ --%>
+ </body>
 </html>

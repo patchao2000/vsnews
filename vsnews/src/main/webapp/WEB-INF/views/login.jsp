@@ -13,7 +13,7 @@
 	</script>
 	<%@ include file="/common/meta.jsp" %>
 	<%@ include file="/common/include-jquery-ui-theme.jsp" %>
-    <%-- <%@ include file="/common/include-base-styles.jsp" %> --%>
+    <%@ include file="/common/include-base-styles.jsp" %>
     <style type="text/css">
         .login-center {
             width: 600px;
@@ -30,8 +30,8 @@
         }
     </style>
 
-    <script src="${ctx }/js/common/jquery-1.8.3.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/plugins/jui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>
+    <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
+    <script src="${ctx }/js/common/plugins/jquery-ui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>
     <script type="text/javascript">
 	$(function() {
 		$('button').button({
