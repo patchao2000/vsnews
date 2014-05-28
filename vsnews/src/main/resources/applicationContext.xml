@@ -50,10 +50,9 @@
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<!-- <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
-				</prop> -->
-				<!-- <prop key="net.sf.ehcache.configurationResourceName">ehcache/ehcache-hibernate-local.xml</prop> -->
-				<!-- <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop> -->
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+				<prop key="net.sf.ehcache.configurationResourceName">ehcache/ehcache-hibernate-local.xml</prop>
+				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
@@ -63,28 +62,23 @@
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
  
 	<!-- Spring Data Jpa配置 -->
-	<!-- <jpa:repositories base-package="me.kafeitu.demo.activiti"
+	<jpa:repositories base-package="com.videostar.vsnews"
 		transaction-manager-ref="transactionManager"
-		entity-manager-factory-ref="entityManagerFactory" /> -->
+		entity-manager-factory-ref="entityManagerFactory" />
 
 	<!-- Jpa 事务配置 -->
-	<!-- <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean> -->
+	</bean>
 
 	<!-- 使用annotation定义事务 -->
-	<!-- <tx:annotation-driven transaction-manager="transactionManager"
-		proxy-target-class="true" /> -->
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
 
 	<!-- 引擎内部提供的UUID生成器，依赖fastxml的java-uuid-generator模块 -->
 	<!-- <bean id="uuidGenerator"
 		class="org.activiti.engine.impl.persistence.StrongUuidGenerator" /> -->
  
-	<bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
   	<!-- Activiti begin -->
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
 		<property name="dataSource" ref="dataSource" />
@@ -96,15 +90,15 @@
 		<!-- UUID作为主键生成策略 <property name="idGenerator" ref="uuidGenerator" /> -->
 
 		<!-- 生成流程图的字体 -->
-		<!-- <property name="activityFontName" value="${diagram.activityFontName}" /> -->
-		<!-- <property name="labelFontName" value="${diagram.labelFontName}" /> -->
+		<property name="activityFontName" value="${diagram.activityFontName}" />
+		<property name="labelFontName" value="${diagram.labelFontName}" />
 
 		<!-- 自动部署 -->
-		<!-- <property name="deploymentResources">
+		<property name="deploymentResources">
 			<list>
 				<value>classpath*:/deployments/*</value>
 			</list>
-		</property> -->
+		</property>
 
 		<!-- 自定义表单字段类型 -->
 		<!-- <property name="customFormTypes">
@@ -114,9 +108,9 @@
 		</property> -->
 
 		<!-- JPA -->
-		<!-- <property name="jpaEntityManagerFactory" ref="entityManagerFactory" />
+		<property name="jpaEntityManagerFactory" ref="entityManagerFactory" />
 		<property name="jpaHandleTransaction" value="false" />
-		<property name="jpaCloseEntityManager" value="false" /> -->
+		<property name="jpaCloseEntityManager" value="false" />
 
 		<!-- 全局事件 -->
 		<!-- <property name="typedEventListeners">
