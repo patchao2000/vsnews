@@ -12,11 +12,11 @@
     <link href="${ctx }/js/common/bootstrap/css/bootstrap-modal-bs3patch.css" rel="stylesheet" />
     <link href="${ctx }/js/common/bootstrap/css/bootstrap-modal.css" rel="stylesheet" />
     
-    <%-- <%@ include file="/common/include-base-styles.jsp" %> --%>
+    <%--<%@ include file="/common/include-base-styles.jsp" %>--%>
     <%@ include file="/common/include-jquery-ui-theme.jsp" %>
     <link href="${ctx }/js/common/plugins/jquery-ui/extends/timepicker/jquery-ui-timepicker-addon.css" type="text/css" rel="stylesheet" />
     <%-- <link href="${ctx }/js/common/plugins/qtip/jquery.qtip.min.css" type="text/css" rel="stylesheet" /> --%>
-    <%-- <%@ include file="/common/include-custom-styles.jsp" %> --%>
+    <%--<%@ include file="/common/include-custom-styles.jsp" %>--%>
     <!-- <style type="text/css">
     /* block ui */
 	.blockOverlay {
@@ -33,7 +33,7 @@
 	<script src="${ctx }/js/common/plugins/jquery-ui/extends/timepicker/jquery-ui-timepicker-zh-CN.js" type="text/javascript"></script>
 	<%-- <script src="${ctx }/js/common/plugins/qtip/jquery.qtip.pack.js" type="text/javascript"></script>
 	<script src="${ctx }/js/common/plugins/html/jquery.outerhtml.js" type="text/javascript"></script> --%>
-	<%-- <script src="${ctx }/js/common/plugins/blockui/jquery.blockUI.js" type="text/javascript"></script> --%>
+    <script src="${ctx }/js/common/plugins/jquery.blockUI.js" type="text/javascript"></script>
 	<%-- <script src="${ctx }/js/module/activiti/workflow.js" type="text/javascript"></script> --%>
 	<script src="${ctx }/js/module/oa/leave/leave-todo.js" type="text/javascript"></script>
 </head>
