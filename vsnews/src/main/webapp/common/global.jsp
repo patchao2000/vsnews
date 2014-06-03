@@ -7,13 +7,18 @@
 <%
 	//jquery.ui主题
 	String defaultTheme = "redmond";
-	//String themeVersion = "1.9.2";
 	String themeVersion = "1.10.4";
 
 	session.setAttribute("themeName", defaultTheme);
 	session.setAttribute("themeVersion", themeVersion);
 	pageContext.setAttribute("timeInMillis", System.currentTimeMillis());
 %>
+
+<%--@elvariable id="defaultTheme" type="java.lang.String"--%>
+<%--@elvariable id="themeVersion" type="java.lang.String"--%>
+
+<%--@elvariable id="message" type="java.lang.String"--%>
+<%--@elvariable id="error" type="java.lang.String"--%>
 
 <script type="text/javascript">
 	var ctx = '<%=request.getContextPath() %>';

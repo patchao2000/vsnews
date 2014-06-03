@@ -4,21 +4,19 @@
 $(function() {
 
     // 签收
-//    $('.claim').button({
-//        icons: {
-//            primary: 'ui-icon-person'
-//        }
-//    });
+    $('.claim').button({
+        icons: {
+            primary: 'ui-icon-person'
+        }
+    });
     
-    // 办理
-//    $('.handle').button({
-//        icons: {
-//            primary: 'ui-icon-comment'
-//        }
-//    }).click(handle);
+    //    办理
+    $('.handle').button({
+        icons: {
+            primary: 'ui-icon-comment'
+        }
+    }).click(handle);
 	
-    $('.handle').click(handle);
-    
     // 跟踪
 //    $('.trace').click(graphTrace);
     
@@ -280,10 +278,11 @@ var handleOpts = {
 				$('#modifyApplyContent #endTime').val(new Date(data.endTime).format('yyyy-MM-dd hh:mm'));
 				$('#modifyApplyContent #reason').val(data.reason);
 			});
-			
+
 			// 切换状态
-			$("#radio").buttonset().change(function(){
-				var type = $(':radio[name=reApply]:checked').val();
+            $("#radio").buttonset().change(function(){
+                var type = $(':radio[name=reApply]:checked').val();
+//                alert("type: " + type);
 				if (type == 'true') {
 					$('#modifyApplyContent').show();
 				} else {
@@ -295,8 +294,9 @@ var handleOpts = {
 			text: '提交',
 			click: function() {
 				var taskId = $(this).data('taskId');
-				var reApply = $(':radio[name=reApply]:checked').val();
-				
+//                var reApply = $(':radio[name=reApply]:checked').val();
+                var reApply = $(':radio[name=reApply]:checked').val();
+
 				// 提交的时候把变量
 				complete(taskId, [{
 					key: 'reApply',

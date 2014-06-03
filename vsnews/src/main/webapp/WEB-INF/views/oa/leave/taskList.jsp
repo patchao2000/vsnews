@@ -7,25 +7,21 @@
 	<title>请假待办任务列表</title>
 	<%@ include file="/common/meta.jsp" %>
 	
-    <!-- Bootstrap core CSS -->
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap-modal-bs3patch.css" rel="stylesheet" />
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap-modal.css" rel="stylesheet" />
-    
-    <%--<%@ include file="/common/include-base-styles.jsp" %>--%>
+    <%@ include file="/common/include-base-styles.jsp" %>
     <%@ include file="/common/include-jquery-ui-theme.jsp" %>
     <link href="${ctx }/js/common/plugins/jquery-ui/extends/timepicker/jquery-ui-timepicker-addon.css" type="text/css" rel="stylesheet" />
     <%-- <link href="${ctx }/js/common/plugins/qtip/jquery.qtip.min.css" type="text/css" rel="stylesheet" /> --%>
-    <%--<%@ include file="/common/include-custom-styles.jsp" %>--%>
-    <!-- <style type="text/css">
-    /* block ui */
-	.blockOverlay {
-		z-index: 1004 !important;
-	}
-	.blockMsg {
-		z-index: 1005 !important;
-	}
-    </style> -->
+    <%@ include file="/common/include-custom-styles.jsp" %>
+    <style type="text/css">
+        /* block ui */
+        .blockOverlay {
+            z-index: 1004 !important;
+        }
+
+        .blockMsg {
+            z-index: 1005 !important;
+        }
+    </style>
 
     <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
     <script src="${ctx }/js/common/plugins/jquery-ui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>
@@ -57,9 +53,13 @@
 			</tr>
 		</thead>
 		<tbody>
+        <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
 			<c:forEach items="${page.result }" var="leave">
 				<c:set var="task" value="${leave.task }" />
+                <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
 				<c:set var="pi" value="${leave.processInstance }" />
+                <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
+
 				<tr id="${leave.id }" tid="${task.id }">
 					<td>${leave.leaveType }</td>
 					<td>${leave.userId }</td>
@@ -74,11 +74,11 @@
 					<td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${leave.processDefinition.version }</b></td>
 					<td>
 						<c:if test="${empty task.assignee }">
-							<a class="claim btn btn-primary" type="button" href="${ctx }/oa/leave/task/claim/${task.id}">签收</a>
+							<a class="claim" type="button" href="${ctx }/oa/leave/task/claim/${task.id}">签收</a>
 						</c:if>
 						<c:if test="${not empty task.assignee }">
 							<%-- 此处用tkey记录当前节点的名称 --%>
-							<a class="handle btn btn-success" type="button" tkey='${task.taskDefinitionKey }' tname='${task.name }' href="#">办理</a>
+							<a class="handle" type="button" tkey='${task.taskDefinitionKey }' tname='${task.name }' href="#">办理</a>
 						</c:if>
 					</td>
 				</tr>
@@ -104,13 +104,13 @@
 	</div>
 
 	<div id="modifyApply" style="display: none">
-		<div class="info" style="display: none"></div>
-		<div id="radio">
-			<input type="radio" id="radio1" name="reApply" value="true" /><label for="radio1">调整申请</label>
-			<input type="radio" id="radio2" name="reApply" checked="checked" value="false" /><label for="radio2">取消申请</label>
-		</div>
+		<%--<div class="info" style="display: none"></div>--%>
+        <div id="radio">
+            <input type="radio" id="radio1" name="reApply" value="true" /><label for="radio1">调整申请</label>
+            <input type="radio" id="radio2" name="reApply" checked="checked" value="false" /><label for="radio2">取消申请</label>
+        </div>
 		<hr />
-		<table id="modifyApplyContent" style="display: none">
+        <table id="modifyApplyContent" style="display: none">
 			<caption>调整请假内容</caption>
 			<tr>
 				<td>请假类型：</td>
@@ -162,11 +162,5 @@
 		</table>
 	</div>
 	
-	<!-- Bootstrap core JavaScript
-    ================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="${ctx }/js/common/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${ctx }/js/common/bootstrap/js/bootstrap-modalmanager.js"></script>
-    <script src="${ctx }/js/common/bootstrap/js/bootstrap-modal.js"></script>
 </body>
 </html>
