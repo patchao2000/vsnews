@@ -6,7 +6,7 @@
     <userTask id="deviceAudit" name="设备部门审批" activiti:candidateGroups="device"></userTask>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow2" name="需要设备支持" sourceRef="exclusivegateway1" targetRef="deviceAudit">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${needDevices}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${not empty devices}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow3" sourceRef="deviceAudit" targetRef="exclusivegateway2"></sequenceFlow>
@@ -20,7 +20,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${devicePass}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow7" name="不需要设备" sourceRef="exclusivegateway1" targetRef="endevent1">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!needDevices}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${empty devices}]]></conditionExpression>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_topic">
