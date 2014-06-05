@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 /**
+ * Topic Manager
+ * 
  * Created by patchao2000 on 14-6-4.
  */
 @Component
@@ -21,6 +25,9 @@ public class TopicManager {
 
     @Transactional(readOnly = false)
     public void saveTopic(Topic entity) {
+        if (entity.getId() == null) {
+            entity.setApplyTime(new Date());
+        }
         topicDao.save(entity);
     }
 

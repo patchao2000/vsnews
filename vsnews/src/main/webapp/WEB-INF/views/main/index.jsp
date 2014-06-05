@@ -90,9 +90,11 @@
 			<a rel="main/welcome" href="#" class="list-group-item active">首页</a>
 			<a rel="oa/leave/apply" href="#" class="list-group-item">请假申请</a>
 			<a rel="oa/leave/list/task" href="#" class="list-group-item">请假办理</a>
-            <a rel="news/topic/apply" href="#" class="list-group-item">新建选题</a>
             <a rel="oa/leave/list/running" href="#" class="list-group-item">运行中流程</a>
-			<a rel="oa/leave/list/finished" href="#" class="list-group-item">已结束流程</a>
+            <a rel="oa/leave/list/finished" href="#" class="list-group-item">已结束流程</a>
+            <a rel="news/topic/apply" href="#" class="list-group-item">新建选题</a>
+            <a rel="news/list/task" href="#" class="list-group-item">待办任务</a>
+            <a rel="news/list/running" href="#" class="list-group-item">运行中流程</a>
 		</div>
 	</div>
 

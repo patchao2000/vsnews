@@ -31,6 +31,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/news/topic")
 public class TopicController {
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -61,6 +62,8 @@ public class TopicController {
             }
             topic.setUserId(user.getId());
             Map<String, Object> variables = new HashMap<String, Object>();
+//            variables.put("needDevices", topic.getDevices().isEmpty());
+            variables.put("needDevices", true);
             ProcessInstance processInstance = workflowService.startWorkflow(topic, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
         } catch (ActivitiException e) {
@@ -68,11 +71,11 @@ public class TopicController {
                 logger.warn("没有部署流程!", e);
 //                redirectAttributes.addFlashAttribute("error", "没有部署流程，请在[工作流]->[流程管理]页面点击<重新部署流程>");
             } else {
-                logger.error("启动请假流程失败：", e);
+                logger.error("启动选题流程失败：", e);
                 redirectAttributes.addFlashAttribute("error", "系统内部错误！");
             }
         } catch (Exception e) {
-            logger.error("启动请假流程失败：", e);
+            logger.error("启动选题流程失败：", e);
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
         return "redirect:/news/topic/apply";

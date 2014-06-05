@@ -51,7 +51,6 @@
            class="well col-md-8">
     <h3>创建选题</h3>
     <hr>
-    <%--<input type="hidden" id="needDevices" name="needDevices" value="false"/>--%>
     <div class="row">
         <div class="form-group col-md-8">
             <label for="title">标题：</label>
