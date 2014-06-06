@@ -32,6 +32,14 @@
 	.ui-tabs .ui-tabs-nav li a {padding-right: .5em;}
 	#tabs li .ui-icon-close { float: left; margin: 0.5em 0.2em 0 0; cursor: pointer; }
 	#add_tab { cursor: pointer; }
+    /*.list-group-item-success { background:#d9edf7; }*/
+    .list-group-item-success { background:#8ab9dc; }
+    .list-group > a.list-group-item:hover {
+        color: #000000;
+    }
+    .list-group > a.list-group-item {
+        color: #ffffff;
+    }
 	</style>
 
     <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
@@ -53,28 +61,21 @@
 
 <body>
 	<!-- #TopPane -->
-	<div id="topPane"
-		class="ui-layout-north ui-widget ui-widget-header ui-widget-content">
-		<div style="padding-left: 5px; font-size: 16px; margin-top: 1px;">
-			<table id="topTable"
-				style="padding: 0px; margin: 0px; margin-top: -5px; width: 100%">
+	<div id="topPane" class="ui-layout-north ui-widget ui-widget-header ui-widget-content">
+        <%--<div style="padding-left: 5px; font-size: 16px; margin-top: 1px;">--%>
+        <div style="font-size: 16px; margin-top: 3px;">
+            <%--<table id="topTable" style="padding: 0px; margin: 0px; margin-top: -5px; width: 100%">--%>
+            <table id="topTable" style="width: 100%">
 				<tr>
+					<td valign="middle"><span style="font-size: 17px; color: #FFFFFF">Videostar </span></td>
+					<td valign="middle"><span style="font-size: 17px; color: #FFFFFF">VSNews</span></td>
 					<td>
-						<!--  width="40px"> --> <%-- <img src="${ctx }/images/logo.png" align="top"  style="margin-top:5px" /> --%>
-						<span style="font-size: 17px; color: #FFFFFF">Videostar </span>
-					</td>
-					<td><span style="font-size: 17px; color: #FFFFFF">VSNews</span><br />
-					</td>
-					<td>
-						<div
-							style="float: right; color: #fff; font-size: 12px; margin-top: 2px">
+						<div style="float: right; color: #fff; font-size: 12px;">
 							<div>
-								<label for="username">欢迎：</label> <span
-									title="角色：${groupNames }">${user.firstName }
-									${user.lastName }/${user.id }</span>
+								<label for="username">欢迎：</label>
+                                <span title="角色：${groupNames }">${user.firstName }${user.lastName }/${user.id }</span>
 							</div>
 							<div style="text-align: right;">
-								<!-- <a id="chang-theme" href="#">切换风格</a> -->
 								<a href="#" id="loginOut">安全退出</a>
 							</div>
 						</div>
@@ -86,16 +87,35 @@
 
 	<!-- #LeftPane -->
 	<div id="leftPane" class="ui-layout-west ui-widget ui-widget-content">
-		<div id="navimenu" class="list-group">
-			<a rel="main/welcome" href="#" class="list-group-item active">首页</a>
-			<a rel="oa/leave/apply" href="#" class="list-group-item">请假申请</a>
-			<a rel="oa/leave/list/task" href="#" class="list-group-item">请假办理</a>
-            <a rel="oa/leave/list/running" href="#" class="list-group-item">运行中流程</a>
-            <a rel="oa/leave/list/finished" href="#" class="list-group-item">已结束流程</a>
-            <a rel="news/topic/apply" href="#" class="list-group-item">新建选题</a>
-            <a rel="news/list/task" href="#" class="list-group-item">待办任务</a>
-            <a rel="news/list/running" href="#" class="list-group-item">运行中流程</a>
-		</div>
+        <div id="navimenu">
+            <div class="list-group panel">
+                <a rel="main/welcome" href="#" class="list-group-item list-group-item-success" data-parent="#navimenu">首页</a>
+                <a rel="#" href="#topic" class="list-group-item list-group-item-success" data-toggle="collapse" data-parent="#navimenu">选题</a>
+                <div class="collapse" id="topic">
+                    <a rel="news/topic/apply" href="#" class="list-group-item">创建选题</a>
+                    <a rel="news/topic/list/task" href="#" class="list-group-item">待办任务</a>
+                    <a rel="news/topic/list/running" href="#" class="list-group-item">运行中</a>
+                    <a rel="news/topic/list/finished" href="#" class="list-group-item">已结束</a>
+                </div>
+                <a rel="#" href="#leave" class="list-group-item list-group-item-success" data-toggle="collapse" data-parent="#navimenu">请假</a>
+                <div class="collapse" id="leave">
+                    <a rel="oa/leave/apply" href="#" class="list-group-item">请假申请</a>
+                    <a rel="oa/leave/list/task" href="#" class="list-group-item">请假办理</a>
+                    <a rel="oa/leave/list/running" href="#" class="list-group-item">运行中流程</a>
+                    <a rel="oa/leave/list/finished" href="#" class="list-group-item">已结束流程</a>
+                </div>
+            </div>
+        </div>
+        <%--<div id="navimenu" class="list-group">--%>
+			<%--<a rel="main/welcome" href="#" class="list-group-item active">首页</a>--%>
+			<%--<a rel="oa/leave/apply" href="#" class="list-group-item">请假申请</a>--%>
+			<%--<a rel="oa/leave/list/task" href="#" class="list-group-item">请假办理</a>--%>
+            <%--<a rel="oa/leave/list/running" href="#" class="list-group-item">运行中流程</a>--%>
+            <%--<a rel="oa/leave/list/finished" href="#" class="list-group-item">已结束流程</a>--%>
+            <%--<a rel="news/topic/apply" href="#" class="list-group-item">新建选题</a>--%>
+            <%--<a rel="news/list/task" href="#" class="list-group-item">待办任务</a>--%>
+            <%--<a rel="news/list/running" href="#" class="list-group-item">运行中流程</a>--%>
+		<%--</div>--%>
 	</div>
 
 	<!-- RightPane -->

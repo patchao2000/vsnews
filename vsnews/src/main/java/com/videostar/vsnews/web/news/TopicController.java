@@ -3,11 +3,16 @@ package com.videostar.vsnews.web.news;
 import com.videostar.vsnews.entity.news.Topic;
 import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.service.news.TopicWorkflowService;
+import com.videostar.vsnews.util.Page;
+import com.videostar.vsnews.util.PageUtil;
 import com.videostar.vsnews.util.UserUtil;
+import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.ActivitiException;
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,12 +20,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +56,9 @@ public class TopicController {
     @Autowired
     protected TaskService taskService;
 
+    @Autowired
+    protected IdentityService identityService;
+
     @RequestMapping(value = {"apply", ""})
     public String createForm(Model model) {
         model.addAttribute("topic", new Topic());
@@ -55,15 +68,29 @@ public class TopicController {
     @RequestMapping(value = "start", method = RequestMethod.POST)
     public String startWorkflow(Topic topic, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
+            //  user must logged on first
             User user = UserUtil.getUserFromSession(session);
-            // 用户未登录不能操作
             if (user == null || StringUtils.isBlank(user.getId())) {
                 return "redirect:/login?timeout=true";
             }
             topic.setUserId(user.getId());
+
+            //  check user is in leader group
+            Boolean isLeader = false;
+            List<Group> groups = identityService.createGroupQuery().groupMember(user.getId()).list();
+            for (Group group : groups) {
+                logger.debug("group: {}", group.getId());
+                if (group.getId().equals("leader")) {
+                    isLeader = true;
+                    break;
+                }
+            }
+
             Map<String, Object> variables = new HashMap<String, Object>();
-//            variables.put("needDevices", topic.getDevices().isEmpty());
-            variables.put("needDevices", true);
+            logger.debug("startWorkflow: title {} content {} devices {}", topic.getTitle(), topic.getContent(), topic.getDevices());
+            variables.put("needDevices", !topic.getDevices().isEmpty());
+            variables.put("leaderStart", isLeader);
+
             ProcessInstance processInstance = workflowService.startWorkflow(topic, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
         } catch (ActivitiException e) {
@@ -79,5 +106,64 @@ public class TopicController {
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
         return "redirect:/news/topic/apply";
+    }
+
+    @RequestMapping(value = "list/task")
+    public ModelAndView taskList(HttpSession session, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("/news/topic/taskList");
+        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        int[] pageParams = PageUtil.init(page, request);
+
+        String userId = UserUtil.getUserFromSession(session).getId();
+        workflowService.findTodoTasks(userId, page, pageParams);
+        mav.addObject("page", page);
+        return mav;
+    }
+
+    @RequestMapping(value = "list/finished")
+    public ModelAndView finishedList(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("/news/topic/finished");
+        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        int[] pageParams = PageUtil.init(page, request);
+        workflowService.findFinishedProcessInstaces(page, pageParams);
+        mav.addObject("page", page);
+        return mav;
+    }
+
+    @RequestMapping(value = "task/claim/{id}")
+    public String claim(@PathVariable("id") String taskId, HttpSession session, RedirectAttributes redirectAttributes) {
+        String userId = UserUtil.getUserFromSession(session).getId();
+        taskService.claim(taskId, userId);
+        redirectAttributes.addFlashAttribute("message", "任务已签收");
+        return "redirect:/news/topic/list/task";
+    }
+    
+    @RequestMapping(value = "detail/{id}")
+    @ResponseBody
+    public Topic getTopic(@PathVariable("id") Long id) {
+        Topic topic = topicManager.getTopic(id);
+        return topic;
+    }
+
+    @RequestMapping(value = "detail-with-vars/{id}/{taskId}")
+    @ResponseBody
+    public Topic getTopicWithVars(@PathVariable("id") Long id, @PathVariable("taskId") String taskId) {
+        Topic topic = topicManager.getTopic(id);
+        Map<String, Object> variables = taskService.getVariables(taskId);
+        topic.setVariables(variables);
+        return topic;
+    }
+
+    @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String complete(@PathVariable("id") String taskId, Variable var) {
+        try {
+            Map<String, Object> variables = var.getVariableMap();
+            taskService.complete(taskId, variables);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, var.getVariableMap(), e});
+            return "error";
+        }
     }
 }

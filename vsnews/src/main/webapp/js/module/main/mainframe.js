@@ -35,7 +35,7 @@ function dealRoles() {
 	
 	$('#navimenu a').click(function() {
 		if ($(this).attr('rel') == '#') {
-			return false;
+			return true;
 		}
 		
 		var tabTemplate = "<li><a class='tabs-title' href='#{href}'>#{label}</a>"

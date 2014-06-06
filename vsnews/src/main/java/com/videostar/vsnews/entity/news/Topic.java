@@ -1,17 +1,9 @@
 package com.videostar.vsnews.entity.news;
 
-import com.videostar.vsnews.entity.IdEntity;
-import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.Task;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Entity: Topic

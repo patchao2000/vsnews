@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  * Topic Manager
- * 
+ *
  * Created by patchao2000 on 14-6-4.
  */
 @Component
