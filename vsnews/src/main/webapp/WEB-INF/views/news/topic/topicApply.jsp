@@ -15,9 +15,7 @@
     <title>创建选题</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap-modal-bs3patch.css" rel="stylesheet" />
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap-modal.css" rel="stylesheet" />
+    <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <%-- <%@ include file="/common/include-base-styles.jsp" %> --%>
     <%@ include file="/common/include-jquery-ui-theme.jsp" %>
@@ -81,7 +79,5 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="${ctx }/js/common/bootstrap/js/bootstrap.min.js"></script>
-<script src="${ctx }/js/common/bootstrap/js/bootstrap-modalmanager.js"></script>
-<script src="${ctx }/js/common/bootstrap/js/bootstrap-modal.js"></script>
 </body>
 </html>
