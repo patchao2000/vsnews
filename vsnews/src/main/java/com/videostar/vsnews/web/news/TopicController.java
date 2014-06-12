@@ -120,6 +120,16 @@ public class TopicController {
         return mav;
     }
 
+    @RequestMapping(value = "list/running")
+    public ModelAndView runningList(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("/news/topic/running");
+        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        int[] pageParams = PageUtil.init(page, request);
+        workflowService.findRunningProcessInstaces(page, pageParams);
+        mav.addObject("page", page);
+        return mav;
+    }
+    
     @RequestMapping(value = "list/finished")
     public ModelAndView finishedList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/finished");

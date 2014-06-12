@@ -153,6 +153,88 @@
                         }
                     }
                 ]
+            },
+            deviceAudit: {
+                width: 300,
+                height: 300,
+                buttons: [
+                    {
+                        id: 'btn-agree',
+                        label: '同意',
+                        cssClass: 'btn-primary',
+                        action: function(dialogRef){
+                            var taskId = dialogRef.getData('taskId');
+
+                            // 设置流程变量
+                            complete(taskId, [
+                                {
+                                    key: 'devicePass',
+                                    value: true,
+                                    type: 'B'
+                                }
+                            ]);
+                        }
+                    },
+                    {
+                        id: 'btn-reject',
+                        label: '驳回',
+                        action: function(dialogRef){
+                            var taskId = dialogRef.getData('taskId');
+
+                            var rejcontent = $('<div/>', {
+                                title: '填写驳回理由',
+                                html: "<textarea id='deviceBackReason' style='width: 250px; height: 60px;'></textarea>"
+                            });
+
+                            var rejdialog = new BootstrapDialog({
+//                                title: '流程办理[' + tname + ']',
+                                message: rejcontent,
+                                data: { 'taskId': taskId },
+                                buttons: [
+                                    {
+                                        label: '驳回',
+                                        action: function(dialogRef){
+                                            var deviceBackReason = $('#deviceBackReason').val();
+                                            if (deviceBackReason == '') {
+                                                alert('请输入驳回理由！');
+                                                return;
+                                            }
+
+                                            // 设置流程变量
+                                            complete(taskId, [
+                                                {
+                                                    key: 'devicePass',
+                                                    value: false,
+                                                    type: 'B'
+                                                },
+                                                {
+                                                    key: 'deviceBackReason',
+                                                    value: deviceBackReason,
+                                                    type: 'S'
+                                                }
+                                            ]);
+                                        }
+                                    },
+                                    {
+                                        label: '取消',
+                                        action: function(dialogRef){
+                                            dialogRef.close();
+                                        }
+                                    }
+                                ]
+                            });
+                            rejdialog.realize();
+                            rejdialog.open();
+                        }
+                    },
+                    {
+                        id: 'btn-cancel',
+                        label: '取消',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                    }
+                ]
             }
         };
 
@@ -257,6 +339,31 @@
 <%--<button class="btn btn-primary" id="test">Run the code</button>--%>
 
 <div id="leaderAudit" style="display: none">
+    <table class='view-info'>
+        <tr>
+            <td>申请人：</td>
+            <td name="userId"></td>
+        </tr>
+        <tr>
+            <td>申请时间：</td>
+            <td name="applyTime"></td>
+        </tr>
+        <tr>
+            <td>标题：</td>
+            <td name="title"></td>
+        </tr>
+        <tr>
+            <td>内容：</td>
+            <td name="content"></td>
+        </tr>
+        <tr>
+            <td>设备：</td>
+            <td name="devices"></td>
+        </tr>
+    </table>
+</div>
+
+<div id="deviceAudit" style="display: none">
     <table class='view-info'>
         <tr>
             <td>申请人：</td>

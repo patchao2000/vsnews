@@ -7,6 +7,7 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
@@ -101,6 +102,33 @@ public class TopicWorkflowService {
         }
 
         page.setTotalCount(todoQuery.count() + claimQuery.count());
+        page.setResult(results);
+        return results;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Topic> findRunningProcessInstaces(Page<Topic> page, int[] pageParams) {
+        List<Topic> results = new ArrayList<Topic>();
+        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey("topic").active().orderByProcessInstanceId().desc();
+        List<ProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
+
+        // 关联业务实体
+        for (ProcessInstance processInstance : list) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            Topic topic = topicManager.getTopic(new Long(businessKey));
+            topic.setProcessInstance(processInstance);
+            topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            results.add(topic);
+
+            // 设置当前任务信息
+            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
+            topic.setTask(tasks.get(0));
+        }
+
+        page.setTotalCount(query.count());
         page.setResult(results);
         return results;
     }
