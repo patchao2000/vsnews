@@ -32,6 +32,8 @@
 <body style="margin-top: 1em;">
 	<div class="center">
         <div style="text-align: center;">
+            <h1>欢迎访问VSNews</h1>
+            <h2>欢迎访问VSNews</h2>
             <h3>欢迎访问VSNews</h3>
         </div>
     </div>
