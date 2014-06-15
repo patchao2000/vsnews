@@ -31,7 +31,7 @@
 </head>
 
 <body>
-<table width="100%" class="need-border">
+<table width="100%" class="table table-hover">
     <thead>
     <tr>
         <th>申请人</th>
