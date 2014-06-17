@@ -50,7 +50,7 @@ $(function () {
                 replace(/#\{id\}/g, "tab-" + id));
             var tabContentHtml = "<iframe id='iframe" + tabCounter
                 + "' name='iframe" + tabCounter
-                + "' seamless class='module-iframe' style='width:100%;height:100%;'></iframe>";
+                + "' seamless class='module-iframe' style='width:100%;height:100%;border:none;' frameborder='no'></iframe>";
 
             tabs.find(".nav-tabs").append(li);
             tabs.find(".tab-content").append("<div class='tab-pane' id='" + id + "'>" + tabContentHtml + "</div>");

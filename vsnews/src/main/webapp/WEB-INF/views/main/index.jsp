@@ -41,7 +41,7 @@
         /*}*/
 
         /* keep iframe full height */
-        body,html,.container,.centerpane,.col-md-10,.tab-content,.tab-pane {
+        body,html,.container,.centerpane,.col-md-10,#maintabs,.tab-content,.tab-pane {
             height:100%;
         }
 
@@ -175,7 +175,7 @@
                 <div class="tab-content">
                     <div class="tab-pane" id="home">
                         <iframe id="mainIframe" name="mainIframe" src="welcome" class="module-iframe" seamless
-                                style="width:100%;height:100%;"></iframe>
+                                style="width:100%;height:100%;border:none;" frameborder="no"></iframe>
                     </div>
                 </div>
             </div>
