@@ -238,16 +238,33 @@
             }
         };
 
+        Date.prototype.format = function(format) {
+            var o = {
+                "M+": this.getMonth() + 1, //month
+                "d+": this.getDate(), //day
+                "h+": this.getHours(), //hour
+                "m+": this.getMinutes(), //minute
+                "s+": this.getSeconds(), //second
+                "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+                "S": this.getMilliseconds() //millisecond
+            };
+            if (/(y+)/.test(format))
+                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(format))
+                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            return format;
+        };
+
         function loadDetail(id, content) {
             $.getJSON(ctx + '/news/topic/detail/' + id, function(data) {
                 $.each(data, function(k, v) {
-//                    // 格式化日期
-//                    if (k == 'applyTime') {
-//                        $('.view-info td[name=' + k + ']', dialog).text(new Date(v).format('yyyy-MM-dd hh:mm'));
-//                    } else {
-//                        $('.view-info td[name=' + k + ']', dialog).text(v);
-//                    }
-                    $(content).find('td[name=' + k + ']').text(v);
+                    // 格式化日期
+                    if (k == 'applyTime') {
+                        $(content).find('td[data-name=' + k + ']').text(new Date(v).format('yyyy-MM-dd hh:mm'));
+                    } else {
+                        $(content).find('td[data-name=' + k + ']').text(v);
+                    }
                 });
             });
         }
@@ -255,13 +272,19 @@
         $(document).ready(function () {
             $('.handle').click(function () {
                 // 当前节点的英文名称
-                var tkey = $(this).attr('tkey');
+                var tkey = $(this).attr('data-tkey');
                 // 当前节点的中文名称
-                var tname = $(this).attr('tname');
+                var tname = $(this).attr('data-tname');
                 // 记录ID
                 var rowId = $(this).parents('tr').attr('id');
                 // 任务ID
-                var taskId = $(this).parents('tr').attr('tid');
+                var taskId = $(this).parents('tr').attr('data-tid');
+
+                //  若调整申请内容
+                if (tkey == 'modifyLeaderApply') {
+                    window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&id='+rowId, '调整申请内容');
+                    return;
+                }
 
                 var content = $('#' + tkey).clone().attr("style", "display: block");
                 loadDetail(rowId, content);
@@ -308,9 +331,9 @@
         <c:set var="pi" value="${topic.processInstance }"/>
         <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
 
-        <tr id="${topic.id }" tid="${task.id }">
+        <tr id="${topic.id }" data-tid="${task.id }">
             <td>${topic.userId }</td>
-            <td>${topic.applyTime }</td>
+            <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
             <td>${topic.title }</td>
             <td>${topic.content }</td>
             <td>${topic.devices }</td>
@@ -318,7 +341,7 @@
                     <%-- <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a> --%>
                     ${task.name }
             </td>
-            <td>${task.createTime }</td>
+            <td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
             <td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${topic.processDefinition.version }</b></td>
             <td>
                 <c:if test="${empty task.assignee }">
@@ -326,7 +349,7 @@
                 </c:if>
                 <c:if test="${not empty task.assignee }">
                     <%-- 此处用tkey记录当前节点的名称 --%>
-                    <a class="handle" type="button" tkey='${task.taskDefinitionKey }' tname='${task.name }'
+                    <a class="handle" type="button" data-tkey='${task.taskDefinitionKey }' data-tname='${task.name }'
                        href="#">办理</a>
                 </c:if>
             </td>
@@ -339,53 +362,11 @@
 <%--<button class="btn btn-primary" id="test">Run the code</button>--%>
 
 <div id="leaderAudit" style="display: none">
-    <table class='view-info'>
-        <tr>
-            <td>申请人：</td>
-            <td name="userId"></td>
-        </tr>
-        <tr>
-            <td>申请时间：</td>
-            <td name="applyTime"></td>
-        </tr>
-        <tr>
-            <td>标题：</td>
-            <td name="title"></td>
-        </tr>
-        <tr>
-            <td>内容：</td>
-            <td name="content"></td>
-        </tr>
-        <tr>
-            <td>设备：</td>
-            <td name="devices"></td>
-        </tr>
-    </table>
+    <%@include file="view-form.jsp" %>
 </div>
 
 <div id="deviceAudit" style="display: none">
-    <table class='view-info'>
-        <tr>
-            <td>申请人：</td>
-            <td name="userId"></td>
-        </tr>
-        <tr>
-            <td>申请时间：</td>
-            <td name="applyTime"></td>
-        </tr>
-        <tr>
-            <td>标题：</td>
-            <td name="title"></td>
-        </tr>
-        <tr>
-            <td>内容：</td>
-            <td name="content"></td>
-        </tr>
-        <tr>
-            <td>设备：</td>
-            <td name="devices"></td>
-        </tr>
-    </table>
+    <%@include file="view-form.jsp" %>
 </div>
 
 </body>
