@@ -101,11 +101,12 @@
 
                             var rejcontent = $('<div/>', {
                                 title: '填写驳回理由',
-                                html: "<textarea id='leaderBackReason' style='width: 250px; height: 60px;'></textarea>"
+                                html: "<div class='form-group'><textarea id='leaderBackReason' class='form-control' rows='2'></textarea></div>"
                             });
 
                             var rejdialog = new BootstrapDialog({
 //                                title: '流程办理[' + tname + ']',
+                                title: '填写驳回理由',
                                 message: rejcontent,
                                 data: { 'taskId': taskId },
                                 buttons: [
@@ -282,13 +283,14 @@
 
                 //  若调整申请内容
                 if (tkey == 'modifyLeaderApply') {
-                    window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&id='+rowId, '调整申请内容');
+                    window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&id='+rowId+'&taskid='+taskId, '调整申请内容');
                     return;
                 }
 
                 var content = $('#' + tkey).clone().attr("style", "display: block");
                 loadDetail(rowId, content);
 
+                window.parent.disableScroll();
                 var dialog = new BootstrapDialog({
                     title: '流程办理[' + tname + ']',
                     message: content,
@@ -297,6 +299,7 @@
                 });
                 dialog.realize();
                 dialog.open();
+                //window.parent.enableScroll();
 
             });
         });

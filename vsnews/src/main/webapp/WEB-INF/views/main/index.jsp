@@ -19,6 +19,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${ctx }/js/common/bootstrap/css/bootstrap-dialog.min.css" rel="stylesheet">
 
     <%--<%@ include file="/common/include-base-styles.jsp" %>--%>
     <%--<%@ include file="/common/include-jquery-ui-theme.jsp" %>--%>
@@ -49,22 +50,55 @@
             margin: -2px 0 0 10px;
             font-size: 18px;
         }
+
+        body.noscroll
+        {
+            position: fixed;
+            overflow-y: scroll;
+            width: 100%;
+        }
+
     </style>
 
     <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
     <script src="${ctx }/js/common/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
     <%--<script src="${ctx }/js/common/plugins/jquery-ui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>--%>
     <%--<script src="${ctx }/js/common/plugins/jquery-ui/extends/layout/jquery.layout.min.js?v=1.3" type="text/javascript"></script>--%>
     <script src='${ctx }/js/common/tools.js' type="text/javascript"></script>
     <script src='${ctx }/js/module/main/mainframe.js' type="text/javascript"></script>
 
     <script type="text/javascript">
+        function disableScroll() {
+            $('body').addClass('noscroll');
+        }
+
+        function enableScroll() {
+            $('body').removeClass('noscroll');
+        }
+
         $(function () {
             $('#loginOut').click(function () {
                 if (confirm('系统提示，您确定要退出本次登录吗?')) {
                     location.href = ctx + '/user/logout';
                 }
             });
+
+//            var disableWindowScroll = function(e){
+//                e=e||window.event;
+//                if (e&&e.preventDefault){
+//                    e.preventDefault();
+//                    e.stopPropagation();
+//                }else{
+//                    e.returnvalue=false;
+//                    return false;
+//                }
+//            }
+//            window.onscroll=function(){
+//                if (document.documentElement && document.documentElement.scrollTop) {
+//                    document.documentElement.scrollTop = 0;
+//                }
+//            }
         });
     </script>
 </head>

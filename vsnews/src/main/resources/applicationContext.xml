@@ -117,7 +117,7 @@
         <property name="jpaCloseEntityManager" value="false"/>
 
         <!-- 全局事件 -->
-        <!-- <property name="typedEventListeners">
+        <property name="typedEventListeners">
             <map>
                 <entry key="VARIABLE_CREATED">
                     <list>
@@ -125,7 +125,7 @@
                     </list>
                 </entry>
             </map>
-        </property> -->
+        </property>
     </bean>
 
     <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">

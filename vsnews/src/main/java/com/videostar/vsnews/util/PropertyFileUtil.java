@@ -74,12 +74,12 @@ public class PropertyFileUtil {
      */
     private static void innerInit(String fileName) throws IOException {
         String[] propFiles = activePropertyFiles(fileName);
-        logger.debug("读取属性文件：{}", ArrayUtils.toString(propFiles));
+//        logger.debug("读取属性文件：{}", ArrayUtils.toString(propFiles));
         properties = loadProperties(propFiles);
         Set<Object> keySet = properties.keySet();
-        for (Object key : keySet) {
-            logger.debug("property: {}, value: {}", key, properties.getProperty(key.toString()));
-        }
+//        for (Object key : keySet) {
+//            logger.debug("property: {}, value: {}", key, properties.getProperty(key.toString()));
+//        }
     }
 
     /**
@@ -90,7 +90,7 @@ public class PropertyFileUtil {
      * @throws IOException
      */
     private static String[] activePropertyFiles(String fileName) throws IOException {
-        logger.info("读取" + fileName);
+//        logger.info("读取" + fileName);
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream resourceAsStream = loader.getResourceAsStream(fileName);
         // 默认的Properties实现使用HashMap算法，为了保持原有顺序使用有序Map
@@ -120,7 +120,7 @@ public class PropertyFileUtil {
 
         for (String location : resourcesPaths) {
 
-            logger.debug("Loading properties file from:" + location);
+//            logger.debug("Loading properties file from:" + location);
 
             InputStream is = null;
             try {
@@ -128,7 +128,7 @@ public class PropertyFileUtil {
                 is = resource.getInputStream();
                 propertiesPersister.load(props, new InputStreamReader(is, DEFAULT_ENCODING));
             } catch (IOException ex) {
-                logger.info("Could not load properties from classpath:" + location + ": " + ex.getMessage());
+//                logger.info("Could not load properties from classpath:" + location + ": " + ex.getMessage());
             } finally {
                 if (is != null) {
                     is.close();
@@ -169,7 +169,7 @@ public class PropertyFileUtil {
      */
     public static String get(String key) {
         String propertyValue = properties.getProperty(key);
-        logger.debug("获取属性：{}，值：{}", key, propertyValue);
+//        logger.debug("获取属性：{}，值：{}", key, propertyValue);
         return propertyValue;
     }
 
@@ -183,7 +183,7 @@ public class PropertyFileUtil {
     public static String get(String key, String defaultValue) {
         String propertyValue = properties.getProperty(key);
         String value = StringUtils.defaultString(propertyValue, defaultValue);
-        logger.debug("获取属性：{}，值：{}", key, value);
+//        logger.debug("获取属性：{}，值：{}", key, value);
         return value;
     }
 
@@ -195,7 +195,7 @@ public class PropertyFileUtil {
      */
     public static void add(String key, String value) {
         properties.put(key, value);
-        logger.debug("通过方法添加属性到内存：{}，值：{}", key, value);
+//        logger.debug("通过方法添加属性到内存：{}，值：{}", key, value);
     }
 
     public static Properties getActivePropertyFiles() {

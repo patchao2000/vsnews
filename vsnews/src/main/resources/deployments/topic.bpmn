@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
-  <process id="topic" name="新闻选题流程" isExecutable="true">
+  <process id="topic" name="新闻选题流程">
     <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
     <userTask id="deviceAudit" name="设备部门审批" activiti:candidateGroups="device"></userTask>
@@ -10,7 +10,11 @@
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow3" sourceRef="deviceAudit" targetRef="exclusivegateway2"></sequenceFlow>
-    <userTask id="modifyDeviceApply" name="调整申请设备" activiti:assignee="${applyUserId}"></userTask>
+    <userTask id="modifyDeviceApply" name="调整申请设备" activiti:assignee="${applyUserId}">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${afterModifyTopicProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow4" name="不同意" sourceRef="exclusivegateway2" targetRef="modifyDeviceApply">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!devicePass}]]></conditionExpression>
     </sequenceFlow>
@@ -35,7 +39,11 @@
     <sequenceFlow id="flow11" name="同意" sourceRef="exclusivegateway4" targetRef="exclusivegateway1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${leaderPass}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="modifyLeaderApply" name="调整申请内容" activiti:assignee="${applyUserId}"></userTask>
+    <userTask id="modifyLeaderApply" name="调整申请内容" activiti:assignee="${applyUserId}">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${afterModifyTopicProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow12" name="不同意" sourceRef="exclusivegateway4" targetRef="modifyLeaderApply">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!leaderPass}]]></conditionExpression>
     </sequenceFlow>

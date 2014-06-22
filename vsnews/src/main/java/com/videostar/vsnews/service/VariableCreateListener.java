@@ -1,4 +1,4 @@
-package com.videostar.vsnews.service.oa;
+package com.videostar.vsnews.service;
 
 /**
  * 引擎的全局监听器

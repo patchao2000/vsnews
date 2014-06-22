@@ -94,11 +94,11 @@ public class TopicWorkflowService {
             if (businessKey == null) {
                 continue;
             }
-            Topic leave = topicManager.getTopic(new Long(businessKey));
-            leave.setTask(task);
-            leave.setProcessInstance(processInstance);
-            leave.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-            results.add(leave);
+            Topic topic = topicManager.getTopic(new Long(businessKey));
+            topic.setTask(task);
+            topic.setProcessInstance(processInstance);
+            topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            results.add(topic);
         }
 
         page.setTotalCount(todoQuery.count() + claimQuery.count());
@@ -136,16 +136,16 @@ public class TopicWorkflowService {
     @Transactional(readOnly = true)
     public List<Topic> findFinishedProcessInstaces(Page<Topic> page, int[] pageParams) {
         List<Topic> results = new ArrayList<Topic>();
-        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey("leave").finished().orderByProcessInstanceEndTime().desc();
+        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey("topic").finished().orderByProcessInstanceEndTime().desc();
         List<HistoricProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
 
         // 关联业务实体
         for (HistoricProcessInstance historicProcessInstance : list) {
             String businessKey = historicProcessInstance.getBusinessKey();
-            Topic leave = topicManager.getTopic(new Long(businessKey));
-            leave.setProcessDefinition(getProcessDefinition(historicProcessInstance.getProcessDefinitionId()));
-            leave.setHistoricProcessInstance(historicProcessInstance);
-            results.add(leave);
+            Topic topic = topicManager.getTopic(new Long(businessKey));
+            topic.setProcessDefinition(getProcessDefinition(historicProcessInstance.getProcessDefinitionId()));
+            topic.setHistoricProcessInstance(historicProcessInstance);
+            results.add(topic);
         }
         page.setTotalCount(query.count());
         page.setResult(results);

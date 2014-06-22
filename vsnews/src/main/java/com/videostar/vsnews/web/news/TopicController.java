@@ -170,6 +170,7 @@ public class TopicController {
         try {
             Map<String, Object> variables = var.getVariableMap();
             taskService.complete(taskId, variables);
+            logger.debug("complete: task {}, variables={}", new Object[]{taskId, var.getVariableMap()});
             return "success";
         } catch (Exception e) {
             logger.error("error on complete task {}, variables={}", new Object[]{taskId, var.getVariableMap(), e});
