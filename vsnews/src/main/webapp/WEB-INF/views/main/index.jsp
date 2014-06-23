@@ -43,7 +43,8 @@
 
         /* keep iframe full height */
         body,html,.container,.centerpane,.col-md-10,#maintabs,.tab-content,.tab-pane {
-            height:100%;
+            /*height:100%;*/
+            height:700px;
         }
 
         .nav-tabs > li .close {

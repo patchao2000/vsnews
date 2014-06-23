@@ -34,8 +34,6 @@
     <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
     <script type="text/javascript">
         function complete(taskId, variables) {
-//            var dialog = this;
-
             // 转换JSON为字符串
             var keys = "", values = "", types = "";
             if (variables) {
@@ -184,11 +182,12 @@
 
                             var rejcontent = $('<div/>', {
                                 title: '填写驳回理由',
-                                html: "<textarea id='deviceBackReason' style='width: 250px; height: 60px;'></textarea>"
+                                html: "<div class='form-group'><textarea id='deviceBackReason' class='form-control' rows='2'></textarea></div>"
                             });
 
                             var rejdialog = new BootstrapDialog({
 //                                title: '流程办理[' + tname + ']',
+                                title: '填写驳回理由',
                                 message: rejcontent,
                                 data: { 'taskId': taskId },
                                 buttons: [
@@ -286,11 +285,14 @@
                     window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&id='+rowId+'&taskid='+taskId, '调整申请内容');
                     return;
                 }
+                else if (tkey == 'modifyDeviceApply') {
+                    window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&devonly=true&id='+rowId+'&taskid='+taskId, '调整设备申请内容');
+                    return;
+                }
 
                 var content = $('#' + tkey).clone().attr("style", "display: block");
                 loadDetail(rowId, content);
 
-                window.parent.disableScroll();
                 var dialog = new BootstrapDialog({
                     title: '流程办理[' + tname + ']',
                     message: content,
@@ -299,7 +301,6 @@
                 });
                 dialog.realize();
                 dialog.open();
-                //window.parent.enableScroll();
 
             });
         });

@@ -5,10 +5,6 @@
   Time: 下午5:52
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page import="org.springframework.context.ApplicationContext"%>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@ page import="com.videostar.vsnews.entity.news.Topic" %>
-<%@ page import="com.videostar.vsnews.service.news.TopicManager" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -22,26 +18,16 @@
         String ctx = request.getContextPath();
         String action = ctx + "/news/topic/start";
         String mainTitle = "创建选题";
-        String title = "", content = "", devices = "";
+        String readonly="";
         boolean reApplyMode = false, modifyDeviceOnly = false;
         if (paraReApply != null && paraReApply.equals("true")) {
             mainTitle = "调整申请内容";
             reApplyMode = true;
             action = "#";
-            if (paraDeviceOnly != null && paraDeviceOnly.equals("true"))
+            if (paraDeviceOnly != null && paraDeviceOnly.equals("true")) {
                 modifyDeviceOnly = true;
-
-            ApplicationContext servctx = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
-            TopicManager man = (TopicManager)servctx.getBean("TopicManager");
-            Topic topic;
-
-            Long id = 0L;
-            if (request.getParameter("id") != null)
-                id = Long.parseLong(request.getParameter("id"));
-            topic = man.getTopic(id);
-            title = topic.getTitle();
-            content = topic.getContent();
-            devices = topic.getDevices();
+                readonly = "readonly=\"readonly\"";
+            }
         }
     %>
     <title><%=mainTitle%></title>
@@ -54,8 +40,28 @@
     <% if (reApplyMode) { %>
         <script type="text/javascript">
             var taskid = '<%=request.getParameter("taskid") %>';
+            var topicid = '<%=request.getParameter("id") %>';
+
+            function closeTab() {
+                window.parent.closeIframeTab(window.parent.getIframeByElement(document.body).id);
+            }
+
+            function loadDetailWithTaskVars(topicId, taskId, callback) {
+                $.getJSON(ctx + '/news/topic/detail-with-vars/' + topicId + "/" + taskId, function(data) {
+                    $.each(data, function(k, v) {
+                        $("#" + k).text(v);
+                    });
+                    if ($.isFunction(callback)) {
+                        callback(data);
+                    }
+                });
+            }
 
             $(function () {
+                loadDetailWithTaskVars(topicid, taskid, function(data) {
+                    $("#leaderbackreason").text(data.variables.leaderBackReason);
+                    $("#devicebackreason").text(data.variables.deviceBackReason);
+                });
                 $( "#inputForm" ).submit(function( event ) {
                     var keys = "title,content,devices", types = "S,S,S";
                     var values = $('#title').val() + ',' + $('#content').val() + ',' + $('#devices').val();
@@ -66,7 +72,8 @@
                     }, function(resp) {
                         if (resp == 'success') {
                             alert('任务完成');
-                            location.reload();
+                            closeTab();
+                            //location.reload();
                         } else {
                             alert('操作失败!');
                         }
@@ -102,22 +109,38 @@
 <form:form id="inputForm" action="<%=action%>" method="post" class="well col-md-8">
     <h3><%=mainTitle%></h3>
     <hr>
+    <% if (reApplyMode && !modifyDeviceOnly) { %>
+    <div class="row">
+        <div class="form-group col-md-8 has-error">
+            <label for="title">领导批示：</label>
+            <textarea id="leaderbackreason" name="leaderbackreason" class="form-control" rows="1" readonly="readonly"></textarea>
+        </div>
+    </div>
+    <% } %>
+    <% if (reApplyMode && modifyDeviceOnly) { %>
+    <div class="row">
+        <div class="form-group col-md-8 has-error">
+            <label for="title">设备部门批示：</label>
+            <textarea id="devicebackreason" name="devicebackreason" class="form-control" rows="1" readonly="readonly"></textarea>
+        </div>
+    </div>
+    <% } %>
     <div class="row">
         <div class="form-group col-md-8">
             <label for="title">标题：</label>
-            <textarea id="title" name="title" class="form-control" rows="1"><%=title%></textarea>
+            <textarea id="title" name="title" class="form-control" rows="1" <%=readonly%>></textarea>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-md-8">
             <label for="content">内容：</label>
-            <textarea id="content" name="content" class="form-control" rows="5"><%=content%></textarea>
+            <textarea id="content" name="content" class="form-control" rows="5" <%=readonly%>></textarea>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-md-8">
             <label for="devices">需要设备：</label>
-            <textarea id="devices" name="devices" class="form-control" rows="3"><%=devices%></textarea>
+            <textarea id="devices" name="devices" class="form-control" rows="3"></textarea>
         </div>
     </div>
     <div class="row">

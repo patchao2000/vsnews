@@ -2,6 +2,32 @@ var tabCounter = 1;
 var lastMenuUrl = '';
 var openedTabs = new Map();
 
+function getIframeByElement(element){
+    var iframe;
+    $("iframe").each(function(){
+        if(element.ownerDocument === this.contentWindow.document) {
+            iframe = this;
+        }
+        return !iframe;
+    });
+    return iframe;
+}
+
+function closeIframeTab(iframeid) {
+    var tabid = 'tab-' + iframeid.substr(6);
+    var $tab = $('#maintabs').find('li #' + tabid);
+    //  skip 'x'
+    var moduleName = $tab.text().substr(1);
+    if (openedTabs.get(moduleName) != null) {
+        openedTabs.remove(moduleName);
+    }
+
+    var tabContentId = $tab.attr("href");
+    $tab.parent().remove(); //remove li of tab
+    $('#maintabs').find('a:last').tab('show'); // Select first tab
+    $(tabContentId).remove(); //remove respective tab content
+}
+
 function registerCloseEvent() {
     $(".closeTab").click(function () {
         //  skip 'x'
@@ -51,43 +77,6 @@ function addOrSwitchToTab(rel, moduleName) {
         $("#tab-" + openedTabs.get(moduleName)).tab('show');
     }
 }
-
-//function renderModal(selector, html, options) {
-//    var parent = "body",
-//        $this = $(parent).find(selector);
-//
-//    options = options || {};
-//    options.width = options.width || 'auto';
-//
-//    if ($this.length == 0) {
-//        var selectorArr = selector.split(".");
-//        var $wrapper = $('<div class="modal hide fade ' + selectorArr[selectorArr.length-1] + '"></div>').append(html);
-//        $this = $wrapper.appendTo(parent);
-//        $this.modal();
-//    } else {
-//        $this.html(html).modal("show");
-//    }
-//
-//    $this.css({
-//        width: options.width,
-//        'margin-left': function () {
-//            return -($(this).width() / 2);
-//        }
-//    });
-//}
-
-//function createDialog(title, message, data, buttons){
-//    var dialog = new BootstrapDialog({
-//        title: title,
-//        message: message,
-//        data: data,
-//        buttons: buttons
-//    });
-//    dialog.realize();
-//    dialog.open();
-//
-//    return dialog;
-//}
 
 $(function () {
     openedTabs.put("首页", 0);
