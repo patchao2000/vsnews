@@ -270,6 +270,22 @@
         }
 
         $(document).ready(function () {
+            $('.trace').click(function() {
+                var dialog = new BootstrapDialog({
+                    title: '123',
+                    message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('pid') + "' />",
+                    buttons: [{
+                        id: 'btn-close',
+                        label: 'Close',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                    }]
+                });
+                dialog.realize();
+                dialog.open();
+
+            })
             $('.handle').click(function () {
                 // 当前节点的英文名称
                 var tkey = $(this).attr('data-tkey');
@@ -342,8 +358,9 @@
             <td>${topic.content }</td>
             <td>${topic.devices }</td>
             <td>
-                    <%-- <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a> --%>
-                    ${task.name }
+                <%--<a href='${ctx }/diagram-viewer/index.html?processDefinitionId=${pi.processDefinitionId}&processInstanceId=${pi.id }' title="点击查看流程图">${task.name }</a>--%>
+                <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
+            <%--${task.name }--%>
             </td>
             <td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
             <td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${topic.processDefinition.version }</b></td>
