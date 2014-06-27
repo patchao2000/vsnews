@@ -184,7 +184,8 @@
                        data-parent="#navimenu">新闻文稿</a>
 
                     <div class="collapse" id="article">
-                        <a rel="news/article/apply" href="#" class="list-group-item">创建文稿</a>
+                        <a rel="news/article/articleEdit" href="#" class="list-group-item">创建文稿</a>
+                        <%--<a rel="news/article/apply" href="#" class="list-group-item">创建文稿</a>--%>
                         <a rel="news/article/list/task" href="#" class="list-group-item"><span class="badge">99</span>待办任务</a>
                         <a rel="news/article/list/running" href="#" class="list-group-item">运行中</a>
                         <a rel="news/article/list/finished" href="#" class="list-group-item">已结束</a>
