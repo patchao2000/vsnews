@@ -397,7 +397,12 @@
 			<version>${jetty.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- TEST end -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+        <!-- TEST end -->
 	</dependencies>
 	
 	<build>

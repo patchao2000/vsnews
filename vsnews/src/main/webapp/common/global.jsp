@@ -23,4 +23,10 @@
 
 <script type="text/javascript">
 	var ctx = '<%=request.getContextPath() %>';
+    var notLogon = ${empty user};
+    if (notLogon) {
+        location.href = '${ctx}/login?timeout=true';	//	jump to login
+    }
 </script>
+
+<c:set var="defbodyclass" value="contrast-fb fixed-header fixed-navigation"/>

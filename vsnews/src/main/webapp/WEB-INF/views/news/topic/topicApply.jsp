@@ -31,124 +31,152 @@
         }
     %>
     <title><%=mainTitle%></title>
-
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/bootstrap/js/bootstrap.min.js"></script>
-
-    <% if (reApplyMode) { %>
-        <script type="text/javascript">
-            var taskid = '<%=request.getParameter("taskid") %>';
-            var topicid = '<%=request.getParameter("id") %>';
-
-            function closeTab() {
-                window.parent.closeIframeTab(window.parent.getIframeByElement(document.body).id);
-            }
-
-            function loadDetailWithTaskVars(topicId, taskId, callback) {
-                $.getJSON(ctx + '/news/topic/detail-with-vars/' + topicId + "/" + taskId, function(data) {
-                    $.each(data, function(k, v) {
-                        $("#" + k).text(v);
-                    });
-                    if ($.isFunction(callback)) {
-                        callback(data);
-                    }
-                });
-            }
-
-            $(function () {
-                loadDetailWithTaskVars(topicid, taskid, function(data) {
-                    $("#leaderbackreason").text(data.variables.leaderBackReason);
-                    $("#devicebackreason").text(data.variables.deviceBackReason);
-                });
-                $( "#inputForm" ).submit(function( event ) {
-                    var keys = "title,content,devices", types = "S,S,S";
-                    var values = $('#title').val() + ',' + $('#content').val() + ',' + $('#devices').val();
-                    $.post(ctx + '/news/topic/complete/' + taskid, {
-                        keys: keys,
-                        values: values,
-                        types: types
-                    }, function(resp) {
-                        if (resp == 'success') {
-                            alert('任务完成');
-                            closeTab();
-                            //location.reload();
-                        } else {
-                            alert('操作失败!');
-                        }
-                    });
-
-                    event.preventDefault();
-                });
-            });
-        </script>
-    <% } %>
+    <%@ include file="/common/allcss.jsp" %>
 </head>
 
-<body>
-<!-- <div class="container"> -->
-<c:if test="${not empty message}">
-    <div id="message" class="alert alert-success">${message}</div>
-    <!-- 自动隐藏提示信息 -->
-    <script type="text/javascript">
-        setTimeout(function () {
-            $('#message').hide('slow');
-        }, 5000);
-    </script>
-</c:if>
-<c:if test="${not empty error}">
-    <div id="error" class="alert alert-error">${error}</div>
-    <!-- 自动隐藏提示信息 -->
-    <script type="text/javascript">
-        setTimeout(function () {
-            $('#error').hide('slow');
-        }, 5000);
-    </script>
-</c:if>
-<form:form id="inputForm" action="<%=action%>" method="post" class="well col-md-8">
-    <h3><%=mainTitle%></h3>
-    <hr>
-    <% if (reApplyMode && !modifyDeviceOnly) { %>
-    <div class="row">
-        <div class="form-group col-md-8 has-error">
-            <label for="title">领导批示：</label>
-            <textarea id="leaderbackreason" name="leaderbackreason" class="form-control" rows="1" readonly="readonly"></textarea>
+<body class='${defbodyclass}'>
+<%@ include file="/common/header.jsp" %>
+
+<div id='wrapper'>
+    <%@ include file="/common/nav.jsp" %>
+    <section id='content'>
+        <div class='container'>
+            <c:if test="${not empty message}">
+                <div id="message" class="alert alert-success">${message}</div>
+                <!-- 自动隐藏提示信息 -->
+                <script type="text/javascript">
+                    setTimeout(function () {
+                        $('#message').hide('slow');
+                    }, 5000);
+                </script>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div id="error" class="alert alert-error">${error}</div>
+                <!-- 自动隐藏提示信息 -->
+                <script type="text/javascript">
+                    setTimeout(function () {
+                        $('#error').hide('slow');
+                    }, 5000);
+                </script>
+            </c:if>
+
+            <div class='row'>
+                <div class='col-sm-12'>
+                    <div class='box'>
+                        <div class='box-header blue-background'>
+                            <div class='title'>
+                                <div class='icon-edit'></div>
+                                <%=mainTitle%>
+                            </div>
+                            <div class='actions'>
+                                <a class="btn box-collapse btn-xs btn-link" href="#"><i></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class='box-content'>
+                            <form id="inputForm" action="<%=action%>" class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                                <input name="authenticity_token" type="hidden" />
+                                <% if (reApplyMode && !modifyDeviceOnly) { %>
+                                <div class='form-group has-error'>
+                                    <label class='col-md-2 control-label' for='leaderbackreason'>领导批示：</label>
+                                    <div class='col-md-5'>
+                                        <input class='form-control' id='leaderbackreason' name='leaderbackreason' type='text' readonly="readonly">
+                                    </div>
+                                </div>
+                                <% } %>
+                                <% if (reApplyMode && modifyDeviceOnly) { %>
+                                <div class='form-group has-error'>
+                                    <label class='col-md-2 control-label' for='devicebackreason'>设备部门批示：</label>
+                                    <div class='col-md-5'>
+                                        <input class='form-control' id='devicebackreason' name='devicebackreason' type='text' readonly="readonly">
+                                    </div>
+                                </div>
+                                <% } %>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='title'>标题：</label>
+                                    <div class='col-md-5'>
+                                        <input class='form-control' id='title' name='title' placeholder='标题' type='text' <%=readonly%>>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='content1'>内容：</label>
+                                    <div class='col-md-5'>
+                                        <textarea class='form-control' id='content1' name = 'content' placeholder='内容' rows='5' <%=readonly%>></textarea>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='devices'>需要设备：</label>
+                                    <div class='col-md-5'>
+                                        <textarea class='form-control' id='devices' name='devices' placeholder='需要设备' rows='3'></textarea>
+                                    </div>
+                                </div>
+                                <div class='form-actions form-actions-padding-sm'>
+                                    <div class='row'>
+                                        <div class='col-md-10 col-md-offset-2'>
+                                            <button class='btn btn-primary' type='submit'>
+                                                <i class='icon-save'></i>
+                                                提交
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <% } %>
-    <% if (reApplyMode && modifyDeviceOnly) { %>
-    <div class="row">
-        <div class="form-group col-md-8 has-error">
-            <label for="title">设备部门批示：</label>
-            <textarea id="devicebackreason" name="devicebackreason" class="form-control" rows="1" readonly="readonly"></textarea>
-        </div>
-    </div>
-    <% } %>
-    <div class="row">
-        <div class="form-group col-md-8">
-            <label for="title">标题：</label>
-            <textarea id="title" name="title" class="form-control" rows="1" <%=readonly%>></textarea>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-md-8">
-            <label for="content">内容：</label>
-            <textarea id="content" name="content" class="form-control" rows="5" <%=readonly%>></textarea>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-md-8">
-            <label for="devices">需要设备：</label>
-            <textarea id="devices" name="devices" class="form-control" rows="3"></textarea>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-md-4">
-            <button type="submit" class="btn btn-default">提交</button>
-        </div>
-    </div>
-</form:form>
-<!-- </div> -->
+    </section>
+</div>
+<%@ include file="/common/alljs.jsp" %>
+<% if (reApplyMode) { %>
+<script type="text/javascript">
+    var taskid = '<%=request.getParameter("taskid") %>';
+    var topicid = '<%=request.getParameter("id") %>';
+
+//    function closeTab() {
+//        window.parent.closeIframeTab(window.parent.getIframeByElement(document.body).id);
+//    }
+
+    function loadDetailWithTaskVars(topicId, taskId, callback) {
+        $.getJSON(ctx + '/news/topic/detail-with-vars/' + topicId + "/" + taskId, function(data) {
+            $.each(data, function(k, v) {
+                if (k == "content")
+                    $("#content1").val(v);
+                else
+                    $("#" + k).val(v);
+            });
+            if ($.isFunction(callback)) {
+                callback(data);
+            }
+        });
+    }
+
+    $(function () {
+        loadDetailWithTaskVars(topicid, taskid, function(data) {
+            $("#leaderbackreason").val(data.variables.leaderBackReason);
+            $("#devicebackreason").val(data.variables.deviceBackReason);
+        });
+        $( "#inputForm" ).submit(function( event ) {
+            var keys = "title,content,devices", types = "S,S,S";
+            var values = $('#title').val() + ',' + $('#content1').val() + ',' + $('#devices').val();
+            $.post(ctx + '/news/topic/complete/' + taskid, {
+                keys: keys,
+                values: values,
+                types: types
+            }, function(resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                    location.href = ctx + '/news/topic/list/task'
+                } else {
+                    alert('操作失败!');
+                }
+            });
+
+            event.preventDefault();
+        });
+    });
+</script>
+<% } %>
 </body>
 </html>

@@ -7,51 +7,52 @@
     <%@ include file="/common/global.jsp" %>
     <%@ include file="/common/meta.jsp" %>
 
-    <!-- Bootstrap core CSS -->
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <%@ include file="/common/include-base-styles.jsp" %>
-    <%@ include file="/common/include-jquery-ui-theme.jsp" %>
-    <%@ include file="/common/include-custom-styles.jsp" %>
-    <!--     <style type="text/css">
-            .template {display:none;}
-            .version {margin-left: 0.5em; margin-right: 0.5em;}
-            .trace {margin-right: 0.5em;}
-            .center {
-                width: 1200px;
-                margin-left:auto;
-                margin-right:auto;
-            }
-        </style>
-     -->
-    <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/plugins/jquery-ui/jquery-ui-${themeVersion }.min.js" type="text/javascript"></script>
-    <%-- <script src="${ctx }/js/module/activiti/workflow.js" type="text/javascript"></script> --%>
-    <script type="text/javascript">
-        $(function () {
-
-        });
-    </script>
+    <title>欢迎</title>
+    <%@ include file="/common/allcss.jsp" %>
 </head>
 
-<body style="margin-top: 1em;">
-<div class="center">
-    <div style="text-align: center;">
-        <h1>欢迎访问VSNews</h1>
-        <h2>欢迎访问VSNews</h2>
-        <h3>欢迎访问VSNews</h3>
-        <h1>欢迎访问VSNews</h1>
-        <h2>欢迎访问VSNews</h2>
-        <h3>欢迎访问VSNews</h3>
-        <h1>欢迎访问VSNews</h1>
-        <h2>欢迎访问VSNews</h2>
-        <h3>欢迎访问VSNews</h3>
-    </div>
+<body class='${defbodyclass}'>
+<%@ include file="/common/header.jsp" %>
+
+<div id='wrapper'>
+    <%@ include file="/common/nav.jsp" %>
+    <section id='content'>
+        <div class='container'>
+            <div class="center">
+                <div style="text-align: center;">
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                    <h1>欢迎访问VSNews</h1>
+                    <h2>欢迎访问VSNews</h2>
+                    <h3>欢迎访问VSNews</h3>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="${ctx }/js/common/bootstrap/js/bootstrap.min.js"></script>
+<%@ include file="/common/alljs.jsp" %>
 </body>
 </html>

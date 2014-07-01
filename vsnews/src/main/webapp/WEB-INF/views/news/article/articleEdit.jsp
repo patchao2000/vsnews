@@ -16,71 +16,78 @@
         String mainTitle = "编辑文稿";
     %>
     <title><%=mainTitle%></title>
-
-    <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
-    <script src="${ctx }/js/common/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${ctx }/js/ckeditor/ckeditor.js"></script>
-
-    <script type="text/javascript">
-        $(function () {
-        });
-    </script>
+    <%@ include file="/common/allcss.jsp" %>
 </head>
 
-<body>
-<!-- <div class="container"> -->
-<c:if test="${not empty message}">
-    <div id="message" class="alert alert-success">${message}</div>
-    <!-- 自动隐藏提示信息 -->
-    <script type="text/javascript">
-        setTimeout(function () {
-            $('#message').hide('slow');
-        }, 5000);
-    </script>
-</c:if>
-<c:if test="${not empty error}">
-    <div id="error" class="alert alert-error">${error}</div>
-    <!-- 自动隐藏提示信息 -->
-    <script type="text/javascript">
-        setTimeout(function () {
-            $('#error').hide('slow');
-        }, 5000);
-    </script>
-</c:if>
-<form:form id="inputForm" action="#" method="post" class="well col-md-8">
-    <h3><%=mainTitle%></h3>
-    <hr>
-    <div class="row">
-        <div class="form-group col-md-8">
-            <label for="title">标题：</label>
-            <textarea id="title" name="title" class="form-control" rows="1"></textarea>
+<body class='${defbodyclass}'>
+<%@ include file="/common/header.jsp" %>
+
+<div id='wrapper'>
+    <%@ include file="/common/nav.jsp" %>
+    <section id='content'>
+        <div class='container'>
+            <c:if test="${not empty message}">
+                <div id="message" class="alert alert-success">${message}</div>
+                <!-- 自动隐藏提示信息 -->
+                <script type="text/javascript">
+                    setTimeout(function () {
+                        $('#message').hide('slow');
+                    }, 5000);
+                </script>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div id="error" class="alert alert-error">${error}</div>
+                <!-- 自动隐藏提示信息 -->
+                <script type="text/javascript">
+                    setTimeout(function () {
+                        $('#error').hide('slow');
+                    }, 5000);
+                </script>
+            </c:if>
+            <div class='row'>
+                <div class='col-sm-12'>
+                    <div class='box' style='margin-bottom:0'>
+                        <div class='box-header blue-background'>
+                            <div class='title'><%=mainTitle%></div>
+                            <div class='actions'>
+                                <a class="btn box-collapse btn-xs btn-link" href="#"><i></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class='box-content'>
+                            <form id="inputForm" action="#" class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='title'>标题：</label>
+                                    <div class='col-md-10'>
+                                        <input class='form-control' id='title' name='title' placeholder='标题' type='text'>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='text'>内容：</label>
+                                    <div class='col-md-10'>
+                                        <textarea class='form-control ckeditor' id='text' name = 'text' placeholder='内容' rows='7'></textarea>
+                                    </div>
+                                </div>
+                                <div class='form-actions form-actions-padding-sm'>
+                                    <div class='row'>
+                                        <div class='col-md-10 col-md-offset-2'>
+                                            <button class='btn btn-primary' type='submit'>
+                                                <i class='icon-save'></i>
+                                                提交
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-md-8">
-            <label for="content">内容：</label>
-            <textarea id="content" name="content" class="form-control" rows="8"></textarea>
-            <script>
-                // Replace the <textarea id="editor1"> with a CKEditor
-                // instance, using default configuration.
-                CKEDITOR.replace('content');
-            </script>
-        </div>
-    </div>
-    <%--<div class="row">--%>
-        <%--<div class="form-group col-md-8">--%>
-            <%--<label for="devices">需要设备：</label>--%>
-            <%--<textarea id="devices" name="devices" class="form-control" rows="3"></textarea>--%>
-        <%--</div>--%>
-    <%--</div>--%>
-    <div class="row">
-        <div class="form-group col-md-4">
-            <button type="submit" class="btn btn-default">保存</button>
-        </div>
-    </div>
-</form:form>
-<!-- </div> -->
+    </section>
+</div>
+
+<%@ include file="/common/alljs.jsp" %>
+<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 </body>
 </html>
