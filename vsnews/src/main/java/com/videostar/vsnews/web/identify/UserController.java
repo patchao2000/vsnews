@@ -6,6 +6,7 @@ import com.videostar.vsnews.util.UserUtil;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.identity.UserQuery;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,16 +80,19 @@ public class UserController {
     @RequestMapping(value = "/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
+        logger.debug("logout");
         return "/login";
     }
 
     @RequestMapping(value = "/list/user")
     public ModelAndView userList(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("/user/list/user");
+        ModelAndView mav = new ModelAndView("/user/userList");
         Page<User> page = new Page<User>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
-//        workflowService.findRunningProcessInstaces(page, pageParams);
-        List<User> list = identityService.createUserQuery().list();
+        UserQuery query = identityService.createUserQuery();
+        List<User> list = query.listPage(pageParams[0], pageParams[1]);
+        page.setTotalCount(query.count());
+        page.setResult(list);
 
         mav.addObject("page", page);
         return mav;

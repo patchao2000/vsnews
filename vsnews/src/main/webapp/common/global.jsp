@@ -3,8 +3,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-
+<script type="text/javascript">
+    var ctx = '<%=request.getContextPath() %>';
+</script>
 <%
 	//jquery.ui主题
 	String defaultTheme = "redmond";
@@ -21,12 +24,13 @@
 <%--@elvariable id="message" type="java.lang.String"--%>
 <%--@elvariable id="error" type="java.lang.String"--%>
 
+<c:set var="defbodyclass" value="contrast-fb fixed-header fixed-navigation"/>
+
+<% if (!request.getRequestURI().contains("/login")) { %>
 <script type="text/javascript">
-	var ctx = '<%=request.getContextPath() %>';
     var notLogon = ${empty user};
     if (notLogon) {
         location.href = '${ctx}/login?timeout=true';	//	jump to login
     }
 </script>
-
-<c:set var="defbodyclass" value="contrast-fb fixed-header fixed-navigation"/>
+<% } %>

@@ -3,6 +3,7 @@
     String uri = request.getRequestURI();
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicRunning = false, inTopicFinished = false;
     boolean inArticle = false, inArticleEdit = false;
+    boolean inManage = false, inUserManage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -20,6 +21,10 @@
         inArticleEdit = true;
     if (uri.contains("/main/welcome"))
         inWelcome = true;
+    if (uri.contains("/user"))
+        inManage = true;
+    if (uri.contains("/list/user"))
+        inUserManage = true;
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -104,14 +109,14 @@
                     </li>
                 </ul>
             </li>
-            <li class=''>
+            <li class='<%=inManage?"active":""%>'>
                 <a class="dropdown-collapse" href="#"><i class='icon-user'></i>
                     <span>系统管理</span>
                     <i class='icon-angle-down angle-down'></i>
                 </a>
-                <ul class='nav nav-stacked'>
-                    <li class=''>
-                        <a href='${ctx}/oa/leave/apply'>
+                <ul class='<%=inManage?"in":""%> nav nav-stacked'>
+                    <li class='<%=inUserManage?"active":""%>'>
+                        <a href='${ctx}/user/list/user'>
                             <i class='icon-caret-right'></i>
                             <span>用户管理</span>
                         </a>

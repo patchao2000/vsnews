@@ -9,6 +9,7 @@
 <head>
     <%@ include file="/common/global.jsp" %>
     <%@ include file="/common/meta.jsp" %>
+
     <title>VSNews</title>
     <%@ include file="/common/allcss.jsp" %>
 </head>
