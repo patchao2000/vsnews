@@ -11,7 +11,8 @@
 <script src="${ctx}/assets/javascripts/plugins/jquery_ui_touch_punch/jquery.ui.touch-punch.min.js"
         type="text/javascript"></script>
 <!-- / bootstrap [required] -->
-<script src="${ctx}/assets/javascripts/bootstrap/bootstrap.js" type="text/javascript"></script>
+<%--<script src="${ctx}/assets/javascripts/bootstrap/bootstrap.js" type="text/javascript"></script>--%>
+<script src="${ctx}/js/common/bootstrap/js/bootstrap.js" type="text/javascript"></script>
 <!-- / modernizr -->
 <script src="${ctx}/assets/javascripts/plugins/modernizr/modernizr.min.js" type="text/javascript"></script>
 <!-- / retina -->

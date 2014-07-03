@@ -22,7 +22,8 @@
       type="text/css"/>
 <!-- / END - page related stylesheets [optional] -->
 <!-- / bootstrap [required] -->
-<link href="${ctx}/assets/stylesheets/bootstrap/bootstrap.css" media="all" rel="stylesheet" type="text/css"/>
+<%--<link href="${ctx}/assets/stylesheets/bootstrap/bootstrap.css" media="all" rel="stylesheet" type="text/css"/>--%>
+<link href="${ctx}/js/common/bootstrap/css/bootstrap.css" media="all" rel="stylesheet" type="text/css"/>
 <!-- / theme file [required] -->
 <link href="${ctx}/assets/stylesheets/light-theme.css" media="all" id="color-settings-body-color" rel="stylesheet"
       type="text/css"/>
