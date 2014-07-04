@@ -35,3 +35,11 @@
 <!--<script src="${ctx}/assets/javascripts/ie/html5shiv.js" type="text/javascript"></script>-->
 <!--<script src="${ctx}/assets/javascripts/ie/respond.min.js" type="text/javascript"></script>-->
 <!--[endif]-->
+
+<%--解决使用最新版Bootstrap 3.1.1后顶部navbar中的搜索框超出右边的bug--%>
+<%--若不用最新版，则bootstrap modal弹出后背景所有元素有抖动--%>
+<style>
+    .navbar-form.navbar-right:last-child {
+        margin-right: 5px;
+    }
+</style>

@@ -33,7 +33,7 @@
             <nav class='navbar navbar-default'>
                 <form class='navbar-form'>
                     <div class='navbar-left'>
-                        <a id="adduser" class="btn btn-success" title='创建新用户' href="#" data-toggle="modal" data-target="#myModal"><i class="icon-plus icon-white"></i> 创建</a>
+                        <a id="adduser" class="btn btn-success" title='创建新用户' href="#"><i class="icon-plus icon-white"></i> 创建</a>
                     </div>
                     <div class='navbar-right'>
                         <div class='form-group'>
@@ -74,12 +74,21 @@
                                         <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
                                         <%--@elvariable id="user" type="org.activiti.engine.identity.User"--%>
                                         <c:forEach items="${page.result }" var="user">
-                                            <tr>
+                                            <tr id="${user.id }">
                                                 <td>${user.id }</td>
                                                 <td>${user.firstName }</td>
                                                 <td>${user.email }</td>
                                                 <td>${user.lastName }</td>
-                                                <td></td>
+                                                <td>
+                                                    <div>
+                                                        <a class='btn btn-success btn-xs edituser' href='#'>
+                                                            <i class='icon-edit'></i> 编辑
+                                                        </a>
+                                                        <a class='btn btn-danger btn-xs deleteuser' href='#'>
+                                                            <i class='icon-remove'></i> 删除
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </c:forEach>
                                         </tbody>
@@ -95,62 +104,46 @@
     </section>
 </div>
 
-<div class="modal fade user-dialog" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade user-dialog" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                <h4 class="modal-title" id="userModalLabel">创建新用户</h4>
             </div>
             <div class="modal-body">
-                <form id="InfroText" method="POST">
-                    <input type="hidden" name="InfroText" value="1">
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td>用户名：</td>
-                            <td><input class='form-control' name="title" id="title" style="width:280px"></td>
-                        </tr>
-                        <tr>
-                            <td>用户用户名：</td>
-                            <td><input class='form-control' name="name" id="name" style="width:280px"></td>
-                        </tr>
-
-                        <%--<tr><td>Introudction</td><td><textarea name="contect" style="width:300px;height:100px"></textarea></td></tr>--%>
-                        </tbody>
-                    </table>
-                </form>
-                <%--<table class='view-info table table-striped'>--%>
-                    <%--<tr>--%>
-                        <%--<td>申请人：</td>--%>
-                        <%--<td><input class='form-control' id='title' name='title' placeholder='用户名' type='text'></td>--%>
-                    <%--</tr>--%>
-                    <%--<tr>--%>
-                        <%--<td>申请时间：</td>--%>
-                        <%--<td data-name="applyTime"></td>--%>
-                    <%--</tr>--%>
-                <%--</table>--%>
-            <%--<form id="userform" action="#" class="form" method="post" accept-charset="UTF-8">--%>
-                    <%--<div class='form-inline'>--%>
-                        <%--<div class='form-group'>--%>
-                            <%--<label class='control-label' for='username'>用户名：</label>--%>
-                            <%--<input class='form-control' id='username' name='username' placeholder='用户名' type='text'>--%>
-                        <%--</div>--%>
-                        <%--<p />--%>
-                        <%--<div class='form-group'>--%>
-                            <%--<label class='control-label' for='fullname'>用户全称：</label>--%>
-                            <%--<input class='form-control' id='fullname' name='fullname' placeholder='用户全称' type='text'>--%>
-                        <%--</div>--%>
-                        <%--<div class='form-group'>--%>
-                            <%--<label class='control-label' for='email'>用户名：</label>--%>
-                            <%--<input class='form-control' id='email' name='email' placeholder='用户名' type='text'>--%>
-                        <%--</div>--%>
-                    <%--</div>--%>
-                <%--</form>--%>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input class='form-control' name="userid" id="userid" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>用户全名：</td>
+                        <td><input class='form-control' name="firstname" id="firstname" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>密码：</td>
+                        <td><input class='form-control' type="password" name="password" id="password" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>再次输入密码：</td>
+                        <td><input class='form-control' type="password" name="password2" id="password2" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>电子邮件：</td>
+                        <td><input class='form-control' name="email" id="email" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>附注：</td>
+                        <td><input class='form-control' name="lastname" id="lastname" style="width:260px"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">保存</button>
+                <button type="button" class="btn btn-primary" id="saveuser">保存</button>
             </div>
         </div>
     </div>
@@ -158,60 +151,101 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
-//    $(document).ready(function () {
-//        $('#adduser').click(function () {
+    $(document).ready(function () {
+        $('#adduser').click(function () {
+            $('#userModal').modal('toggle');
+        });
 
-//            var dialog = new BootstrapDialog({
-//                title: '流程办理[' + tname + ']',
-//                message: content,
-//                data: { 'taskId': taskId },
-//                buttons: handleOpts[tkey].buttons
-//            });
-//            dialog.realize();
-//            dialog.open();
+        $('.edituser').click(function () {
+            var userId = $(this).parents('tr').attr('id');
+            $.getJSON(ctx + '/user/detail/user/' + userId, function(data) {
+                $.each(data, function(k, v) {
+                    if (k == "id")
+                        $("#userid").val(v);
+                    else
+                        $("#" + k).val(v);
+                });
+                if ($.isFunction(callback)) {
+                    callback(data);
+                }
+            });
+            $('#userModal').modal('toggle');
+        });
 
-//            BootstrapDialog.show({
-//                title: 'Default Title',
-//                message: 'Click buttons below.',
-//                buttons: [{
-//                    label: 'Title 1',
-//                    action: function(dialog) {
-//                        dialog.setTitle('Title 1');
-//                    }
-//                }, {
-//                    label: 'Title 2',
-//                    action: function(dialog) {
-//                        dialog.setTitle('Title 2');
-//                    }
-//                }]
-//            });
+        $('#saveuser').click(function () {
+            var userid = $('#userid').val();
+            if (userid.length == 0) {
+                alert('用户名为空！');
+                return;
+            }
+            var password1 = $('#password').val();
+            var password2 = $('#password2').val();
+            if (password1.length == 0) {
+                alert('密码为空！');
+                return;
+            }
+            if (password1 != password2) {
+                alert('两次密码内容不一致！');
+                return;
+            }
+            var firstname = $('#firstname').val();
+            if (firstname.length == 0) {
+                firstname = "null";
+            }
+            var email = $('#email').val();
+            if (email.length == 0) {
+                email = "null";
+            }
+            var lastname = $('#lastname').val();
+            if (lastname.length == 0) {
+                lastname = "null";
+            }
+            
+            $.post(ctx + '/user/add/user/' + userid + '/' + firstname + '/' +
+                password1 + '/' + email + '/' + lastname,
+                function(resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/user/list/user';
+                    } else {
+                        alert('操作失败!');
+                }
+            });
+        });
 
+        $('.deleteuser').click(function () {
+            var userId = $(this).parents('tr').attr('id');
+            var dialog = new BootstrapDialog({
+                type: BootstrapDialog.TYPE_WARNING,
+                title: '删除用户',
+                message: '<div><h3>真要删除用户' + userId + '吗？</h3></div>',
+                buttons: [{
+                    icon: 'icon-remove',
+                    label: '删除',
+                    cssClass: 'btn-danger',
+                    action: function(dialog){
+                        $.post(ctx + '/user/delete/user/' + userId,
+                            function(resp) {
+                                if (resp == 'success') {
+                                    alert('任务完成');
+                                    location.href = ctx + '/user/list/user';
+                                } else {
+                                    alert('操作失败!');
+                                }
+                            });
+                    }
+                }, {
+                    label: '关闭',
+                    action: function(dialog){
+                        dialog.close();
+                    }
+                }]
+            });
+            dialog.realize();
+            dialog.open();
 
-//            var dialog = new BootstrapDialog({
-//                title: '创建用户',
-//                cssClass: 'user-dialog',
-//                message: $('<div></div>').load('/user/add/user'),
-//                buttons: [{
-////                    icon: 'glyphicon glyphicon-ban-circle',
-//                    icon: 'icon-user',
-//                    label: '创建',
-//                    cssClass: 'btn-success'
-//                }, {
-//                    label: '关闭',
-//                    action: function(dialogItself){
-//                        dialogItself.close();
-//                    }
-//                }],
-//                closable: true
-//            });
-//            dialog.realize();
-//            dialog.getModalHeader().hide();
-//            dialog.getModalFooter().hide();
-//            dialog.getModalBody().css('background-color', '#0088cc');
-//            dialog.getModalBody().css('color', '#fff');
-//            dialog.open();
-//        });
-//    });
+        });
+    });
 </script>
 </body>
 </html>

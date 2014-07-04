@@ -92,7 +92,7 @@
             </li>
             <li class='dropdown dark user-menu'>
                 <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
-                    <img width="23" height="23" alt="${user.id }" src="${ctx}/assets/images/avatar.jpg"/>
+                    <img width="23" height="23" alt="${user.id }" src="${ctx}/assets/images/avatar.gif"/>
                     <span class='user-name'>${user.id }</span>
                     <b class='caret'></b>
                 </a>
