@@ -3,7 +3,7 @@
     String uri = request.getRequestURI();
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicRunning = false, inTopicFinished = false;
     boolean inArticle = false, inArticleEdit = false;
-    boolean inManage = false, inUserManage = false;
+    boolean inManage = false, inUserManage = false, inGroupManage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -25,6 +25,8 @@
         inManage = true;
     if (uri.contains("/list/user"))
         inUserManage = true;
+    if (uri.contains("/list/group"))
+        inGroupManage = true;
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -121,8 +123,8 @@
                             <span>用户管理</span>
                         </a>
                     </li>
-                    <li class=''>
-                        <a href='${ctx}/oa/leave/list/task'>
+                    <li class='<%=inGroupManage?"active":""%>'>
+                        <a href='${ctx}/user/list/group'>
                             <i class='icon-caret-right'></i>
                             <span>角色管理</span>
                         </a>

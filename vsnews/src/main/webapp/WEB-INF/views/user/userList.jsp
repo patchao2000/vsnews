@@ -65,6 +65,7 @@
                                             <%--<th>ID</th>--%>
                                             <th>用户名</th>
                                             <th>全名</th>
+                                            <th>角色</th>
                                             <th>电子邮件</th>
                                             <th>附注</th>
                                             <th>操作</th>
@@ -72,13 +73,14 @@
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
-                                        <%--@elvariable id="user" type="org.activiti.engine.identity.User"--%>
-                                        <c:forEach items="${page.result }" var="user">
-                                            <tr id="${user.id }">
-                                                <td>${user.id }</td>
-                                                <td>${user.firstName }</td>
-                                                <td>${user.email }</td>
-                                                <td>${user.lastName }</td>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.identify.UserDetail"--%>
+                                        <c:forEach items="${page.result }" var="detail">
+                                            <tr id="${detail.userId }">
+                                                <td>${detail.userId }</td>
+                                                <td>${detail.firstName }</td>
+                                                <td>${detail.role }</td>
+                                                <td>${detail.email }</td>
+                                                <td>${detail.lastName }</td>
                                                 <td>
                                                     <div>
                                                         <a class='btn btn-success btn-xs edituser' href='#'>
@@ -93,7 +95,7 @@
                                         </c:forEach>
                                         </tbody>
                                     </table>
-                                    <tags:pagination page="${page}" paginationSize="${page.pageSize}"/>
+                                    <%--<tags:pagination page="${page}" paginationSize="${page.pageSize}"/>--%>
                                 </div>
                             </div>
                         </div>
@@ -116,34 +118,46 @@
                     <tbody>
                     <tr>
                         <td>用户名：</td>
-                        <td><input class='form-control' name="userid" id="userid" style="width:260px"></td>
+                        <td>
+                            <label for='userid'></label>
+                            <input class='form-control' name="userid" id="userid" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>用户全名：</td>
-                        <td><input class='form-control' name="firstname" id="firstname" style="width:260px"></td>
+                        <td>
+                            <label for='firstname'></label>
+                            <input class='form-control' name="firstname" id="firstname" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>密码：</td>
-                        <td><input class='form-control' type="password" name="password" id="password" style="width:260px"></td>
+                        <td>
+                            <label for='password'></label>
+                            <input class='form-control' type="password" name="password" id="password" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>再次输入密码：</td>
-                        <td><input class='form-control' type="password" name="password2" id="password2" style="width:260px"></td>
+                        <td>
+                            <label for='password2'></label>
+                            <input class='form-control' type="password" name="password2" id="password2" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>电子邮件：</td>
-                        <td><input class='form-control' name="email" id="email" style="width:260px"></td>
+                        <td>
+                            <label for='email'></label>
+                            <input class='form-control' name="email" id="email" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>附注：</td>
-                        <td><input class='form-control' name="lastname" id="lastname" style="width:260px"></td>
+                        <td>
+                            <label for='lastname'></label>
+                            <input class='form-control' name="lastname" id="lastname" style="width:260px"></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="saveuser">保存</button>
+                <button type="button" class="btn btn-primary" id="saveuser"><i class='icon-save'></i> 保存</button>
             </div>
         </div>
     </div>
@@ -152,6 +166,7 @@
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        var saveaction = '/user/add/user/';
         $('#adduser').click(function () {
             $('#userModal').modal('toggle');
         });
@@ -160,15 +175,19 @@
             var userId = $(this).parents('tr').attr('id');
             $.getJSON(ctx + '/user/detail/user/' + userId, function(data) {
                 $.each(data, function(k, v) {
-                    if (k == "id")
-                        $("#userid").val(v);
-                    else
-                        $("#" + k).val(v);
+                    $("#" + k.toLowerCase()).val(v);
+                    if (k == "password") {
+                        $("#password2").val(v);
+                    }
                 });
                 if ($.isFunction(callback)) {
                     callback(data);
                 }
             });
+            $('#userModalLabel').text('修改用户');
+            $('#userid').prop('readonly', true);
+            saveaction = '/user/modify/user/';
+
             $('#userModal').modal('toggle');
         });
 
@@ -201,7 +220,7 @@
                 lastname = "null";
             }
             
-            $.post(ctx + '/user/add/user/' + userid + '/' + firstname + '/' +
+            $.post(ctx + saveaction + userid + '/' + firstname + '/' +
                 password1 + '/' + email + '/' + lastname,
                 function(resp) {
                     if (resp == 'success') {
@@ -223,7 +242,7 @@
                     icon: 'icon-remove',
                     label: '删除',
                     cssClass: 'btn-danger',
-                    action: function(dialog){
+                    action: function(){
                         $.post(ctx + '/user/delete/user/' + userId,
                             function(resp) {
                                 if (resp == 'success') {

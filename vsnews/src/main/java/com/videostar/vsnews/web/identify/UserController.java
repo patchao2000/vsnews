@@ -1,12 +1,11 @@
 package com.videostar.vsnews.web.identify;
 
-import com.videostar.vsnews.entity.news.Topic;
 import com.videostar.vsnews.util.Page;
 import com.videostar.vsnews.util.PageUtil;
 import com.videostar.vsnews.util.UserUtil;
-import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,15 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用户控制器
@@ -42,10 +38,6 @@ public class UserController {
     /**
      * 登录系统
      *
-     * @param userName
-     * @param password
-     * @param session
-     * @return
      */
     @RequestMapping(value = "/logon")
     public String logon(@RequestParam("username") String userName, @RequestParam("password") String password, HttpSession session) {
@@ -77,8 +69,6 @@ public class UserController {
     /**
      * 登出系统
      * 
-     * @param session
-     * @return
      */
     @RequestMapping(value = "/logout")
     public String logout(HttpSession session) {
@@ -90,10 +80,40 @@ public class UserController {
     @RequestMapping(value = "list/user")
     public ModelAndView userList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/user/userList");
-        Page<User> page = new Page<User>(PageUtil.PAGE_SIZE);
+        Page<UserDetail> page = new Page<UserDetail>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
         UserQuery query = identityService.createUserQuery();
+
+        GroupQuery groupQuery = identityService.createGroupQuery();
         List<User> list = query.listPage(pageParams[0], pageParams[1]);
+        List<UserDetail> detailList = new ArrayList<UserDetail>();
+        for (User user : list) {
+            UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
+            String groupNames = "";
+            for (Group group : groupQuery.groupMember(user.getId()).list()) {
+                groupNames += group.getName() + " ";
+            }
+            detail.setRole(groupNames);
+            detailList.add(detail);
+        }
+        page.setTotalCount(query.count());
+        page.setResult(detailList);
+
+        mav.addObject("page", page);
+
+//        User user = query.userId("admin").singleResult();
+//        UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
+//        mav.addObject("detail", detail);
+        return mav;
+    }
+
+    @RequestMapping(value = "list/group")
+    public ModelAndView groupList(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("/user/groupList");
+        Page<Group> page = new Page<Group>(PageUtil.PAGE_SIZE);
+        int[] pageParams = PageUtil.init(page, request);
+        GroupQuery query = identityService.createGroupQuery();
+        List<Group> list = query.listPage(pageParams[0], pageParams[1]);
         page.setTotalCount(query.count());
         page.setResult(list);
 
@@ -111,7 +131,7 @@ public class UserController {
         try {
             UserQuery query = identityService.createUserQuery();
             if (query.userId(userId).count() > 0) {
-                logger.error("user id {} exist", userId);
+                logger.error("user id {} already exist", userId);
                 return "error";
             }
 
@@ -132,6 +152,31 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "modify/user/{id}/{firstname}/{password}/{email}/{lastname}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String modifyUser(@PathVariable("id") String userId,
+                          @PathVariable("firstname") String firstName,
+                          @PathVariable("password") String password,
+                          @PathVariable("email") String email,
+                          @PathVariable("lastname") String lastName) {
+        try {
+            User user = identityService.createUserQuery().userId(userId).singleResult();
+            if (!firstName.equals("null"))
+                user.setFirstName(firstName);
+            user.setPassword(password);
+            if (!email.equals("null"))
+                user.setEmail(email);
+            if (!lastName.equals("null"))
+                user.setLastName(lastName);
+            identityService.saveUser(user);
+            logger.debug("user modified: {}", user.getId());
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on modify user: {}", userId);
+            return "error";
+        }
+    }
+
     @RequestMapping(value = "delete/user/{id}", method = {RequestMethod.POST})
     @ResponseBody
     public String deleteUser(@PathVariable("id") String userId) {
@@ -147,9 +192,74 @@ public class UserController {
 
     @RequestMapping(value = "detail/user/{id}")
     @ResponseBody
-    public User getUser(@PathVariable("id") String userId) {
+    public UserDetail getUser(@PathVariable("id") String userId) {
         User user = identityService.createUserQuery().userId(userId).singleResult();
-        return user;
+        logger.debug("get user detail {}", user.getId());
+        UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
+        return detail;
+    }
+
+    @RequestMapping(value = "add/group/{id}/{name}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String addGroup(@PathVariable("id") String groupId,
+                          @PathVariable("name") String name) {
+        try {
+            GroupQuery query = identityService.createGroupQuery();
+            if (query.groupId(groupId).count() > 0) {
+                logger.error("group id {} already exist", groupId);
+                return "error";
+            }
+
+            Group group = identityService.newGroup(groupId);
+            group.setType("assignment");
+            if (!name.equals("null"))
+                group.setName(name);
+
+            identityService.saveGroup(group);
+            logger.debug("group created: {}", group.getId());
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on create group: {}", groupId);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "modify/group/{id}/{name}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String modifyGroup(@PathVariable("id") String groupId,
+                             @PathVariable("name") String name) {
+        try {
+            Group group = identityService.createGroupQuery().groupId(groupId).singleResult();
+            if (!name.equals("null"))
+                group.setName(name);
+            identityService.saveGroup(group);
+            logger.debug("group modified: {}", group.getId());
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on modify group: {}", groupId);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "delete/group/{id}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String deleteGroup(@PathVariable("id") String groupId) {
+        try {
+            identityService.deleteGroup(groupId);
+            logger.debug("group deleted: {}", groupId);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on delete group: {}", groupId);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "detail/group/{id}")
+    @ResponseBody
+    public Group getGroup(@PathVariable("id") String groupId) {
+        Group group = identityService.createGroupQuery().groupId(groupId).singleResult();
+        logger.debug("get group detail {}", group.getId());
+        return group;
     }
 
     @Autowired
