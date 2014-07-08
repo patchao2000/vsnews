@@ -3,6 +3,7 @@ package com.videostar.vsnews.web.identify;
 import com.videostar.vsnews.util.Page;
 import com.videostar.vsnews.util.PageUtil;
 import com.videostar.vsnews.util.UserUtil;
+import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
@@ -90,8 +91,11 @@ public class UserController {
         for (User user : list) {
             UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
             String groupNames = "";
+            int i = 0;
             for (Group group : groupQuery.groupMember(user.getId()).list()) {
-                groupNames += group.getName() + " ";
+                if (i++ > 0)
+                    groupNames += ", ";
+                groupNames += group.getName();
             }
             detail.setRole(groupNames);
             detailList.add(detail);
@@ -101,9 +105,6 @@ public class UserController {
 
         mav.addObject("page", page);
 
-//        User user = query.userId("admin").singleResult();
-//        UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-//        mav.addObject("detail", detail);
         return mav;
     }
 
@@ -260,6 +261,61 @@ public class UserController {
         Group group = identityService.createGroupQuery().groupId(groupId).singleResult();
         logger.debug("get group detail {}", group.getId());
         return group;
+    }
+
+    @RequestMapping(value = "detail/allgroup")
+    @ResponseBody
+    public List<Group> getAllGroup(HttpServletRequest request) {
+        return identityService.createGroupQuery().list();
+    }
+
+    @RequestMapping(value = "detail/user/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<String> getUserGroups(@PathVariable("id") String userId) {
+        List<String> result = new ArrayList<String>();
+        for (Group group : identityService.createGroupQuery().groupMember(userId).list()) {
+            result.add(group.getId());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "modify/user/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String setUserGroups(@PathVariable("id") String userId, Variable var) {
+        try {
+            List<Group> list = identityService.createGroupQuery().groupMember(userId).list();
+            Map<String, Object> variables = var.getVariableMap();
+            Set set = variables.keySet();
+            Iterator it = set.iterator();
+            while (it.hasNext()) {
+                String group = (String)it.next();
+                Boolean v = (Boolean)variables.get(group);
+                Boolean inlist = false;
+                for(Group g : list) {
+                    if (g.getId().equals(group)) {
+                        inlist = true;
+                        break;
+                    }
+                }
+//                logger.debug("user: {} group: {} inlist: {}", userId, group, inlist);
+                if (v) {
+                    if (!inlist) {
+//                        logger.debug("createMembership");
+                        identityService.createMembership(userId, group);
+                    }
+                }
+                else {
+                    if (inlist) {
+//                        logger.debug("deleteMembership");
+                        identityService.deleteMembership(userId, group);
+                    }
+                }
+            }
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on set user groups {}, variables={}", userId, var.getVariableMap());
+            return "error";
+        }
     }
 
     @Autowired

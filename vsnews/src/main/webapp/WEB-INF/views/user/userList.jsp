@@ -119,38 +119,43 @@
                     <tr>
                         <td>用户名：</td>
                         <td>
-                            <label for='userid'></label>
+                            <%--<label for='userid'></label>--%>
                             <input class='form-control' name="userid" id="userid" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>用户全名：</td>
                         <td>
-                            <label for='firstname'></label>
+                            <%--<label for='firstname'></label>--%>
                             <input class='form-control' name="firstname" id="firstname" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>密码：</td>
                         <td>
-                            <label for='password'></label>
+                            <%--<label for='password'></label>--%>
                             <input class='form-control' type="password" name="password" id="password" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>再次输入密码：</td>
                         <td>
-                            <label for='password2'></label>
+                            <%--<label for='password2'></label>--%>
                             <input class='form-control' type="password" name="password2" id="password2" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>电子邮件：</td>
                         <td>
-                            <label for='email'></label>
+                            <%--<label for='email'></label>--%>
                             <input class='form-control' name="email" id="email" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>附注：</td>
                         <td>
-                            <label for='lastname'></label>
+                            <%--<label for='lastname'></label>--%>
                             <input class='form-control' name="lastname" id="lastname" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>所属角色：</td>
+                        <td id="roles">
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -165,7 +170,54 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
+    function modifyGroups(userId, variables) {
+        var keys = "", values = "", types = "";
+        if (variables) {
+            $.each(variables, function() {
+                if (keys != "") {
+                    keys += ",";
+                    values += ",";
+                    types += ",";
+                }
+                keys += this.key;
+                values += this.value;
+                types += this.type;
+            });
+        }
+        $.post(ctx + '/user/modify/user/groups/' + userId, {
+            keys: keys,
+            values: values,
+            types: types
+        }, function(resp) {
+            if (resp == 'success') {
+                alert('任务完成');
+                location.href = ctx + '/user/list/user';
+            } else {
+                alert('操作失败!');
+            }
+        });
+    }
+
     $(document).ready(function () {
+        $.getJSON(ctx + '/user/detail/allgroup', function(data) {
+            var roles = '';
+            var template = "<div class='checkbox'><label><input type='checkbox' value='' id='#id'>  #name</label></div>";
+            $.each(data, function(dk, dv) {
+                var curr = template;
+                $.each(dv, function(k, v) {
+                    var id = '';
+                    if (k == 'id') {
+                        curr = curr.replace(/#id/g, 'group_' + v);
+                    }
+                    else if (k == 'name') {
+                        curr = curr.replace(/#name/g, v);
+                    }
+                });
+                roles += curr;
+            });
+            $('#roles').html(roles);
+        });
+
         var saveaction = '/user/add/user/';
         $('#adduser').click(function () {
             $('#userModal').modal('toggle');
@@ -180,15 +232,24 @@
                         $("#password2").val(v);
                     }
                 });
-                if ($.isFunction(callback)) {
-                    callback(data);
-                }
             });
-            $('#userModalLabel').text('修改用户');
-            $('#userid').prop('readonly', true);
-            saveaction = '/user/modify/user/';
 
-            $('#userModal').modal('toggle');
+//            $.ajaxSettings.async = false;
+            $.getJSON(ctx + '/user/detail/user/groups/' + userId, function(data) {
+                $("#roles input").prop('checked', false);
+
+                $.each(data, function(k, v) {
+                    $("#group_" + v).prop('checked', true);
+                });
+
+                $('#userModalLabel').text('修改用户');
+                $('#userid').prop('readonly', true);
+                saveaction = '/user/modify/user/';
+
+                $('#userModal').modal('toggle');
+            });
+//            $.ajaxSettings.async = true;
+
         });
 
         $('#saveuser').click(function () {
@@ -224,8 +285,17 @@
                 password1 + '/' + email + '/' + lastname,
                 function(resp) {
                     if (resp == 'success') {
-                        alert('任务完成');
-                        location.href = ctx + '/user/list/user';
+//                        alert('任务完成');
+//                        location.href = ctx + '/user/list/user';
+                        var variables = [];
+                        $('#roles').find('input').each(function(){
+                            var id = $(this).attr('id').substr(6);
+                            if ($(this).prop('checked'))
+                                variables.push({key: id, value: true, type: 'B'});
+                            else
+                                variables.push({key: id, value: false, type: 'B'});
+                        })
+                        modifyGroups(userid, variables);
                     } else {
                         alert('操作失败!');
                 }

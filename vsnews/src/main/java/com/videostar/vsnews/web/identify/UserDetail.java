@@ -1,14 +1,10 @@
 package com.videostar.vsnews.web.identify;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
 /**
  * UserDetail
  *
  * Created by patchao2000 on 14-7-7.
  */
-@Entity
 public class UserDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     private String userId;
@@ -30,7 +26,6 @@ public class UserDetail implements java.io.Serializable {
         this.password = password;
     }
 
-    @Column
     public String getUserId() {
         return userId;
     }
@@ -39,7 +34,6 @@ public class UserDetail implements java.io.Serializable {
         this.userId = userId;
     }
 
-    @Column
     public String getFirstName() {
         return firstName;
     }
@@ -48,7 +42,6 @@ public class UserDetail implements java.io.Serializable {
         this.firstName = firstName;
     }
 
-    @Column
     public String getLastName() {
         return lastName;
     }
@@ -57,7 +50,6 @@ public class UserDetail implements java.io.Serializable {
         this.lastName = lastName;
     }
 
-    @Column
     public String getEmail() {
         return email;
     }
@@ -66,7 +58,6 @@ public class UserDetail implements java.io.Serializable {
         this.email = email;
     }
 
-    @Column
     public String getPassword() {
         return password;
     }
@@ -75,7 +66,6 @@ public class UserDetail implements java.io.Serializable {
         this.password = password;
     }
 
-    @Column
     public String getRole() {
         return role;
     }
