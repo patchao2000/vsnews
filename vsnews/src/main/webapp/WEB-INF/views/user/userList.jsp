@@ -62,7 +62,6 @@
                                     <table class='table' style='margin-bottom:0;'>
                                         <thead>
                                         <tr>
-                                            <%--<th>ID</th>--%>
                                             <th>用户名</th>
                                             <th>全名</th>
                                             <th>角色</th>
@@ -95,7 +94,7 @@
                                         </c:forEach>
                                         </tbody>
                                     </table>
-                                    <%--<tags:pagination page="${page}" paginationSize="${page.pageSize}"/>--%>
+                                    <tags:pagination page="${page}" paginationSize="${page.pageSize}"/>
                                 </div>
                             </div>
                         </div>

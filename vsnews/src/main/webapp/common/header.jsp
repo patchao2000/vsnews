@@ -2,7 +2,7 @@
 <header>
     <nav class='navbar navbar-default navbar-fixed-top'>
         <a class='navbar-brand' href='index.html'>
-            <img width="81" height="21" class="logo" alt="Flatty" src="${ctx}/assets/images/logo.svg"/>
+            <img width="81" height="21" class="logo" alt="Flatty" src="${ctx}/assets/images/vsnews.png"/>
             <img width="21" height="21" class="logo-xs" alt="Flatty" src="${ctx}/assets/images/logo_xs.svg"/>
         </a>
         <a class='toggle-nav btn pull-left' href='#'>
@@ -14,20 +14,20 @@
                     <i class='icon-cog'></i>
                 </a>
                 <ul class='dropdown-menu color-settings'>
-                    <li class='color-settings-body-color'>
-                    <div class='color-title'>Body color</div>
-                    <a data-change-to='${ctx}/assets/stylesheets/light-theme.css' href='#'>
-                    Light
-                    <small>(default)</small>
-                    </a>
-                    <a data-change-to='${ctx}/assets/stylesheets/dark-theme.css' href='#'>
-                    Dark
-                    </a>
-                    <a data-change-to='${ctx}/assets/stylesheets/dark-blue-theme.css' href='#'>
-                    Dark blue
-                    </a>
-                    </li>
-                    <li class='divider'></li>
+                    <%--<li class='color-settings-body-color'>--%>
+                    <%--<div class='color-title'>Body color</div>--%>
+                    <%--<a data-change-to='${ctx}/assets/stylesheets/light-theme.css' href='#'>--%>
+                    <%--Light--%>
+                    <%--<small>(default)</small>--%>
+                    <%--</a>--%>
+                    <%--<a data-change-to='${ctx}/assets/stylesheets/dark-theme.css' href='#'>--%>
+                    <%--Dark--%>
+                    <%--</a>--%>
+                    <%--<a data-change-to='${ctx}/assets/stylesheets/dark-blue-theme.css' href='#'>--%>
+                    <%--Dark blue--%>
+                    <%--</a>--%>
+                    <%--</li>--%>
+                    <%--<li class='divider'></li>--%>
                     <li class='color-settings-contrast-color'>
                         <div class='color-title'>Contrast color</div>
                         <a data-change-to="contrast-red" href="#"><i class='icon-cog text-red'></i>

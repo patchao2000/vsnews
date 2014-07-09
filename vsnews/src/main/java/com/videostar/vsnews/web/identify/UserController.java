@@ -286,9 +286,12 @@ public class UserController {
             List<Group> list = identityService.createGroupQuery().groupMember(userId).list();
             Map<String, Object> variables = var.getVariableMap();
             Set set = variables.keySet();
-            Iterator it = set.iterator();
-            while (it.hasNext()) {
-                String group = (String)it.next();
+//            Iterator it = set.iterator();
+//            for (Iterator it = set.iterator(); it.hasNext();) {
+            for (Object groupObj : set) {
+//            while (it.hasNext()) {
+//                String group = (String)it.next();
+                String group = (String)groupObj;
                 Boolean v = (Boolean)variables.get(group);
                 Boolean inlist = false;
                 for(Group g : list) {
@@ -314,6 +317,7 @@ public class UserController {
             return "success";
         } catch (Exception e) {
             logger.error("error on set user groups {}, variables={}", userId, var.getVariableMap());
+            logger.error(e.getMessage());
             return "error";
         }
     }
