@@ -1,10 +1,10 @@
 package com.videostar.vsnews.web.identify;
 
+import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.util.Page;
 import com.videostar.vsnews.util.PageUtil;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
-import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
@@ -34,7 +34,10 @@ public class UserController {
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // Activiti Identify Service
-    private IdentityService identityService;
+//    private IdentityService identityService;
+
+//    @Autowired
+    private UserManager userManager;
 
     /**
      * 登录系统
@@ -43,19 +46,19 @@ public class UserController {
     @RequestMapping(value = "/logon")
     public String logon(@RequestParam("username") String userName, @RequestParam("password") String password, HttpSession session) {
         logger.debug("logon request: {username={}, password={}}", userName, password);
-        boolean checkPassword = identityService.checkPassword(userName, password);
+        boolean checkPassword = userManager.checkPassword(userName, password);
         if (checkPassword) {
 
             // read user from database
-            User user = identityService.createUserQuery().userId(userName).singleResult();
+            User user = userManager.getUserById(userName);
             UserUtil.saveUserToSession(session, user);
 
-            List<Group> groupList = identityService.createGroupQuery().groupMember(userName).list();
+            List<Group> groupList = userManager.getGroupListByUserId(userName);
             session.setAttribute("groups", groupList);
 
             String[] groupNames = new String[groupList.size()];
             for (int i = 0; i < groupNames.length; i++) {
-                System.out.println(groupList.get(i).getName());
+                logger.debug("in group: {}", groupList.get(i).getName());
                 groupNames[i] = groupList.get(i).getName();
             }
 
@@ -83,9 +86,9 @@ public class UserController {
         ModelAndView mav = new ModelAndView("/user/userList");
         Page<UserDetail> page = new Page<UserDetail>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
-        UserQuery query = identityService.createUserQuery();
+        UserQuery query = userManager.createUserQuery();
 
-        GroupQuery groupQuery = identityService.createGroupQuery();
+        GroupQuery groupQuery = userManager.createGroupQuery();
         List<User> list = query.listPage(pageParams[0], pageParams[1]);
         List<UserDetail> detailList = new ArrayList<UserDetail>();
         for (User user : list) {
@@ -113,7 +116,7 @@ public class UserController {
         ModelAndView mav = new ModelAndView("/user/groupList");
         Page<Group> page = new Page<Group>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
-        GroupQuery query = identityService.createGroupQuery();
+        GroupQuery query = userManager.createGroupQuery();
         List<Group> list = query.listPage(pageParams[0], pageParams[1]);
         page.setTotalCount(query.count());
         page.setResult(list);
@@ -130,21 +133,13 @@ public class UserController {
                           @PathVariable("email") String email,
                           @PathVariable("lastname") String lastName) {
         try {
-            UserQuery query = identityService.createUserQuery();
+            UserQuery query = userManager.createUserQuery();
             if (query.userId(userId).count() > 0) {
                 logger.error("user id {} already exist", userId);
                 return "error";
             }
 
-            User user = identityService.newUser(userId);
-            if (!firstName.equals("null"))
-                user.setFirstName(firstName);
-            user.setPassword(password);
-            if (!email.equals("null"))
-                user.setEmail(email);
-            if (!lastName.equals("null"))
-                user.setLastName(lastName);
-            identityService.saveUser(user);
+            User user = userManager.newUser(userId, firstName, password, email, lastName);
             logger.debug("user created: {}", user.getId());
             return "success";
         } catch (Exception e) {
@@ -161,15 +156,7 @@ public class UserController {
                           @PathVariable("email") String email,
                           @PathVariable("lastname") String lastName) {
         try {
-            User user = identityService.createUserQuery().userId(userId).singleResult();
-            if (!firstName.equals("null"))
-                user.setFirstName(firstName);
-            user.setPassword(password);
-            if (!email.equals("null"))
-                user.setEmail(email);
-            if (!lastName.equals("null"))
-                user.setLastName(lastName);
-            identityService.saveUser(user);
+            User user = userManager.modifyUser(userId, firstName, password, email, lastName);
             logger.debug("user modified: {}", user.getId());
             return "success";
         } catch (Exception e) {
@@ -182,7 +169,7 @@ public class UserController {
     @ResponseBody
     public String deleteUser(@PathVariable("id") String userId) {
         try {
-            identityService.deleteUser(userId);
+            userManager.deleteUser(userId);
             logger.debug("user deleted: {}", userId);
             return "success";
         } catch (Exception e) {
@@ -194,7 +181,7 @@ public class UserController {
     @RequestMapping(value = "detail/user/{id}")
     @ResponseBody
     public UserDetail getUser(@PathVariable("id") String userId) {
-        User user = identityService.createUserQuery().userId(userId).singleResult();
+        User user = userManager.getUserById(userId);
         logger.debug("get user detail {}", user.getId());
         UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
         return detail;
@@ -205,18 +192,7 @@ public class UserController {
     public String addGroup(@PathVariable("id") String groupId,
                           @PathVariable("name") String name) {
         try {
-            GroupQuery query = identityService.createGroupQuery();
-            if (query.groupId(groupId).count() > 0) {
-                logger.error("group id {} already exist", groupId);
-                return "error";
-            }
-
-            Group group = identityService.newGroup(groupId);
-            group.setType("assignment");
-            if (!name.equals("null"))
-                group.setName(name);
-
-            identityService.saveGroup(group);
+            Group group = userManager.newGroup(groupId, name);
             logger.debug("group created: {}", group.getId());
             return "success";
         } catch (Exception e) {
@@ -230,10 +206,7 @@ public class UserController {
     public String modifyGroup(@PathVariable("id") String groupId,
                              @PathVariable("name") String name) {
         try {
-            Group group = identityService.createGroupQuery().groupId(groupId).singleResult();
-            if (!name.equals("null"))
-                group.setName(name);
-            identityService.saveGroup(group);
+            Group group = userManager.modifyGroup(groupId, name);
             logger.debug("group modified: {}", group.getId());
             return "success";
         } catch (Exception e) {
@@ -246,7 +219,7 @@ public class UserController {
     @ResponseBody
     public String deleteGroup(@PathVariable("id") String groupId) {
         try {
-            identityService.deleteGroup(groupId);
+            userManager.deleteGroup(groupId);
             logger.debug("group deleted: {}", groupId);
             return "success";
         } catch (Exception e) {
@@ -258,7 +231,7 @@ public class UserController {
     @RequestMapping(value = "detail/group/{id}")
     @ResponseBody
     public Group getGroup(@PathVariable("id") String groupId) {
-        Group group = identityService.createGroupQuery().groupId(groupId).singleResult();
+        Group group = userManager.getGroupById(groupId);
         logger.debug("get group detail {}", group.getId());
         return group;
     }
@@ -266,14 +239,14 @@ public class UserController {
     @RequestMapping(value = "detail/allgroup")
     @ResponseBody
     public List<Group> getAllGroup(HttpServletRequest request) {
-        return identityService.createGroupQuery().list();
+        return userManager.createGroupQuery().list();
     }
 
     @RequestMapping(value = "detail/user/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public List<String> getUserGroups(@PathVariable("id") String userId) {
         List<String> result = new ArrayList<String>();
-        for (Group group : identityService.createGroupQuery().groupMember(userId).list()) {
+        for (Group group : userManager.getGroupListByUserId(userId)) {
             result.add(group.getId());
         }
         return result;
@@ -283,37 +256,7 @@ public class UserController {
     @ResponseBody
     public String setUserGroups(@PathVariable("id") String userId, Variable var) {
         try {
-            List<Group> list = identityService.createGroupQuery().groupMember(userId).list();
-            Map<String, Object> variables = var.getVariableMap();
-            Set set = variables.keySet();
-//            Iterator it = set.iterator();
-//            for (Iterator it = set.iterator(); it.hasNext();) {
-            for (Object groupObj : set) {
-//            while (it.hasNext()) {
-//                String group = (String)it.next();
-                String group = (String)groupObj;
-                Boolean v = (Boolean)variables.get(group);
-                Boolean inlist = false;
-                for(Group g : list) {
-                    if (g.getId().equals(group)) {
-                        inlist = true;
-                        break;
-                    }
-                }
-//                logger.debug("user: {} group: {} inlist: {}", userId, group, inlist);
-                if (v) {
-                    if (!inlist) {
-//                        logger.debug("createMembership");
-                        identityService.createMembership(userId, group);
-                    }
-                }
-                else {
-                    if (inlist) {
-//                        logger.debug("deleteMembership");
-                        identityService.deleteMembership(userId, group);
-                    }
-                }
-            }
+            userManager.setUserGroups(userId, var);
             return "success";
         } catch (Exception e) {
             logger.error("error on set user groups {}, variables={}", userId, var.getVariableMap());
@@ -322,9 +265,14 @@ public class UserController {
         }
     }
 
+//    @Autowired
+//    public void setIdentityService(IdentityService identityService) {
+//        this.identityService = identityService;
+//    }
+
     @Autowired
-    public void setIdentityService(IdentityService identityService) {
-        this.identityService = identityService;
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.videostar.vsnews.web.identify;
 
+import com.videostar.vsnews.service.identify.UserManager;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.User;
 import org.slf4j.Logger;
@@ -36,8 +37,11 @@ public class UserControllerTest extends AbstractTransactionalJUnit4SpringContext
 
     @org.junit.Test
     public void testLogon() throws Exception {
+        UserManager m = new UserManager();
+        m.setIdentityService(identityService);
         UserController c = new UserController();
-        c.setIdentityService(identityService);
+        c.setUserManager(m);
+//        c.setIdentityService(identityService);
         MockHttpSession session = new MockHttpSession();
         String view = c.logon("leader", "000000", session);
         assertEquals("redirect:/main/index", view);
