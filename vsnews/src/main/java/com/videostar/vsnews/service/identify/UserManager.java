@@ -81,10 +81,10 @@ public class UserManager {
         identityService.deleteUser(userId);
     }
 
-    @Transactional(readOnly = false)
-    public void saveUser(User user) {
-        identityService.saveUser(user);
-    }
+//    @Transactional(readOnly = false)
+//    public void saveUser(User user) {
+//        identityService.saveUser(user);
+//    }
 
     @Transactional(readOnly = false)
     public Group newGroup(String groupId, String name) throws ActivitiException {

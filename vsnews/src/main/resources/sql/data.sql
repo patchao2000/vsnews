@@ -19,9 +19,9 @@ insert into ACT_ID_USER values ('leader', 1, 'Leader', '', 'leader@videostar.com
 insert into ACT_ID_MEMBERSHIP values ('leader', 'user');
 insert into ACT_ID_MEMBERSHIP values ('leader', 'leader');
 
-insert ACT_ID_GROUP value ('device', 1, '设备管理员', 'assignment');
-insert ACT_ID_USER value ('device', 1, 'DeviceMan', '', 'device@videostar.com', '000000','');
-insert ACT_ID_MEMBERSHIP value ('device', 'device');
+insert into ACT_ID_GROUP values ('device', 1, '设备管理员', 'assignment');
+insert into ACT_ID_USER values ('device', 1, 'DeviceMan', '', 'device@videostar.com', '000000','');
+insert into ACT_ID_MEMBERSHIP values ('device', 'device');
 
 update ACT_GE_PROPERTY
 set VALUE_ = '10'
