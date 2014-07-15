@@ -1,6 +1,7 @@
 package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.Topic;
+import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.service.news.TopicWorkflowService;
 import com.videostar.vsnews.util.Page;
@@ -57,7 +58,8 @@ public class TopicController {
     protected TaskService taskService;
 
     @Autowired
-    protected IdentityService identityService;
+    protected UserManager userManager;
+//    protected IdentityService identityService;
 
     @RequestMapping(value = {"apply", ""})
     public String createForm(Model model) {
@@ -66,7 +68,7 @@ public class TopicController {
     }
 
     @RequestMapping(value = "start", method = RequestMethod.POST)
-    public String startWorkflow(Topic topic, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String startTopicWriteWorkflow(Topic topic, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             //  user must logged on first
             User user = UserUtil.getUserFromSession(session);
@@ -75,23 +77,15 @@ public class TopicController {
             }
             topic.setUserId(user.getId());
 
-            //  check user is in leader group
-            Boolean isLeader = false;
-            List<Group> groups = identityService.createGroupQuery().groupMember(user.getId()).list();
-            for (Group group : groups) {
-                logger.debug("group: {}", group.getId());
-                if (group.getId().equals("leader")) {
-                    isLeader = true;
-                    break;
-                }
-            }
+            //  check user is in leader(topicAudit) group
+            Boolean isLeader = userManager.isUserInGroup(user.getId(), "topicAudit");
 
             Map<String, Object> variables = new HashMap<String, Object>();
             logger.debug("startWorkflow: title {} content {} devices {}", topic.getTitle(), topic.getContent(), topic.getDevices());
             variables.put("needDevices", !topic.getDevices().isEmpty());
             variables.put("leaderStart", isLeader);
 
-            ProcessInstance processInstance = workflowService.startWorkflow(topic, variables);
+            ProcessInstance processInstance = workflowService.startTopicWriteWorkflow(topic, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {

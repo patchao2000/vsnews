@@ -152,6 +152,17 @@ public class UserManager {
         }
     }
 
+    public Boolean isUserInGroup(String userId, String groupId) {
+        List<Group> groups = identityService.createGroupQuery().groupMember(userId).list();
+        for (Group group : groups) {
+//            logger.debug("group: {}", group.getId());
+            if (group.getId().equals(groupId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Autowired
     public void setIdentityService(IdentityService identityService) {
         this.identityService = identityService;

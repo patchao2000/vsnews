@@ -1,7 +1,5 @@
 package com.videostar.vsnews.service.news;
 
-import com.videostar.vsnews.entity.news.Topic;
-import com.videostar.vsnews.util.Page;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
@@ -20,7 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.videostar.vsnews.entity.news.Topic;
+import com.videostar.vsnews.util.Page;
+import com.videostar.vsnews.constants.WorkflowNames;
+
 /**
+ * TopicWorkflowService
+ * 
  * Created by patchao2000 on 14-6-4.
  */
 @Component
@@ -47,7 +51,7 @@ public class TopicWorkflowService {
      *
      * @param entity
      */
-    public ProcessInstance startWorkflow(Topic entity, Map<String, Object> variables) {
+    public ProcessInstance startTopicWriteWorkflow(Topic entity, Map<String, Object> variables) {
         topicManager.saveTopic(entity);
         logger.debug("save entity: {}", entity);
         String businessKey = entity.getId().toString();
@@ -57,10 +61,10 @@ public class TopicWorkflowService {
             // 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
             identityService.setAuthenticatedUserId(entity.getUserId());
 
-            processInstance = runtimeService.startProcessInstanceByKey("topic", businessKey, variables);
+            processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.topicWrite, businessKey, variables);
             String processInstanceId = processInstance.getId();
             entity.setProcessInstanceId(processInstanceId);
-            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", new Object[]{"topic", businessKey, processInstanceId, variables});
+            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", new Object[]{WorkflowNames.topicWrite, businessKey, processInstanceId, variables});
         } finally {
             identityService.setAuthenticatedUserId(null);
         }
@@ -73,12 +77,12 @@ public class TopicWorkflowService {
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
-        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey("topic").taskAssignee(userId).active().orderByTaskId().desc()
+        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskAssignee(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
         List<Task> todoList = todoQuery.listPage(pageParams[0], pageParams[1]);
 
         // 根据当前人未签收的任务
-        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey("topic").taskCandidateUser(userId).active().orderByTaskId().desc()
+        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
         List<Task> unsignedTasks = claimQuery.listPage(pageParams[0], pageParams[1]);
 
@@ -109,7 +113,7 @@ public class TopicWorkflowService {
     @Transactional(readOnly = true)
     public List<Topic> findRunningProcessInstaces(Page<Topic> page, int[] pageParams) {
         List<Topic> results = new ArrayList<Topic>();
-        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey("topic").active().orderByProcessInstanceId().desc();
+        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc();
         List<ProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
 
         // 关联业务实体
@@ -136,7 +140,7 @@ public class TopicWorkflowService {
     @Transactional(readOnly = true)
     public List<Topic> findFinishedProcessInstaces(Page<Topic> page, int[] pageParams) {
         List<Topic> results = new ArrayList<Topic>();
-        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey("topic").finished().orderByProcessInstanceEndTime().desc();
+        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).finished().orderByProcessInstanceEndTime().desc();
         List<HistoricProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
 
         // 关联业务实体
