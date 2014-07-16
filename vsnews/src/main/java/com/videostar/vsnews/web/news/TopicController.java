@@ -62,7 +62,16 @@ public class TopicController {
 //    protected IdentityService identityService;
 
     @RequestMapping(value = {"apply", ""})
-    public String createForm(Model model) {
+    public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null || StringUtils.isBlank(user.getId())) {
+            return "redirect:/login?timeout=true";
+        }
+
+        if(!userManager.isUserInGroup(user.getId(), "topicWrite")) {
+            redirectAttributes.addFlashAttribute("error", "您没有撰写选题权限！");
+            return "redirect:/main/welcome";
+        }
         model.addAttribute("topic", new Topic());
         return "/news/topic/topicApply";
     }

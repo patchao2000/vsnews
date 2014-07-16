@@ -26,24 +26,8 @@
     <%@ include file="/common/nav.jsp" %>
     <section id='content'>
         <div class='container'>
-            <c:if test="${not empty message}">
-                <div id="message" class="alert alert-success">${message}</div>
-                <!-- 自动隐藏提示信息 -->
-                <script type="text/javascript">
-                    setTimeout(function () {
-                        $('#message').hide('slow');
-                    }, 5000);
-                </script>
-            </c:if>
-            <c:if test="${not empty error}">
-                <div id="error" class="alert alert-error">${error}</div>
-                <!-- 自动隐藏提示信息 -->
-                <script type="text/javascript">
-                    setTimeout(function () {
-                        $('#error').hide('slow');
-                    }, 5000);
-                </script>
-            </c:if>
+            <%@ include file="/common/message-error.jsp" %>
+
             <div class='row'>
                 <div class='col-sm-12'>
                     <div class='box' style='margin-bottom:0'>

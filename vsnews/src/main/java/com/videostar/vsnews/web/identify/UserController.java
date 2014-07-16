@@ -236,18 +236,28 @@ public class UserController {
         return group;
     }
 
-    @RequestMapping(value = "detail/allgroup")
+    @RequestMapping(value = "objlist/allgroups")
     @ResponseBody
     public List<Group> getAllGroup(HttpServletRequest request) {
         return userManager.createGroupQuery().list();
     }
 
-    @RequestMapping(value = "detail/user/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "idlist/usergroups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public List<String> getUserGroups(@PathVariable("id") String userId) {
         List<String> result = new ArrayList<String>();
         for (Group group : userManager.getGroupListByUserId(userId)) {
             result.add(group.getId());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "objlist/groupmembers/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<UserDetail> getGroupMembers(@PathVariable("id") String groupId) {
+        List<UserDetail> result = new ArrayList<UserDetail>();
+        for (User user : userManager.getGroupMembers(groupId)) {
+            result.add(new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword()));
         }
         return result;
     }

@@ -7,6 +7,8 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ import java.util.Set;
 public class UserManager {
 //    @Autowired
     private IdentityService identityService;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public boolean checkPassword(String userName, String password) {
         return identityService.checkPassword(userName, password);
@@ -153,14 +157,20 @@ public class UserManager {
     }
 
     public Boolean isUserInGroup(String userId, String groupId) {
+//        logger.debug("isUserInGroup: {}", userId);
         List<Group> groups = identityService.createGroupQuery().groupMember(userId).list();
         for (Group group : groups) {
-//            logger.debug("group: {}", group.getId());
+//            logger.debug("check group: {}, {}", group.getId(), groupId);
             if (group.getId().equals(groupId)) {
+//                logger.debug("equals!!");
                 return true;
             }
         }
         return false;
+    }
+
+    public List<User> getGroupMembers(String groupId) {
+        return identityService.createUserQuery().memberOfGroup(groupId).list();
     }
 
     @Autowired

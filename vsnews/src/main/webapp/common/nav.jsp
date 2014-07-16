@@ -56,7 +56,7 @@
                     <li class='<%=inTopicApply?"active":""%>'>
                         <a href='${ctx}/news/topic/apply'>
                             <i class='icon-caret-right'></i>
-                            <span>创建选题</span>
+                            <span>撰写选题</span>
                         </a>
                     </li>
                     <li class='<%=inTopicList?"active":""%>'>

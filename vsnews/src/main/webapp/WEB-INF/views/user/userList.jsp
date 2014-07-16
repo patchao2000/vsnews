@@ -198,7 +198,7 @@
     }
 
     $(document).ready(function () {
-        $.getJSON(ctx + '/user/detail/allgroup', function(data) {
+        $.getJSON(ctx + '/user/objlist/allgroups', function(data) {
             var roles = '';
             var template = "<div class='checkbox'><label><input type='checkbox' value='' id='#id'>  #name</label></div>";
             $.each(data, function(dk, dv) {
@@ -234,7 +234,7 @@
             });
 
 //            $.ajaxSettings.async = false;
-            $.getJSON(ctx + '/user/detail/user/groups/' + userId, function(data) {
+            $.getJSON(ctx + '/user/idlist/usergroups/' + userId, function(data) {
                 $("#roles input").prop('checked', false);
 
                 $.each(data, function(k, v) {

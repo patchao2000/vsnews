@@ -1,10 +1,5 @@
 package com.videostar.vsnews.entity.news;
 
-//import org.hibernate.annotations.Fetch;
-//import org.hibernate.annotations.FetchMode;
-//import org.hibernate.annotations.LazyCollection;
-//import org.hibernate.annotations.LazyCollectionOption;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,11 +23,11 @@ public class Topic extends NewsEntity implements Serializable {
     private String content;
 
     //    记者
-    private List<Long> reporters;
+    private List<String> reporters;
     //    摄像员
-    private List<Long> camermans;
+    private List<String> camermans;
     //    其他人员
-    private List<Long> others;
+    private List<String> others;
 
     //    采访时间
     private Date interviewTime;
@@ -89,33 +84,33 @@ public class Topic extends NewsEntity implements Serializable {
     @Column
     @ElementCollection
     @CollectionTable (name = "NEWS_TOPIC_REPORTERS", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<Long> getReporters() {
+    public List<String> getReporters() {
         return reporters;
     }
 
-    public void setReporters(List<Long> reporters) {
+    public void setReporters(List<String> reporters) {
         this.reporters = reporters;
     }
 
     @Column
     @ElementCollection
     @CollectionTable (name = "NEWS_TOPIC_CAMERAMANS", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<Long> getCamermans() {
+    public List<String> getCamermans() {
         return camermans;
     }
 
-    public void setCamermans(List<Long> camermans) {
+    public void setCamermans(List<String> camermans) {
         this.camermans = camermans;
     }
 
     @Column
     @ElementCollection
     @CollectionTable (name = "NEWS_TOPIC_OTHERS", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<Long> getOthers() {
+    public List<String> getOthers() {
         return others;
     }
 
-    public void setOthers(List<Long> others) {
+    public void setOthers(List<String> others) {
         this.others = others;
     }
 
