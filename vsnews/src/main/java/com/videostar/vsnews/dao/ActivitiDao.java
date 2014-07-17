@@ -2,8 +2,12 @@ package com.videostar.vsnews.dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Component;
+import com.videostar.vsnews.entity.news.Topic;
+
+import java.util.List;
 
 /**
  * Activiti相关DAO操作
@@ -26,4 +30,9 @@ public class ActivitiDao {
         return i;
     }
 
+    public Query createTopicQuery() {
+        Query query = entityManager.createQuery("select t from Topic t");
+//        List<Topic> list = query.getResultList();
+        return query;
+    }
 }

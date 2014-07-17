@@ -1,5 +1,7 @@
 package com.videostar.vsnews.entity.news;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -25,19 +27,22 @@ public class Topic extends NewsEntity implements Serializable {
     //    记者
     private List<String> reporters;
     //    摄像员
-    private List<String> camermans;
+    private List<String> cameramen;
     //    其他人员
     private List<String> others;
 
     //    采访时间
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date interviewTime;
     //    采访地点
-    private Date interviewLocation;
+    private String location;
     //    所需设备/车辆
     private String devices;
     //    出发时间
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date startTime;
     //    返回时间
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date endTime;
 
     //  status: 0 -> not finished, 1 -> finished
@@ -94,13 +99,13 @@ public class Topic extends NewsEntity implements Serializable {
 
     @Column
     @ElementCollection
-    @CollectionTable (name = "NEWS_TOPIC_CAMERAMANS", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<String> getCamermans() {
-        return camermans;
+    @CollectionTable (name = "NEWS_TOPIC_CAMERAMEN", joinColumns = @JoinColumn(name = "TOPIC_ID"))
+    public List<String> getCameramen() {
+        return cameramen;
     }
 
-    public void setCamermans(List<String> camermans) {
-        this.camermans = camermans;
+    public void setCameramen(List<String> cameramen) {
+        this.cameramen = cameramen;
     }
 
     @Column
@@ -114,7 +119,8 @@ public class Topic extends NewsEntity implements Serializable {
         this.others = others;
     }
 
-    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "INTERVIEW_TIME")
     public Date getInterviewTime() {
         return interviewTime;
     }
@@ -124,15 +130,16 @@ public class Topic extends NewsEntity implements Serializable {
     }
 
     @Column
-    public Date getInterviewLocation() {
-        return interviewLocation;
+    public String getLocation() {
+        return location;
     }
 
-    public void setInterviewLocation(Date interviewLocation) {
-        this.interviewLocation = interviewLocation;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "START_TIME")
     public Date getStartTime() {
         return startTime;
     }
@@ -141,7 +148,8 @@ public class Topic extends NewsEntity implements Serializable {
         this.startTime = startTime;
     }
 
-    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "END_TIME")
     public Date getEndTime() {
         return endTime;
     }

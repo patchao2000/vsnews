@@ -15,7 +15,7 @@
         inTopicList = true;
     if (uri.contains("/topic/running"))
         inTopicRunning = true;
-    if (uri.contains("/topic/finished"))
+    if (uri.contains("/topic/alltopics"))
         inTopicFinished = true;
     if (uri.contains("articleEdit"))
         inArticleEdit = true;
@@ -72,9 +72,9 @@
                         </a>
                     </li>
                     <li class='<%=inTopicFinished?"active":""%>'>
-                        <a href='${ctx}/news/topic/list/finished'>
+                        <a href='${ctx}/news/topic/list/all'>
                             <i class='icon-caret-right'></i>
-                            <span>已结束任务</span>
+                            <span>所有选题</span>
                         </a>
                     </li>
                 </ul>

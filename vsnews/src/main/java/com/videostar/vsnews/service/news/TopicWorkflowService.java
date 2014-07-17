@@ -1,5 +1,6 @@
 package com.videostar.vsnews.service.news;
 
+import com.videostar.vsnews.dao.ActivitiDao;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
@@ -45,6 +46,9 @@ public class TopicWorkflowService {
 
     @Autowired
     private IdentityService identityService;
+
+    @Autowired
+    ActivitiDao activitiDao;
 
     /**
      * 启动流程
@@ -152,6 +156,36 @@ public class TopicWorkflowService {
             results.add(topic);
         }
         page.setTotalCount(query.count());
+        page.setResult(results);
+        return results;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Topic> getAllTopics(Page<Topic> page, int[] pageParams) {
+//        List<Topic> results = new ArrayList<Topic>();
+        List<Topic> results = activitiDao.createTopicQuery().getResultList();
+
+//        ProcessInstanceQuery queryActive = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc();
+//        List<ProcessInstance> list = queryActive.listPage(pageParams[0], pageParams[1]);
+//
+//        // 关联业务实体
+//        for (ProcessInstance processInstance : list) {
+//            String businessKey = processInstance.getBusinessKey();
+//            if (businessKey == null) {
+//                continue;
+//            }
+//            Topic topic = topicManager.getTopic(new Long(businessKey));
+//            topic.setProcessInstance(processInstance);
+//            topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+//            results.add(topic);
+//
+//            // 设置当前任务信息
+//            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
+//            topic.setTask(tasks.get(0));
+//        }
+
+//        page.setTotalCount(queryActive.count());
+        page.setTotalCount(results.size());
         page.setResult(results);
         return results;
     }

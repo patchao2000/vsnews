@@ -12,7 +12,7 @@
 <head>
     <%@ include file="/common/global.jsp" %>
     <%@ include file="/common/meta.jsp" %>
-    <title>待办选题任务</title>
+    <title>待办新闻选题任务</title>
     <%@ include file="/common/allcss.jsp" %>
     <link href="${ctx }/js/common/bootstrap/css/bootstrap-dialog.min.css" rel="stylesheet">
 </head>
@@ -52,7 +52,7 @@
 
                     <tr id="${topic.id }" data-tid="${task.id }">
                         <td>${topic.userId }</td>
-                        <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                        <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                         <td>${topic.title }</td>
                         <td>${topic.content }</td>
                         <td>${topic.devices }</td>
@@ -61,7 +61,7 @@
                             <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
                         <%--${task.name }--%>
                         </td>
-                        <td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                        <td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                         <td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${topic.processDefinition.version }</b></td>
                         <td>
 
@@ -116,7 +116,7 @@ function complete(taskId, variables) {
 //            });
 
     // 发送任务完成请求
-    $.post(ctx + '/news/topic/complete/' + taskId, {
+    $.post(ctx + '/news/topic/oldcomplete/' + taskId, {
         keys: keys,
         values: values,
         types: types
@@ -359,13 +359,11 @@ $(document).ready(function () {
         var taskId = $(this).parents('tr').attr('data-tid');
 
         //  若调整申请内容
-        if (tkey == 'modifyLeaderApply') {
-//            window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&id='+rowId+'&taskid='+taskId, '调整申请内容');
+        if (tkey == 'modifyContent') {
             location.href = ctx + '/news/topic/apply?reapply=true&id='+rowId+'&taskid='+taskId;
             return;
         }
         else if (tkey == 'modifyDeviceApply') {
-//            window.parent.addOrSwitchToTab('news/topic/apply?reapply=true&devonly=true&id='+rowId+'&taskid='+taskId, '调整设备申请内容');
             location.href = ctx + '/news/topic/apply?reapply=true&devonly=true&id='+rowId+'&taskid='+taskId;
             return;
         }

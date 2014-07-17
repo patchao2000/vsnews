@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
   <process id="topicwrite" name="新闻选题撰写流程" isExecutable="true">
+    <extensionElements>
+      <activiti:executionListener event="end" delegateExpression="${topicWriteWorkflowFinishProcessor}"></activiti:executionListener>
+    </extensionElements>
     <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
     <userTask id="leaderAudit" name="领导审批" activiti:candidateGroups="topicAudit"></userTask>
-    <userTask id="modifyContent" name="调整内容" activiti:assignee="${applyUserId}"></userTask>
+    <userTask id="modifyContent" name="调整内容" activiti:assignee="${applyUserId}">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${afterModifyTopicProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow2" name="非领导指派" sourceRef="exclusivegateway1" targetRef="leaderAudit">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!leaderStart}]]></conditionExpression>
     </sequenceFlow>

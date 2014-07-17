@@ -2,11 +2,14 @@ package com.videostar.vsnews.util;
 
 import jodd.util.StringUtil;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Variable {
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String keys;
     private String values;
@@ -44,6 +47,10 @@ public class Variable {
         if (StringUtil.isBlank(keys)) {
             return vars;
         }
+
+//        logger.debug("keys: {}", keys);
+//        logger.debug("values: {}", values);
+//        logger.debug("types: {}", types);
 
         String[] arrayKey = keys.split(",");
         String[] arrayValue = values.split(",");

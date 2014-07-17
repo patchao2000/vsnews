@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -132,13 +129,23 @@ public class TopicController {
         mav.addObject("page", page);
         return mav;
     }
-    
+
     @RequestMapping(value = "list/finished")
     public ModelAndView finishedList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/finished");
         Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
         workflowService.findFinishedProcessInstaces(page, pageParams);
+        mav.addObject("page", page);
+        return mav;
+    }
+
+    @RequestMapping(value = "list/all")
+    public ModelAndView allList(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("/news/topic/alltopics");
+        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        int[] pageParams = PageUtil.init(page, request);
+        workflowService.getAllTopics(page, pageParams);
         mav.addObject("page", page);
         return mav;
     }
@@ -167,9 +174,9 @@ public class TopicController {
         return topic;
     }
 
-    @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "oldcomplete/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String complete(@PathVariable("id") String taskId, Variable var) {
+    public String oldcomplete(@PathVariable("id") String taskId, Variable var) {
         try {
             Map<String, Object> variables = var.getVariableMap();
             taskService.complete(taskId, variables);
@@ -177,6 +184,19 @@ public class TopicController {
             return "success";
         } catch (Exception e) {
             logger.error("error on complete task {}, variables={}", new Object[]{taskId, var.getVariableMap(), e});
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap) {
+        try {
+            taskService.complete(taskId, topicMap);
+            logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, topicMap, e});
             return "error";
         }
     }
