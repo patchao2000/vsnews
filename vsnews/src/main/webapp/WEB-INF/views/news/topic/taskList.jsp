@@ -297,6 +297,28 @@ var handleOpts = {
                 }
             }
         ]
+    },
+    dispatching: {
+        width: 300,
+        height: 300,
+        buttons: [
+            {
+                id: 'btn-finish',
+                label: '完成',
+                cssClass: 'btn-primary',
+                action: function(dialogRef){
+                    var taskId = dialogRef.getData('taskId');
+                    complete(taskId);
+                }
+            },
+            {
+                id: 'btn-cancel',
+                label: '取消',
+                action: function(dialogRef){
+                    dialogRef.close();
+                }
+            }
+        ]
     }
 };
 
@@ -363,7 +385,7 @@ $(document).ready(function () {
             location.href = ctx + '/news/topic/apply?reapply=true&id='+rowId+'&taskid='+taskId;
             return;
         }
-        else if (tkey == 'modifyDeviceApply') {
+        else if (tkey == 'adjustDevices') {
             location.href = ctx + '/news/topic/apply?reapply=true&devonly=true&id='+rowId+'&taskid='+taskId;
             return;
         }

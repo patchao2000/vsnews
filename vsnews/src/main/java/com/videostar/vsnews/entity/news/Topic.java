@@ -17,6 +17,12 @@ import java.util.List;
 public class Topic extends NewsEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    //   选题状态: 0 -> 选题撰写中, 1 -> 选题撰写完毕, 2 -> 选题派遣中, 3 -> 选题派遣完毕
+    public static final int STATUS_WRITING = 0;
+    public static final int STATUS_WRITTEN = 1;
+    public static final int STATUS_DISPATCHING = 2;
+    public static final int STATUS_DISPATCHED = 3;
+
     private int status;
 
     //    标题
@@ -45,9 +51,8 @@ public class Topic extends NewsEntity implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date endTime;
 
-    //  status: 0 -> not finished, 1 -> finished
     public Topic() {
-        this.status = 0;
+        this.status = STATUS_WRITING;
     }
 
     @Column
@@ -84,6 +89,21 @@ public class Topic extends NewsEntity implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    @Transient
+    public final String getStatusString() {
+        switch(status) {
+            case STATUS_WRITING:
+                return "撰写中";
+            case STATUS_WRITTEN:
+                return "撰写完毕";
+            case STATUS_DISPATCHING:
+                return "派遣中";
+            case STATUS_DISPATCHED:
+                return "派遣完毕";
+        }
+        return "ERROR";
     }
 
     @Column

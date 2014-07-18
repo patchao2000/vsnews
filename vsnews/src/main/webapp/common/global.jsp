@@ -8,15 +8,15 @@
 <script type="text/javascript">
     var ctx = '<%=request.getContextPath() %>';
 </script>
-<%
-	//jquery.ui主题
-	String defaultTheme = "redmond";
-	String themeVersion = "1.10.4";
+<%--<%--%>
+	<%--//jquery.ui主题--%>
+	<%--String defaultTheme = "redmond";--%>
+	<%--String themeVersion = "1.10.4";--%>
 
-	session.setAttribute("themeName", defaultTheme);
-	session.setAttribute("themeVersion", themeVersion);
-	pageContext.setAttribute("timeInMillis", System.currentTimeMillis());
-%>
+	<%--session.setAttribute("themeName", defaultTheme);--%>
+	<%--session.setAttribute("themeVersion", themeVersion);--%>
+	<%--pageContext.setAttribute("timeInMillis", System.currentTimeMillis());--%>
+<%--%>--%>
 
 <%--@elvariable id="defaultTheme" type="java.lang.String"--%>
 <%--@elvariable id="themeVersion" type="java.lang.String"--%>

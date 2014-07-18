@@ -38,13 +38,14 @@ public class AfterModifyTopicProcessor implements TaskListener {
     /* (non-Javadoc)
      * @see org.activiti.engine.delegate.TaskListener#notify(org.activiti.engine.delegate.DelegateTask)
      */
+    @SuppressWarnings("unchecked")
     public void notify(DelegateTask delegateTask) {
         String processInstanceId = delegateTask.getProcessInstanceId();
 
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         Topic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
 
-        topic.setTitle((String)delegateTask.getVariable("title"));
+        topic.setTitle((String) delegateTask.getVariable("title"));
         topic.setContent((String) delegateTask.getVariable("content"));
         topic.setDevices((String) delegateTask.getVariable("devices"));
         topic.setReporters((List<String>) delegateTask.getVariable("reporters"));

@@ -1,3 +1,4 @@
+<%@ page import="org.activiti.engine.identity.Group" %>
 <%--
   Created by IntelliJ IDEA.
   User: patchao2000
@@ -24,6 +25,7 @@
     <%@ include file="/common/nav.jsp" %>
     <section id='content'>
         <div class='container'>
+            <%@ include file="/common/message-error.jsp" %>
             <table width="100%" class="table table-hover">
                 <thead>
                 <tr>
@@ -32,8 +34,8 @@
                     <th>标题</th>
                     <th>内容</th>
                     <th>设备</th>
-                    <%--<th>流程启动时间</th>--%>
-                    <%--<th>流程结束时间</th>--%>
+                    <th>状态</th>
+                    <th>操作</th>
                     <%--<th>流程结束原因</th>--%>
                     <%--<th>流程版本</th>--%>
                 </tr>
@@ -42,18 +44,16 @@
                 <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
                 <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.Topic"--%>
                 <c:forEach items="${page.result }" var="topic">
-                    <c:set var="task" value="${topic.task }" />
-                    <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
-                    <%--<c:set var="pi" value="${topic.processInstance }"/>--%>
-                    <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
-                    <c:set var="hpi" value="${topic.historicProcessInstance }" />
-
                     <tr id="${topic.id }" tid="${task.id }">
                         <td>${topic.userId }</td>
                         <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
                         <td>${topic.title }</td>
                         <td>${topic.content }</td>
                         <td>${topic.devices }</td>
+                        <td>${topic.statusString }</td>
+                        <td>
+                            <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                        </td>
                         <%--<td><fmt:formatDate value="${hpi.startTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>--%>
                         <%--<td><fmt:formatDate value="${hpi.endTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>--%>
                         <%--<td>${hpi.deleteReason }</td>--%>
@@ -67,5 +67,13 @@
     </section>
 </div>
 <%@ include file="/common/alljs.jsp" %>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.viewtopic').click(function () {
+            var topicId = $(this).parents('tr').attr('id');
+            location.href = ctx + '/news/topic/view/' + topicId;
+        });
+    });
+</script>
 </body>
 </html>

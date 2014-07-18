@@ -56,7 +56,6 @@ public class TopicController {
 
     @Autowired
     protected UserManager userManager;
-//    protected IdentityService identityService;
 
     @RequestMapping(value = {"apply", ""})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
@@ -108,6 +107,46 @@ public class TopicController {
         return "redirect:/news/topic/apply";
     }
 
+    @RequestMapping(value = "dispatch/{topicid}/{userid}")
+    public String startTopicDispatchWorkflow(@PathVariable("topicid") Long topicId, @PathVariable("userid") String userId,
+                                             RedirectAttributes redirectAttributes, HttpSession session) {
+        try {
+            Topic topic = topicManager.getTopic(topicId);
+            logger.debug("before start dispatch workflow topic id {}", topic.getId());
+
+            //  user must logged on first
+            User user = UserUtil.getUserFromSession(session);
+            if (user == null || StringUtils.isBlank(user.getId())) {
+                return "redirect:/login?timeout=true";
+            }
+            if (topic.getStatus() != Topic.STATUS_WRITTEN) {
+                logger.error("Topic status wrong: {}", topic.getStatus());
+                redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+            }
+
+            topic.setStatus(Topic.STATUS_DISPATCHING);
+            topic.setUserId(user.getId());
+
+            Map<String, Object> variables = new HashMap<String, Object>();
+            variables.put("dispatcher", userId);
+            logger.debug("startTopicDispatchWorkflow: title {} content {} devices {}", topic.getTitle(), topic.getContent(), topic.getDevices());
+
+            ProcessInstance processInstance = workflowService.startTopicDispatchWorkflow(topic, variables);
+            redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+        } catch (ActivitiException e) {
+            if (e.getMessage().contains("no processes deployed with key")) {
+                logger.warn("没有部署流程!", e);
+            } else {
+                logger.error("启动选题流程失败：", e);
+                redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+            }
+        } catch (Exception e) {
+            logger.error("启动选题流程失败：", e);
+            redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+        }
+        return "redirect:/news/topic/list/all";
+    }
+
     @RequestMapping(value = "list/task")
     public ModelAndView taskList(HttpSession session, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/taskList");
@@ -147,6 +186,15 @@ public class TopicController {
         int[] pageParams = PageUtil.init(page, request);
         workflowService.getAllTopics(page, pageParams);
         mav.addObject("page", page);
+        return mav;
+    }
+
+    @RequestMapping(value = "view/{id}")
+    public ModelAndView viewTopic(@PathVariable("id") Long id, HttpServletRequest request) {
+        logger.debug("viewTopic begin");
+        ModelAndView mav = new ModelAndView("/news/topic/view");
+        Topic topic = topicManager.getTopic(id);
+        mav.addObject("topic", topic);
         return mav;
     }
 

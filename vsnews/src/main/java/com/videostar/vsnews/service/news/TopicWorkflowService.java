@@ -75,24 +75,52 @@ public class TopicWorkflowService {
         return processInstance;
     }
 
+    public ProcessInstance startTopicDispatchWorkflow(Topic entity, Map<String, Object> variables) {
+        topicManager.saveTopic(entity);
+        logger.debug("save entity: {}", entity);
+        String businessKey = entity.getId().toString();
+
+        ProcessInstance processInstance = null;
+        try {
+            // 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
+            identityService.setAuthenticatedUserId(entity.getUserId());
+
+            processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.topicDispatch, businessKey, variables);
+            String processInstanceId = processInstance.getId();
+            entity.setProcessInstanceId(processInstanceId);
+            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", new Object[]{WorkflowNames.topicDispatch, businessKey, processInstanceId, variables});
+        } finally {
+            identityService.setAuthenticatedUserId(null);
+        }
+        return processInstance;
+    }
+
     @Transactional(readOnly = true)
     public List<Topic> findTodoTasks(String userId, Page<Topic> page, int[] pageParams) {
         List<Topic> results = new ArrayList<Topic>();
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
-        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskAssignee(userId).active().orderByTaskId().desc()
+        TaskQuery todoQueryWrite = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskAssignee(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> todoList = todoQuery.listPage(pageParams[0], pageParams[1]);
+        List<Task> todoListWrite = todoQueryWrite.listPage(pageParams[0], pageParams[1]);
+        TaskQuery todoQueryDispatch = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicDispatch).taskAssignee(userId).active().orderByTaskId().desc()
+                .orderByTaskCreateTime().desc();
+        List<Task> todoListDispatch = todoQueryDispatch.listPage(pageParams[0], pageParams[1]);
 
         // 根据当前人未签收的任务
-        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskCandidateUser(userId).active().orderByTaskId().desc()
+        TaskQuery claimQueryWrite = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> unsignedTasks = claimQuery.listPage(pageParams[0], pageParams[1]);
+        List<Task> unsignedTasksWrite = claimQueryWrite.listPage(pageParams[0], pageParams[1]);
+        TaskQuery claimQueryDispatch = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicDispatch).taskCandidateUser(userId).active().orderByTaskId().desc()
+                .orderByTaskCreateTime().desc();
+        List<Task> unsignedTasksDispatch = claimQueryDispatch.listPage(pageParams[0], pageParams[1]);
 
         // 合并
-        tasks.addAll(todoList);
-        tasks.addAll(unsignedTasks);
+        tasks.addAll(todoListWrite);
+        tasks.addAll(todoListDispatch);
+        tasks.addAll(unsignedTasksWrite);
+        tasks.addAll(unsignedTasksDispatch);
 
         // 根据流程的业务ID查询实体并关联
         for (Task task : tasks) {
@@ -109,7 +137,7 @@ public class TopicWorkflowService {
             results.add(topic);
         }
 
-        page.setTotalCount(todoQuery.count() + claimQuery.count());
+        page.setTotalCount(todoQueryWrite.count() + claimQueryWrite.count() + todoQueryDispatch.count() + claimQueryDispatch.count());
         page.setResult(results);
         return results;
     }
@@ -160,34 +188,21 @@ public class TopicWorkflowService {
         return results;
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<Topic> getAllTopics(Page<Topic> page, int[] pageParams) {
-//        List<Topic> results = new ArrayList<Topic>();
-        List<Topic> results = activitiDao.createTopicQuery().getResultList();
+        List<Topic> list = activitiDao.createTopicQuery().getResultList();
+        ArrayList<Topic> result = new ArrayList<Topic>();
+        int i = 0;
+        for (Topic topic : list) {
+            if (i >= pageParams[0] && i < pageParams[0] + pageParams[1])
+                result.add(topic);
+            i++;
+        }
 
-//        ProcessInstanceQuery queryActive = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc();
-//        List<ProcessInstance> list = queryActive.listPage(pageParams[0], pageParams[1]);
-//
-//        // 关联业务实体
-//        for (ProcessInstance processInstance : list) {
-//            String businessKey = processInstance.getBusinessKey();
-//            if (businessKey == null) {
-//                continue;
-//            }
-//            Topic topic = topicManager.getTopic(new Long(businessKey));
-//            topic.setProcessInstance(processInstance);
-//            topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-//            results.add(topic);
-//
-//            // 设置当前任务信息
-//            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
-//            topic.setTask(tasks.get(0));
-//        }
-
-//        page.setTotalCount(queryActive.count());
-        page.setTotalCount(results.size());
-        page.setResult(results);
-        return results;
+        page.setTotalCount(list.size());
+        page.setResult(result);
+        return result;
     }
 
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {

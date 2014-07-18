@@ -19,12 +19,10 @@
         String action = ctx + "/news/topic/start";
         String mainTitle = "撰写选题";
         String readonly = "";
+        String disabled = "disabled=\"disabled\"";
 
-        boolean newMode = true;
         boolean reApplyMode = false, modifyDeviceOnly = false;
         if (paraReApply != null && paraReApply.equals("true")) {
-            newMode = false;
-
             mainTitle = "调整选题内容";
             reApplyMode = true;
             action = "#";
@@ -101,7 +99,7 @@
 
                                     <div class='col-md-10'>
                                         <select class='select2 form-control' multiple placeholder='点击选择记者'
-                                                id="reporters_sel">
+                                                id="reporters_sel" <%=modifyDeviceOnly?disabled:""%>>
                                         </select>
                                         <input type='hidden' id='reporters' name='reporters' value=''>
                                     </div>
@@ -111,7 +109,7 @@
 
                                     <div class='col-md-10'>
                                         <select class='select2 form-control' multiple placeholder='点击选择摄像员'
-                                                id="cameramen_sel">
+                                                id="cameramen_sel" <%=modifyDeviceOnly?disabled:""%>>
                                         </select>
                                         <input type='hidden' id='cameramen' name='cameramen' value=''>
                                     </div>
@@ -121,7 +119,7 @@
 
                                     <div class='col-md-10'>
                                         <select class='select2 form-control' multiple placeholder='点击选择其他人员'
-                                                id="others_sel">
+                                                id="others_sel" <%=modifyDeviceOnly?disabled:""%>>
                                         </select>
                                         <input type='hidden' id='others' name='others' value=''>
                                     </div>
@@ -132,7 +130,7 @@
                                     <div class='col-md-4'>
                                         <div class='datetimepicker input-group'>
                                             <input class='form-control' id='interviewTime' name='interviewTime'
-                                                   placeholder='请选择时间' type='text'>
+                                                   placeholder='请选择时间' type='text' <%=readonly%>>
                                 <span class='input-group-addon'>
                                 <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
                                 </span>
@@ -142,7 +140,7 @@
                                     <label class='col-md-2 control-label' for='location'>采访地点：</label>
 
                                     <div class='col-md-4'>
-                                        <input class='form-control' id='location' name='location' type='text'>
+                                        <input class='form-control' id='location' name='location' type='text' <%=readonly%>>
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -151,7 +149,7 @@
                                     <div class='col-md-4'>
                                         <div class='datetimepicker input-group'>
                                             <input class='form-control' id='startTime' name='startTime'
-                                                   placeholder='请选择时间' type='text'>
+                                                   placeholder='请选择时间' type='text' <%=readonly%>>
                                 <span class='input-group-addon'>
                                 <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
                                 </span>
@@ -162,7 +160,7 @@
                                     <div class='col-md-4'>
                                         <div class='datetimepicker input-group'>
                                             <input class='form-control' id='endTime' name='endTime' placeholder='请选择时间'
-                                                   type='text'>
+                                                   type='text' <%=readonly%>>
                                 <span class='input-group-addon'>
                                 <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
                                 </span>
@@ -188,10 +186,12 @@
                                 </div>
                                 <div class='form-actions form-actions-padding-sm'>
                                     <div class='row'>
+                                        <%--<% if (!viewMode) { %>--%>
                                         <div class='col-md-10 col-md-offset-2'>
                                             <button class='btn btn-primary' type='submit'><i class='icon-save'></i> 提交
                                             </button>
                                         </div>
+                                        <%--<% } %>--%>
                                     </div>
                                 </div>
                             </form>
@@ -256,9 +256,8 @@
     }
 
     <% if (reApplyMode) { %>
-    var taskid = '<%=request.getParameter("taskid") %>';
     var topicid = '<%=request.getParameter("id") %>';
-
+    var taskid = '<%=request.getParameter("taskid") %>';
     function loadDetailWithTaskVars(topicId, taskId, callback) {
         $.getJSON(ctx + '/news/topic/detail-with-vars/' + topicId + "/" + taskId, function (data) {
             $.each(data, function (k, v) {
@@ -284,6 +283,29 @@
             }
         });
     }
+    <%--<% } else { %>--%>
+    <%--function loadDetail(topicId) {--%>
+        <%--$.getJSON(ctx + '/news/topic/detail/' + topicId, function (data) {--%>
+            <%--$.each(data, function (k, v) {--%>
+                <%--if (k == "content")--%>
+                    <%--$("#content1").val(v);--%>
+                <%--else if (k == "reporters")--%>
+                    <%--$('#reporters_sel').select2().select2('val', v);--%>
+                <%--else if (k == "cameramen")--%>
+                    <%--$('#cameramen_sel').select2().select2('val', v);--%>
+                <%--else if (k == "others")--%>
+                    <%--$('#others_sel').select2().select2('val', v);--%>
+                <%--else if (k == "startTime" || k == "endTime" || k == "interviewTime") {--%>
+                    <%--if (v != null) {--%>
+                        <%--var d = new Date(v).format("yyyy-MM-dd hh:mm");--%>
+                        <%--$("#" + k).val(d);--%>
+                    <%--}--%>
+                <%--}--%>
+                <%--else--%>
+                    <%--$("#" + k).val(v);--%>
+            <%--});--%>
+        <%--});--%>
+    <%--}--%>
     <% } %>
 
     //  ckeditor采取异步方式setData, 以下函数可以在提交时正确得到ckeditor数据
@@ -304,10 +326,13 @@
             $("#leaderbackreason").val(data.variables.leaderBackReason);
             $("#devicebackreason").val(data.variables.deviceBackReason);
         });
+        <%--<% } else if (viewMode) {%>--%>
+        <%--loadDetail(topicid);--%>
         <% } %>
 
         $.ajaxSettings.async = true;
 
+        <%--<% if (!viewMode) { %>--%>
         $("#inputForm").submit(function (event) {
 //            ckupdate();
 
@@ -382,6 +407,7 @@
             event.preventDefault();
             <% } %>
         });
+        <%--<% } %>--%>
     });
 </script>
 

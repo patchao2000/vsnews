@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * TopicWriteWorkflowFinishProcessor
+ * TopicDispatchWorkflowFinishProcessor
  *
  * Created by patchao2000 on 14-7-18.
  */
 @Component
 @Transactional
-public class TopicWriteWorkflowFinishProcessor implements ExecutionListener {
+public class TopicDispatchWorkflowFinishProcessor implements ExecutionListener {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = LoggerFactory.getLogger(TopicWriteWorkflowFinishProcessor.class);
@@ -38,9 +38,9 @@ public class TopicWriteWorkflowFinishProcessor implements ExecutionListener {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         Topic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
 
-        topic.setStatus(Topic.STATUS_WRITTEN);
+        topic.setStatus(Topic.STATUS_DISPATCHED);
 
-        logger.debug("TopicWriteWorkflowFinishProcessor: {}", topic.getId());
+        logger.debug("TopicDispatchWorkflowFinishProcessor: {}", topic.getId());
 
         topicManager.saveTopic(topic);
     }
