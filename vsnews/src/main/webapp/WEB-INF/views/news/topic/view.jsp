@@ -17,8 +17,8 @@
     <%
         String ctx = request.getContextPath();
         Boolean canDispatch = false;
-        List<Group> groupList = (List<Group>)session.getAttribute("groups");
-        for(Group group : groupList) {
+        List<Group> groupList = (List<Group>) session.getAttribute("groups");
+        for (Group group : groupList) {
             if (group.getId().equals("topicDispatch")) {
                 canDispatch = true;
                 break;
@@ -56,11 +56,11 @@
                         </div>
                         <div class='box-content'>
                             <form id="inputForm"
-                                  <% if (canDispatch) { %>
+                                    <% if (canDispatch) { %>
                                   action="${ctx}/news/topic/dispatch/${topic.id}/edta"
-                                  <% } else { %>
+                                    <% } else { %>
                                   action="#"
-                                  <% } %>
+                                    <% } %>
                                   class="form form-horizontal"
                                   style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
                                 <input name="authenticity_token" type="hidden"/>

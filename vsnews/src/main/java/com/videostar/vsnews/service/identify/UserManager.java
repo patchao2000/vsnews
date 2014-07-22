@@ -1,14 +1,15 @@
 package com.videostar.vsnews.service.identify;
 
 import com.videostar.vsnews.util.Variable;
+
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ public class UserManager {
 //    @Autowired
     private IdentityService identityService;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+//    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public boolean checkPassword(String userName, String password) {
         return identityService.checkPassword(userName, password);
@@ -132,7 +133,7 @@ public class UserManager {
     public void setUserGroups(String userId, Variable var) {
         List<Group> list = getGroupListByUserId(userId);
         Map<String, Object> variables = var.getVariableMap();
-        Set set = variables.keySet();
+        Set<String> set = variables.keySet();
         for (Object groupObj : set) {
             String group = (String)groupObj;
             Boolean v = (Boolean)variables.get(group);

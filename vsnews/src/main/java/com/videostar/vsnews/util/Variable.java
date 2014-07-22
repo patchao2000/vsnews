@@ -2,14 +2,14 @@ package com.videostar.vsnews.util;
 
 import jodd.util.StringUtil;
 import org.apache.commons.beanutils.ConvertUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Variable {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+//    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String keys;
     private String values;

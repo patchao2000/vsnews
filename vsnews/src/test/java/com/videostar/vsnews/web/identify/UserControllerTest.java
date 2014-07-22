@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration("/applicationContext.xml")
 public class UserControllerTest extends AbstractTransactionalJUnit4SpringContextTests {

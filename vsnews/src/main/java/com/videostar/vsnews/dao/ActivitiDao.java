@@ -5,9 +5,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Component;
-import com.videostar.vsnews.entity.news.Topic;
+//import com.videostar.vsnews.entity.news.Topic;
 
-import java.util.List;
+//import java.util.List;
 
 /**
  * Activiti相关DAO操作

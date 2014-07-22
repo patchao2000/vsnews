@@ -1,9 +1,9 @@
 package com.videostar.vsnews.util;
 
-import org.apache.commons.lang3.ArrayUtils;
+//import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -24,7 +24,7 @@ public class PropertyFileUtil {
 
 
     private static final String DEFAULT_ENCODING = "UTF-8";
-    private static Logger logger = LoggerFactory.getLogger(PropertyFileUtil.class);
+//    private static Logger logger = LoggerFactory.getLogger(PropertyFileUtil.class);
     private static Properties properties;
     private static PropertiesPersister propertiesPersister = new DefaultPropertiesPersister();
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -76,7 +76,7 @@ public class PropertyFileUtil {
         String[] propFiles = activePropertyFiles(fileName);
 //        logger.debug("读取属性文件：{}", ArrayUtils.toString(propFiles));
         properties = loadProperties(propFiles);
-        Set<Object> keySet = properties.keySet();
+//        Set<Object> keySet = properties.keySet();
 //        for (Object key : keySet) {
 //            logger.debug("property: {}, value: {}", key, properties.getProperty(key.toString()));
 //        }

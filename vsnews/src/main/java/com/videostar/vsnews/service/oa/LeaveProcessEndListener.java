@@ -17,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class LeaveProcessEndListener implements ExecutionListener {
+	private static final long serialVersionUID = 1L;
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     ActivitiDao activitiDao;

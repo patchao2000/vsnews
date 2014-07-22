@@ -9,11 +9,11 @@ import com.videostar.vsnews.util.PageUtil;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.IdentityService;
+//import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
-import org.activiti.engine.identity.Group;
+//import org.activiti.engine.identity.Group;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
-import java.util.List;
+//import java.util.List;
 import java.util.Map;
 
 /**
