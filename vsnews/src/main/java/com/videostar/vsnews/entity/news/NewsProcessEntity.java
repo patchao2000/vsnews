@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by patchao2000 on 14-6-5.
  */
 @MappedSuperclass
-public abstract class NewsEntity extends IdEntity {
+public abstract class NewsProcessEntity extends IdEntity {
     private String processInstanceId;
     private String userId;
     private Date applyTime;

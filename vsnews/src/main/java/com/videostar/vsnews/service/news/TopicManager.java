@@ -1,7 +1,7 @@
 package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.dao.TopicDao;
-import com.videostar.vsnews.entity.news.Topic;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 /**
- * Topic Manager
+ * NewsTopic Manager
  *
  * Created by patchao2000 on 14-6-4.
  */
@@ -19,12 +19,12 @@ public class TopicManager {
 
     private TopicDao topicDao;
 
-    public Topic getTopic(Long id) {
+    public NewsTopic getTopic(Long id) {
         return topicDao.findOne(id);
     }
 
     @Transactional(readOnly = false)
-    public void saveTopic(Topic entity) {
+    public void saveTopic(NewsTopic entity) {
         if (entity.getId() == null) {
             entity.setApplyTime(new Date());
         }

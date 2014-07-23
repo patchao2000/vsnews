@@ -31,7 +31,7 @@ public class ActivitiDao {
     }
 
     public Query createTopicQuery() {
-        Query query = entityManager.createQuery("select t from Topic t");
+        Query query = entityManager.createQuery("select t from NewsTopic t");
 //        List<Topic> list = query.getResultList();
         return query;
     }

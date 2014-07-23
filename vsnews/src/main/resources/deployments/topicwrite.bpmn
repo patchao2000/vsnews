@@ -11,7 +11,7 @@
     <userTask id="leaderAudit" name="领导审批" activiti:candidateGroups="topicAudit"></userTask>
     <userTask id="modifyContent" name="调整内容" activiti:assignee="${applyUserId}">
       <extensionElements>
-        <activiti:taskListener event="complete" delegateExpression="${afterModifyTopicProcessor}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${topicAfterModifyProcessor}"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow2" name="非领导指派" sourceRef="exclusivegateway1" targetRef="leaderAudit">

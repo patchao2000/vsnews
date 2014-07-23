@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
                 <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
-                <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.Topic"--%>
+                <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
                 <c:forEach items="${page.result }" var="topic">
                     <tr id="${topic.id }" tid="${task.id }">
                         <td>${topic.userId }</td>

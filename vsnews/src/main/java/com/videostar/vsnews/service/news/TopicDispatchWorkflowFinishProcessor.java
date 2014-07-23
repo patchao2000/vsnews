@@ -1,6 +1,6 @@
 package com.videostar.vsnews.service.news;
 
-import com.videostar.vsnews.entity.news.Topic;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -36,9 +36,9 @@ public class TopicDispatchWorkflowFinishProcessor implements ExecutionListener {
         String processInstanceId = execution.getProcessInstanceId();
 
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        Topic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
+        NewsTopic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
 
-        topic.setStatus(Topic.STATUS_DISPATCHED);
+        topic.setStatus(NewsTopic.STATUS_DISPATCHED);
 
         logger.debug("TopicDispatchWorkflowFinishProcessor: {}", topic.getId());
 

@@ -8,13 +8,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Entity: Topic
+ * Entity: Topic - 新闻选题
  *
  * Created by patchao2000 on 14-6-3.
  */
 @Entity
 @Table(name = "NEWS_TOPIC")
-public class Topic extends NewsEntity implements Serializable {
+public class NewsTopic extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //   选题状态: 0 -> 选题撰写中, 1 -> 选题撰写完毕, 2 -> 选题派遣中, 3 -> 选题派遣完毕
@@ -51,7 +51,7 @@ public class Topic extends NewsEntity implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date endTime;
 
-    public Topic() {
+    public NewsTopic() {
         this.status = STATUS_WRITING;
     }
 

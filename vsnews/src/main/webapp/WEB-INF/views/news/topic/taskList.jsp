@@ -43,7 +43,7 @@
                 </thead>
                 <tbody>
                 <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
-                <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.Topic"--%>
+                <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
                 <c:forEach items="${page.result }" var="topic">
                     <c:set var="task" value="${topic.task }"/>
                     <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>

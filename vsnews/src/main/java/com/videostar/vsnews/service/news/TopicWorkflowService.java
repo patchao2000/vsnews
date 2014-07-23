@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.videostar.vsnews.entity.news.Topic;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.util.Page;
 import com.videostar.vsnews.constants.WorkflowNames;
 
@@ -55,7 +55,7 @@ public class TopicWorkflowService {
      *
      * @param entity
      */
-    public ProcessInstance startTopicWriteWorkflow(Topic entity, Map<String, Object> variables) {
+    public ProcessInstance startTopicWriteWorkflow(NewsTopic entity, Map<String, Object> variables) {
         topicManager.saveTopic(entity);
         logger.debug("save entity: {}", entity);
         String businessKey = entity.getId().toString();
@@ -75,7 +75,7 @@ public class TopicWorkflowService {
         return processInstance;
     }
 
-    public ProcessInstance startTopicDispatchWorkflow(Topic entity, Map<String, Object> variables) {
+    public ProcessInstance startTopicDispatchWorkflow(NewsTopic entity, Map<String, Object> variables) {
         topicManager.saveTopic(entity);
         logger.debug("save entity: {}", entity);
         String businessKey = entity.getId().toString();
@@ -96,8 +96,8 @@ public class TopicWorkflowService {
     }
 
     @Transactional(readOnly = true)
-    public List<Topic> findTodoTasks(String userId, Page<Topic> page, int[] pageParams) {
-        List<Topic> results = new ArrayList<Topic>();
+    public List<NewsTopic> findTodoTasks(String userId, Page<NewsTopic> page, int[] pageParams) {
+        List<NewsTopic> results = new ArrayList<NewsTopic>();
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
@@ -130,7 +130,7 @@ public class TopicWorkflowService {
             if (businessKey == null) {
                 continue;
             }
-            Topic topic = topicManager.getTopic(new Long(businessKey));
+            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
             topic.setTask(task);
             topic.setProcessInstance(processInstance);
             topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
@@ -143,8 +143,8 @@ public class TopicWorkflowService {
     }
 
     @Transactional(readOnly = true)
-    public List<Topic> findRunningProcessInstaces(Page<Topic> page, int[] pageParams) {
-        List<Topic> results = new ArrayList<Topic>();
+    public List<NewsTopic> findRunningProcessInstaces(Page<NewsTopic> page, int[] pageParams) {
+        List<NewsTopic> results = new ArrayList<NewsTopic>();
         ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc();
         List<ProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
 
@@ -154,7 +154,7 @@ public class TopicWorkflowService {
             if (businessKey == null) {
                 continue;
             }
-            Topic topic = topicManager.getTopic(new Long(businessKey));
+            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
             topic.setProcessInstance(processInstance);
             topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
             results.add(topic);
@@ -170,15 +170,15 @@ public class TopicWorkflowService {
     }
     
     @Transactional(readOnly = true)
-    public List<Topic> findFinishedProcessInstaces(Page<Topic> page, int[] pageParams) {
-        List<Topic> results = new ArrayList<Topic>();
+    public List<NewsTopic> findFinishedProcessInstaces(Page<NewsTopic> page, int[] pageParams) {
+        List<NewsTopic> results = new ArrayList<NewsTopic>();
         HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).finished().orderByProcessInstanceEndTime().desc();
         List<HistoricProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
 
         // 关联业务实体
         for (HistoricProcessInstance historicProcessInstance : list) {
             String businessKey = historicProcessInstance.getBusinessKey();
-            Topic topic = topicManager.getTopic(new Long(businessKey));
+            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
             topic.setProcessDefinition(getProcessDefinition(historicProcessInstance.getProcessDefinitionId()));
             topic.setHistoricProcessInstance(historicProcessInstance);
             results.add(topic);
@@ -190,11 +190,11 @@ public class TopicWorkflowService {
 
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
-    public List<Topic> getAllTopics(Page<Topic> page, int[] pageParams) {
-        List<Topic> list = activitiDao.createTopicQuery().getResultList();
-        ArrayList<Topic> result = new ArrayList<Topic>();
+    public List<NewsTopic> getAllTopics(Page<NewsTopic> page, int[] pageParams) {
+        List<NewsTopic> list = activitiDao.createTopicQuery().getResultList();
+        ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
         int i = 0;
-        for (Topic topic : list) {
+        for (NewsTopic topic : list) {
             if (i >= pageParams[0] && i < pageParams[0] + pageParams[1])
                 result.add(topic);
             i++;

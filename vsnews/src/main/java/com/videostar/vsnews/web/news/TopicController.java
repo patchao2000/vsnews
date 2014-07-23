@@ -1,6 +1,6 @@
 package com.videostar.vsnews.web.news;
 
-import com.videostar.vsnews.entity.news.Topic;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.service.news.TopicWorkflowService;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Topic manager
+ * NewsTopic manager
  *
  * Created by patchao2000 on 14-6-4.
  */
@@ -68,12 +68,12 @@ public class TopicController {
             redirectAttributes.addFlashAttribute("error", "您没有撰写选题权限！");
             return "redirect:/main/welcome";
         }
-        model.addAttribute("topic", new Topic());
+        model.addAttribute("topic", new NewsTopic());
         return "/news/topic/topicApply";
     }
 
     @RequestMapping(value = "start", method = RequestMethod.POST)
-    public String startTopicWriteWorkflow(Topic topic, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String startTopicWriteWorkflow(NewsTopic topic, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             //  user must logged on first
             User user = UserUtil.getUserFromSession(session);
@@ -111,7 +111,7 @@ public class TopicController {
     public String startTopicDispatchWorkflow(@PathVariable("topicid") Long topicId, @PathVariable("userid") String userId,
                                              RedirectAttributes redirectAttributes, HttpSession session) {
         try {
-            Topic topic = topicManager.getTopic(topicId);
+            NewsTopic topic = topicManager.getTopic(topicId);
             logger.debug("before start dispatch workflow topic id {}", topic.getId());
 
             //  user must logged on first
@@ -119,12 +119,12 @@ public class TopicController {
             if (user == null || StringUtils.isBlank(user.getId())) {
                 return "redirect:/login?timeout=true";
             }
-            if (topic.getStatus() != Topic.STATUS_WRITTEN) {
-                logger.error("Topic status wrong: {}", topic.getStatus());
+            if (topic.getStatus() != NewsTopic.STATUS_WRITTEN) {
+                logger.error("NewsTopic status wrong: {}", topic.getStatus());
                 redirectAttributes.addFlashAttribute("error", "系统内部错误！");
             }
 
-            topic.setStatus(Topic.STATUS_DISPATCHING);
+            topic.setStatus(NewsTopic.STATUS_DISPATCHING);
             topic.setUserId(user.getId());
 
             Map<String, Object> variables = new HashMap<String, Object>();
@@ -150,7 +150,7 @@ public class TopicController {
     @RequestMapping(value = "list/task")
     public ModelAndView taskList(HttpSession session, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/taskList");
-        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        Page<NewsTopic> page = new Page<NewsTopic>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
 
         String userId = UserUtil.getUserFromSession(session).getId();
@@ -162,7 +162,7 @@ public class TopicController {
     @RequestMapping(value = "list/running")
     public ModelAndView runningList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/running");
-        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        Page<NewsTopic> page = new Page<NewsTopic>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
         workflowService.findRunningProcessInstaces(page, pageParams);
         mav.addObject("page", page);
@@ -172,7 +172,7 @@ public class TopicController {
     @RequestMapping(value = "list/finished")
     public ModelAndView finishedList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/finished");
-        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        Page<NewsTopic> page = new Page<NewsTopic>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
         workflowService.findFinishedProcessInstaces(page, pageParams);
         mav.addObject("page", page);
@@ -182,7 +182,7 @@ public class TopicController {
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/alltopics");
-        Page<Topic> page = new Page<Topic>(PageUtil.PAGE_SIZE);
+        Page<NewsTopic> page = new Page<NewsTopic>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);
         workflowService.getAllTopics(page, pageParams);
         mav.addObject("page", page);
@@ -193,7 +193,7 @@ public class TopicController {
     public ModelAndView viewTopic(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.debug("viewTopic begin");
         ModelAndView mav = new ModelAndView("/news/topic/view");
-        Topic topic = topicManager.getTopic(id);
+        NewsTopic topic = topicManager.getTopic(id);
         mav.addObject("topic", topic);
         return mav;
     }
@@ -208,15 +208,15 @@ public class TopicController {
     
     @RequestMapping(value = "detail/{id}")
     @ResponseBody
-    public Topic getTopic(@PathVariable("id") Long id) {
-        Topic topic = topicManager.getTopic(id);
+    public NewsTopic getTopic(@PathVariable("id") Long id) {
+        NewsTopic topic = topicManager.getTopic(id);
         return topic;
     }
 
     @RequestMapping(value = "detail-with-vars/{id}/{taskId}")
     @ResponseBody
-    public Topic getTopicWithVars(@PathVariable("id") Long id, @PathVariable("taskId") String taskId) {
-        Topic topic = topicManager.getTopic(id);
+    public NewsTopic getTopicWithVars(@PathVariable("id") Long id, @PathVariable("taskId") String taskId) {
+        NewsTopic topic = topicManager.getTopic(id);
         Map<String, Object> variables = taskService.getVariables(taskId);
         topic.setVariables(variables);
         return topic;
