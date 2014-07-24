@@ -18,13 +18,14 @@ public class NewsColumn extends IdEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //   栏目审核方式
-    public static final int AUDIT_CLASS_1 = 1;
-    public static final int AUDIT_CLASS_2 = 2;
-    public static final int AUDIT_CLASS_3 = 4;
+    public static final int AUDIT_LEVEL_NONE    = 0;
+    public static final int AUDIT_LEVEL_1       = 1;
+    public static final int AUDIT_LEVEL_2       = 2;
+    public static final int AUDIT_LEVEL_3       = 4;
 
     private Long parentId;
     private String name;
-    private int auditClass;
+    private int auditLevel;
 
     @Column(name = "PARENT_ID", nullable = true)
     public Long getParentId() {
@@ -45,11 +46,11 @@ public class NewsColumn extends IdEntity implements Serializable {
     }
 
     @Column
-    public int getAuditClass() {
-        return auditClass;
+    public int getAuditLevel() {
+        return auditLevel;
     }
 
-    public void setAuditClass(int auditClass) {
-        this.auditClass = auditClass;
+    public void setAuditLevel(int auditLevel) {
+        this.auditLevel = auditLevel;
     }
 }

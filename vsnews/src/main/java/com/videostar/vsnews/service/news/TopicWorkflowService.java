@@ -1,6 +1,6 @@
 package com.videostar.vsnews.service.news;
 
-import com.videostar.vsnews.dao.ActivitiDao;
+//import com.videostar.vsnews.dao.ActivitiDao;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
@@ -47,8 +47,8 @@ public class TopicWorkflowService {
     @Autowired
     private IdentityService identityService;
 
-    @Autowired
-    ActivitiDao activitiDao;
+//    @Autowired
+//    ActivitiDao activitiDao;
 
     /**
      * 启动流程
@@ -191,7 +191,8 @@ public class TopicWorkflowService {
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<NewsTopic> getAllTopics(Page<NewsTopic> page, int[] pageParams) {
-        List<NewsTopic> list = activitiDao.createTopicQuery().getResultList();
+//        List<NewsTopic> list = activitiDao.createTopicQuery().getResultList();
+        List<NewsTopic> list = topicManager.getAllTopics();
         ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
         int i = 0;
         for (NewsTopic topic : list) {

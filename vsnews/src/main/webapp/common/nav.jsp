@@ -3,7 +3,7 @@
     String uri = request.getRequestURI();
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicRunning = false, inTopicFinished = false;
     boolean inArticle = false, inArticleEdit = false;
-    boolean inManage = false, inUserManage = false, inGroupManage = false;
+    boolean inManage = false, inUserManage = false, inGroupManage = false, inColumnManage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -21,12 +21,14 @@
         inArticleEdit = true;
     if (uri.contains("/main/welcome"))
         inWelcome = true;
-    if (uri.contains("/user"))
+    if (uri.contains("/user") || uri.contains("/news/column"))
         inManage = true;
     if (uri.contains("/list/user"))
         inUserManage = true;
     if (uri.contains("/list/group"))
         inGroupManage = true;
+    if (uri.contains("/news/column"))
+        inColumnManage = true;
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -129,10 +131,10 @@
                             <span>角色管理</span>
                         </a>
                     </li>
-                    <li class=''>
-                        <a href='${ctx}/oa/leave/list/running'>
+                    <li class='<%=inColumnManage?"active":""%>'>
+                        <a href='${ctx}/news/column/list'>
                             <i class='icon-caret-right'></i>
-                            <span>部门管理</span>
+                            <span>栏目管理</span>
                         </a>
                     </li>
                 </ul>
