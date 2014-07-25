@@ -1,5 +1,6 @@
 package com.videostar.vsnews.web.news;
 
+import com.videostar.vsnews.service.news.ArticleManager;
 import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.service.news.TopicWorkflowService;
 import org.activiti.engine.IdentityService;
@@ -24,7 +25,7 @@ public class ArticleController {
 //    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    protected TopicManager topicManager;
+    protected ArticleManager articleManager;
 
     @Autowired
     protected TopicWorkflowService workflowService;

@@ -5,7 +5,6 @@ import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.service.identify.UserManager;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.identity.Group;
-import org.activiti.engine.identity.GroupQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,8 +23,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ColumnManager {
 
-    public final String GROUP_ID_PREFIX = "grp_col_";
-    public final String GROUP_NAME_PREFIX = "栏目: ";
+    public static final String GROUP_ID_PREFIX = "grp_col_";
+    public static final String GROUP_NAME_PREFIX = "栏目: ";
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired

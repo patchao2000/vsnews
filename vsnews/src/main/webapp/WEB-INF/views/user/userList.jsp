@@ -14,7 +14,7 @@
     <%@ include file="/common/meta.jsp" %>
     <title>用户列表</title>
     <%@ include file="/common/allcss.jsp" %>
-    <link href="${ctx}/css/_pagination.css" media="all" rel="stylesheet" type="text/css"/>
+    <%--<link href="${ctx}/css/_pagination.css" media="all" rel="stylesheet" type="text/css"/>--%>
     <link href="${ctx }/js/common/bootstrap/css/bootstrap-dialog.min.css" rel="stylesheet">
     <style>
         .user-dialog .modal-dialog {
@@ -35,12 +35,12 @@
                     <div class='navbar-left'>
                         <a id="adduser" class="btn btn-success" title='创建新用户' href="#"><i class="icon-plus icon-white"></i> 创建</a>
                     </div>
-                    <div class='navbar-right'>
-                        <div class='form-group'>
-                            <input class='form-control' placeholder='用户名' type='text' name='LoginName' >
-                        </div>
-                        <button class='btn btn-default' type='submit'>搜索 <i class="icon-search"></i></button>
-                    </div>
+                    <%--<div class='navbar-right'>--%>
+                        <%--<div class='form-group'>--%>
+                            <%--<input class='form-control' placeholder='用户名' type='text' name='LoginName' >--%>
+                        <%--</div>--%>
+                        <%--<button class='btn btn-default' type='submit'>搜索 <i class="icon-search"></i></button>--%>
+                    <%--</div>--%>
                 </form>
             </nav>
             <c:if test="${not empty message}">
@@ -59,7 +59,7 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class='table' style='margin-bottom:0;'>
+                                    <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
                                         <thead>
                                         <tr>
                                             <th>用户名</th>
@@ -71,9 +71,9 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
+                                        <%--@elvariable id="list" type="java.util.List"--%>
                                         <%--@elvariable id="detail" type="com.videostar.vsnews.web.identify.UserDetail"--%>
-                                        <c:forEach items="${page.result }" var="detail">
+                                        <c:forEach items="${list }" var="detail">
                                             <tr id="${detail.userId }">
                                                 <td>${detail.userId }</td>
                                                 <td>${detail.firstName }</td>
@@ -94,7 +94,6 @@
                                         </c:forEach>
                                         </tbody>
                                     </table>
-                                    <tags:pagination page="${page}" paginationSize="${page.pageSize}"/>
                                 </div>
                             </div>
                         </div>

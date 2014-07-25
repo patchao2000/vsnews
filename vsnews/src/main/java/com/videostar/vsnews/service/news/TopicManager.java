@@ -27,9 +27,11 @@ public class TopicManager {
 
     @Transactional(readOnly = false)
     public void saveTopic(NewsTopic entity) {
-        if (entity.getId() == null) {
-            entity.setApplyTime(new Date());
-        }
+        Date now = new Date();
+        if (entity.getId() == null)
+            entity.setApplyTime(now);
+        entity.setModifyTime(now);
+
         topicDao.save(entity);
     }
 

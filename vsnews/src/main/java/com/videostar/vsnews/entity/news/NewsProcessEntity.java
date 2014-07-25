@@ -20,6 +20,7 @@ public abstract class NewsProcessEntity extends IdEntity {
     private String processInstanceId;
     private String userId;
     private Date applyTime;
+    private Date modifyTime;
 
     private Task task;      // 流程任务
     private Map<String, Object> variables;
@@ -53,6 +54,16 @@ public abstract class NewsProcessEntity extends IdEntity {
 
     public void setApplyTime(Date applyTime) {
         this.applyTime = applyTime;
+    }
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     @Transient

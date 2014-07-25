@@ -91,21 +91,8 @@ public class ColumnController {
     @RequestMapping(value = "list")
     public ModelAndView columnList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/column/columnList");
-        Page<NewsColumn> page = new Page<NewsColumn>(PageUtil.PAGE_SIZE);
-        int[] pageParams = PageUtil.init(page, request);
-
         List<NewsColumn> list = columnManager.getAllColumns();
-        ArrayList<NewsColumn> result = new ArrayList<NewsColumn>();
-        int i = 0;
-        for (NewsColumn column : list) {
-            if (i >= pageParams[0] && i < pageParams[0] + pageParams[1])
-                result.add(column);
-            i++;
-        }
-        page.setTotalCount(list.size());
-        page.setResult(result);
-
-        mav.addObject("page", page);
+        mav.addObject("list", list);
         return mav;
     }
 

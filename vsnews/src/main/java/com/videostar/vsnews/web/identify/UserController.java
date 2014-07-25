@@ -1,8 +1,7 @@
 package com.videostar.vsnews.web.identify;
 
 import com.videostar.vsnews.service.identify.UserManager;
-import com.videostar.vsnews.util.Page;
-import com.videostar.vsnews.util.PageUtil;
+import com.videostar.vsnews.service.news.ColumnManager;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.identity.Group;
@@ -84,14 +83,10 @@ public class UserController {
     @RequestMapping(value = "list/user")
     public ModelAndView userList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/user/userList");
-        Page<UserDetail> page = new Page<UserDetail>(PageUtil.PAGE_SIZE);
-        int[] pageParams = PageUtil.init(page, request);
         UserQuery query = userManager.createUserQuery();
-
         GroupQuery groupQuery = userManager.createGroupQuery();
-        List<User> list = query.listPage(pageParams[0], pageParams[1]);
         List<UserDetail> detailList = new ArrayList<UserDetail>();
-        for (User user : list) {
+        for (User user : query.list()) {
             UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
             String groupNames = "";
             int i = 0;
@@ -103,10 +98,7 @@ public class UserController {
             detail.setRole(groupNames);
             detailList.add(detail);
         }
-        page.setTotalCount(query.count());
-        page.setResult(detailList);
-
-        mav.addObject("page", page);
+        mav.addObject("list", detailList);
 
         return mav;
     }
@@ -114,14 +106,16 @@ public class UserController {
     @RequestMapping(value = "list/group")
     public ModelAndView groupList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/user/groupList");
-        Page<Group> page = new Page<Group>(PageUtil.PAGE_SIZE);
-        int[] pageParams = PageUtil.init(page, request);
         GroupQuery query = userManager.createGroupQuery();
-        List<Group> list = query.listPage(pageParams[0], pageParams[1]);
-        page.setTotalCount(query.count());
-        page.setResult(list);
+        ArrayList<Group> list = new ArrayList<Group>();
+        //  skip column group
+        for (Group group : query.list()) {
+            if (!group.getId().startsWith(ColumnManager.GROUP_ID_PREFIX)) {
+                list.add(group);
+            }
+        }
 
-        mav.addObject("page", page);
+        mav.addObject("list", list);
         return mav;
     }
 

@@ -26,6 +26,7 @@ public class NewsColumn extends IdEntity implements Serializable {
     private Long parentId;
     private String name;
     private int auditLevel;
+    private String notes;
 
     @Column(name = "PARENT_ID", nullable = true)
     public Long getParentId() {
@@ -52,5 +53,14 @@ public class NewsColumn extends IdEntity implements Serializable {
 
     public void setAuditLevel(int auditLevel) {
         this.auditLevel = auditLevel;
+    }
+
+    @Column
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
