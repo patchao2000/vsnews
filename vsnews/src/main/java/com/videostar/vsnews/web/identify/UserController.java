@@ -2,6 +2,7 @@ package com.videostar.vsnews.web.identify;
 
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnManager;
+import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.identity.Group;
@@ -37,6 +38,9 @@ public class UserController {
 
 //    @Autowired
     private UserManager userManager;
+
+    @Autowired
+    private ColumnService columnService;
 
     /**
      * 登录系统
@@ -110,7 +114,7 @@ public class UserController {
         ArrayList<Group> list = new ArrayList<Group>();
         //  skip column group
         for (Group group : query.list()) {
-            if (!group.getId().startsWith(ColumnManager.GROUP_ID_PREFIX)) {
+            if (!columnService.isColumnGroup(group)) {
                 list.add(group);
             }
         }

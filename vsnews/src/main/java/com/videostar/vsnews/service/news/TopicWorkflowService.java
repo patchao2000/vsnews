@@ -47,13 +47,9 @@ public class TopicWorkflowService {
     @Autowired
     private IdentityService identityService;
 
-//    @Autowired
-//    ActivitiDao activitiDao;
-
     /**
      * 启动流程
      *
-     * @param entity
      */
     public ProcessInstance startTopicWriteWorkflow(NewsTopic entity, Map<String, Object> variables) {
         topicManager.saveTopic(entity);
@@ -68,7 +64,7 @@ public class TopicWorkflowService {
             processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.topicWrite, businessKey, variables);
             String processInstanceId = processInstance.getId();
             entity.setProcessInstanceId(processInstanceId);
-            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", new Object[]{WorkflowNames.topicWrite, businessKey, processInstanceId, variables});
+            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", WorkflowNames.topicWrite, businessKey, processInstanceId, variables);
         } finally {
             identityService.setAuthenticatedUserId(null);
         }
@@ -88,7 +84,7 @@ public class TopicWorkflowService {
             processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.topicDispatch, businessKey, variables);
             String processInstanceId = processInstance.getId();
             entity.setProcessInstanceId(processInstanceId);
-            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", new Object[]{WorkflowNames.topicDispatch, businessKey, processInstanceId, variables});
+            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", WorkflowNames.topicDispatch, businessKey, processInstanceId, variables);
         } finally {
             identityService.setAuthenticatedUserId(null);
         }
@@ -188,27 +184,18 @@ public class TopicWorkflowService {
         return results;
     }
 
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
-    public List<NewsTopic> getAllTopics(Page<NewsTopic> page, int[] pageParams) {
-//        List<NewsTopic> list = activitiDao.createTopicQuery().getResultList();
-        List<NewsTopic> list = topicManager.getAllTopics();
+    public List<NewsTopic> getAllTopics() {
         ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
-        int i = 0;
-        for (NewsTopic topic : list) {
-            if (i >= pageParams[0] && i < pageParams[0] + pageParams[1])
-                result.add(topic);
-            i++;
+        for (NewsTopic topic : topicManager.getAllTopics()) {
+            result.add(topic);
         }
-
-        page.setTotalCount(list.size());
-        page.setResult(result);
         return result;
     }
 
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
-        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
-        return processDefinition;
+        return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
     }
 
     @Autowired

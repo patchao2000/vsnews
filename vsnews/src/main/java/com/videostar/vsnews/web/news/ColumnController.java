@@ -2,9 +2,7 @@ package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.service.news.ColumnManager;
-import com.videostar.vsnews.util.Page;
-import com.videostar.vsnews.util.PageUtil;
-import org.activiti.engine.identity.Group;
+import com.videostar.vsnews.service.news.ColumnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,16 +29,19 @@ public class ColumnController {
     @Autowired
     private ColumnManager columnManager;
 
+    @Autowired
+    private ColumnService columnService;
+
     @RequestMapping(value = "add/{name}/{audit}", method = {RequestMethod.POST})
     @ResponseBody
     public String addUser(@PathVariable("name") String name, @PathVariable("audit") int auditLevel) {
         try {
-            if (columnManager.exists(name)) {
+            if (columnManager.findColumn(name) != null) {
                 logger.error("column {} already exist", name);
                 return "error";
             }
 
-            NewsColumn column = columnManager.newColumn(name, auditLevel);
+            NewsColumn column = columnService.newColumn(name, auditLevel);
             logger.debug("column created: {} {} {}", column.getId(), column.getName(), column.getAuditLevel());
             return "success";
         } catch (Exception e) {
@@ -55,12 +54,13 @@ public class ColumnController {
     @ResponseBody
     public String modifyColumn(@PathVariable("id") Long id, @PathVariable("name") String name, @PathVariable("audit") int auditLevel) {
         try {
-            if (columnManager.exists(name)) {
+            NewsColumn exist = columnManager.findColumn(name);
+            if (exist != null && !exist.getId().equals(id)) {
                 logger.error("column {} already exist", name);
                 return "error";
             }
 
-            NewsColumn column = columnManager.modifyColumn(id, name, auditLevel);
+            NewsColumn column = columnService.modifyColumn(id, name, auditLevel);
             logger.debug("column modified: {} {} {}", column.getId(), column.getName(), column.getAuditLevel());
             return "success";
         } catch (Exception e) {
@@ -73,7 +73,7 @@ public class ColumnController {
     @ResponseBody
     public String deleteColumn(@PathVariable("id") Long id) {
         try {
-            columnManager.deleteColumn(id);
+            columnService.deleteColumn(id);
             logger.debug("column deleted: {}", id);
             return "success";
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class ColumnController {
     }
 
     @RequestMapping(value = "list")
-    public ModelAndView columnList(HttpServletRequest request) {
+    public ModelAndView columnList() {
         ModelAndView mav = new ModelAndView("/news/column/columnList");
         List<NewsColumn> list = columnManager.getAllColumns();
         mav.addObject("list", list);

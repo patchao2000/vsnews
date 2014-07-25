@@ -11,4 +11,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public interface ColumnDao extends CrudRepository<NewsColumn, Long> {
+    NewsColumn findByName(String name);
 }

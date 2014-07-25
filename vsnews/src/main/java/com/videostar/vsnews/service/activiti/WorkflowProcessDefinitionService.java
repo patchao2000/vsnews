@@ -49,8 +49,7 @@ public class WorkflowProcessDefinitionService {
     public ProcessDefinition findProcessDefinitionByPid(String processInstanceId) {
         HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         String processDefinitionId = historicProcessInstance.getProcessDefinitionId();
-        ProcessDefinition processDefinition = findProcessDefinition(processDefinitionId);
-        return processDefinition;
+        return findProcessDefinition(processDefinitionId);
     }
 
     /**
@@ -60,8 +59,7 @@ public class WorkflowProcessDefinitionService {
      * @return 流程定义对象{@link ProcessDefinition}
      */
     public ProcessDefinition findProcessDefinition(String processDefinitionId) {
-        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
-        return processDefinition;
+        return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
     }
 
     /**
@@ -151,7 +149,7 @@ public class WorkflowProcessDefinitionService {
     }
 
     /**
-     * 重新部署所有流程定义，调用：{@link #deployFromClasspath()}完成功能
+     * 重新部署所有流程定义，调用：deployFromClasspath()完成功能
      *
      * @throws Exception
      * @see #deployFromClasspath

@@ -182,10 +182,7 @@ public class TopicController {
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/news/topic/alltopics");
-        Page<NewsTopic> page = new Page<NewsTopic>(PageUtil.PAGE_SIZE);
-        int[] pageParams = PageUtil.init(page, request);
-        workflowService.getAllTopics(page, pageParams);
-        mav.addObject("page", page);
+        mav.addObject("list", workflowService.getAllTopics());
         return mav;
     }
 

@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * NewsTopic Manager
@@ -35,13 +33,8 @@ public class TopicManager {
         topicDao.save(entity);
     }
 
-    public List<NewsTopic> getAllTopics() {
-        ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
-        for (NewsTopic topic : topicDao.findAll()) {
-            result.add(topic);
-        }
-
-        return result;
+    public Iterable<NewsTopic> getAllTopics() {
+        return topicDao.findAll();
     }
 
     @Autowired

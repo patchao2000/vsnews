@@ -15,7 +15,6 @@
     <%@ include file="/common/meta.jsp" %>
     <title>所有新闻选题</title>
     <%@ include file="/common/allcss.jsp" %>
-    <link href="${ctx}/css/_pagination.css" media="all" rel="stylesheet" type="text/css"/>
 </head>
 
 <body class='${defbodyclass}'>
@@ -26,43 +25,55 @@
     <section id='content'>
         <div class='container'>
             <%@ include file="/common/message-error.jsp" %>
-            <table width="100%" class="table table-hover">
-                <thead>
-                <tr>
-                    <th>申请人</th>
-                    <th>申请时间</th>
-                    <th>标题</th>
-                    <th>内容</th>
-                    <th>设备</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                    <%--<th>流程结束原因</th>--%>
-                    <%--<th>流程版本</th>--%>
-                </tr>
-                </thead>
-                <tbody>
-                <%--@elvariable id="page" type="com.videostar.vsnews.util.Page"--%>
-                <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
-                <c:forEach items="${page.result }" var="topic">
-                    <tr id="${topic.id }" tid="${task.id }">
-                        <td>${topic.userId }</td>
-                        <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-                        <td>${topic.title }</td>
-                        <td>${topic.content }</td>
-                        <td>${topic.devices }</td>
-                        <td>${topic.statusString }</td>
-                        <td>
-                            <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
-                        </td>
-                        <%--<td><fmt:formatDate value="${hpi.startTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>--%>
-                        <%--<td><fmt:formatDate value="${hpi.endTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>--%>
-                        <%--<td>${hpi.deleteReason }</td>--%>
-                        <%--<td><b title='流程版本号'>V: ${topic.processDefinition.version }</b></td>--%>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-            <tags:pagination page="${page}" paginationSize="${page.pageSize}"/>
+            <div class='row'>
+                <div class='col-sm-12'>
+                    <div class='box bordered-box blue-border' style='margin-bottom:0;'>
+                        <div class='box-header blue-background'>
+                            <div class='title'>新闻选题</div>
+                            <div class='actions'>
+                                <a class="btn box-collapse btn-xs btn-link" href="#"><i></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class='box-content box-no-padding'>
+                            <div class='responsive-table'>
+                                <div class='scrollable-area'>
+                                    <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
+                                        <thead>
+                                        <tr>
+                                            <th>申请人</th>
+                                            <th>申请时间</th>
+                                            <th>标题</th>
+                                            <th>内容</th>
+                                            <th>设备</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <%--@elvariable id="list" type="java.util.List"--%>
+                                        <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
+                                        <c:forEach items="${list }" var="topic">
+                                            <tr id="${topic.id }">
+                                                <td>${topic.userId }</td>
+                                                <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                                                <td>${topic.title }</td>
+                                                <td>${topic.content }</td>
+                                                <td>${topic.devices }</td>
+                                                <td>${topic.statusString }</td>
+                                                <td>
+                                                    <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>

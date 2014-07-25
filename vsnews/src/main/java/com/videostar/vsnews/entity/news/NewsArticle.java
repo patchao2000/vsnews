@@ -86,6 +86,8 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     }
 
     @Column
+    @ElementCollection
+    @CollectionTable (name = "NEWS_ARTICLE_REPORTERS", joinColumns = @JoinColumn(name = "ARTICLE_ID"))
     public List<String> getReporters() {
         return reporters;
     }
@@ -95,6 +97,8 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     }
 
     @Column
+    @ElementCollection
+    @CollectionTable (name = "NEWS_ARTICLE_CAMERMEN", joinColumns = @JoinColumn(name = "ARTICLE_ID"))
     public List<String> getCameramen() {
         return cameramen;
     }
@@ -104,6 +108,8 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     }
 
     @Column
+    @ElementCollection
+    @CollectionTable (name = "NEWS_ARTICLE_EDITORS", joinColumns = @JoinColumn(name = "ARTICLE_ID"))
     public List<String> getEditors() {
         return editors;
     }
