@@ -88,27 +88,27 @@
                 </a>
                 <ul class='<%=inArticle?"in":""%> nav nav-stacked'>
                     <li class='<%=inArticleEdit?"active":""%>'>
-                        <a href='${ctx}/news/article/articleEdit'>
+                        <a href='${ctx}/news/article/apply'>
                             <i class='icon-caret-right'></i>
                             <span>创建文稿</span>
                         </a>
                     </li>
+                    <%--<li class=''>--%>
+                        <%--<a href='${ctx}/news/article/list/task'>--%>
+                            <%--<i class='icon-caret-right'></i>--%>
+                            <%--<span>待办任务</span>--%>
+                        <%--</a>--%>
+                    <%--</li>--%>
+                    <%--<li class=''>--%>
+                        <%--<a href='${ctx}/news/article/list/running'>--%>
+                            <%--<i class='icon-caret-right'></i>--%>
+                            <%--<span>运行中任务</span>--%>
+                        <%--</a>--%>
+                    <%--</li>--%>
                     <li class=''>
-                        <a href='${ctx}/news/article/list/task'>
+                        <a href='${ctx}/news/article/list/all'>
                             <i class='icon-caret-right'></i>
-                            <span>待办任务</span>
-                        </a>
-                    </li>
-                    <li class=''>
-                        <a href='${ctx}/news/article/list/running'>
-                            <i class='icon-caret-right'></i>
-                            <span>运行中任务</span>
-                        </a>
-                    </li>
-                    <li class=''>
-                        <a href='${ctx}/news/article/list/finished'>
-                            <i class='icon-caret-right'></i>
-                            <span>已结束任务</span>
+                            <span>所有文稿</span>
                         </a>
                     </li>
                 </ul>

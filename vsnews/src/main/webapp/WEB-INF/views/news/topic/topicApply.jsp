@@ -205,21 +205,6 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 <script src="${ctx}/assets/javascripts/plugins/select2/select2.js" type="text/javascript"></script>
-<script src="${ctx}/assets/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.js"
-        type="text/javascript"></script>
-<script type="text/javascript">
-    $('.datetimepicker').datetimepicker({
-        format: 'yyyy-MM-dd hh:mm',
-        language: 'ch',
-        pickDate: true,
-        pickTime: true,
-        hourStep: 1,
-        minuteStep: 15,
-        secondStep: 30,
-        inputMask: true
-    });
-</script>
-
 <script type="text/javascript">
     function fillSelectControlWithGroup(controlId, groupId) {
         $.getJSON(ctx + '/user/objlist/groupmembers/' + groupId, function (data) {

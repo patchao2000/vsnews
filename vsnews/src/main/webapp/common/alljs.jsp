@@ -29,7 +29,19 @@
 <%--<script src="${ctx}/assets/javascripts/plugins/flot/flot.min.js" type="text/javascript"></script>--%>
 <%--<script src="${ctx}/assets/javascripts/plugins/flot/flot.resize.js" type="text/javascript"></script>--%>
 <!-- / END - page related files and scripts [optional] -->
+<script src="${ctx}/assets/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.js" type="text/javascript"></script>
 <script>
+    $('.datetimepicker').datetimepicker({
+        format: 'yyyy-MM-dd hh:mm',
+        language: 'ch',
+        pickDate: true,
+        pickTime: true,
+        hourStep: 1,
+        minuteStep: 15,
+        secondStep: 30,
+        inputMask: true
+    });
+
     Date.prototype.format = function(format) {
         var o = {
             "M+": this.getMonth() + 1, //month

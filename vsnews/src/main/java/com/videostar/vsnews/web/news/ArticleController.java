@@ -1,8 +1,7 @@
 package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.service.news.ArticleManager;
-import com.videostar.vsnews.service.news.TopicManager;
-import com.videostar.vsnews.service.news.TopicWorkflowService;
+import com.videostar.vsnews.service.news.ArticleWorkflowService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -28,7 +27,7 @@ public class ArticleController {
     protected ArticleManager articleManager;
 
     @Autowired
-    protected TopicWorkflowService workflowService;
+    protected ArticleWorkflowService workflowService;
 
     @Autowired
     protected RuntimeService runtimeService;
@@ -39,9 +38,9 @@ public class ArticleController {
     @Autowired
     protected IdentityService identityService;
 
-    @RequestMapping(value = {"articleEdit", ""})
+    @RequestMapping(value = {"apply"})
     public String createForm(Model model) {
 //        model.addAttribute("topic", new Topic());
-        return "/news/article/articleEdit";
+        return "/news/article/articleApply";
     }
 }

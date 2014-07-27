@@ -14,7 +14,6 @@
     <%@ include file="/common/meta.jsp" %>
     <title>角色列表</title>
     <%@ include file="/common/allcss.jsp" %>
-    <%--<link href="${ctx}/css/_pagination.css" media="all" rel="stylesheet" type="text/css"/>--%>
     <link href="${ctx }/js/common/bootstrap/css/bootstrap-dialog.min.css" rel="stylesheet">
     <style>
         .group-dialog .modal-dialog {

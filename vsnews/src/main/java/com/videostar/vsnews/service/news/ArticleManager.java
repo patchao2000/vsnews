@@ -33,6 +33,10 @@ public class ArticleManager {
         articleDao.save(entity);
     }
 
+    public Iterable<NewsArticle> getAllArticles() {
+        return articleDao.findAll();
+    }
+
     @Autowired
     public void setArticleDao(ArticleDao dao) {
         this.articleDao = dao;

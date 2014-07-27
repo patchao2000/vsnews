@@ -49,6 +49,28 @@ insert into ACT_ID_MEMBERSHIP values ('chfa', 'topicDispatch');
 insert into ACT_ID_USER values ('deva', 1, '设备员A', '', 'deva@videostar.com', '000000','');
 insert into ACT_ID_MEMBERSHIP values ('deva', 'deviceAudit');
 
-# update ACT_GE_PROPERTY
-# set VALUE_ = '10'
-# where NAME_ = 'next.dbid';
+CREATE TABLE `news_column` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `audit_level` int(11) DEFAULT NULL,
+  `column_name` varchar(255) DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  `parent_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_1dxmjm7a8cbltm9wdmbgv5fe7` (`column_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+set @t = '东方时空';
+insert into NEWS_COLUMN values (1, 3, @t, NULL, NULL);
+SET @i = (SELECT id FROM NEWS_COLUMN WHERE column_name = @t);
+SET @gid = CONCAT('grp_col_', CONCAT(@i, ''));
+SET @gname = CONCAT('栏目: ', @t);
+insert into ACT_ID_GROUP values (@gid, 1, @gname, 'assignment');
+
+set @t = '爸爸去哪儿';
+insert into NEWS_COLUMN values (2, 3, @t, NULL, NULL);
+SET @i = (SELECT id FROM NEWS_COLUMN WHERE column_name = @t);
+SET @gid = CONCAT('grp_col_', CONCAT(@i, ''));
+SET @gname = CONCAT('栏目: ', @t);
+insert into ACT_ID_GROUP values (@gid, 1, @gname, 'assignment');
+
+update ACT_GE_PROPERTY set VALUE_ = '10' where NAME_ = 'next.dbid';
