@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%--<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>--%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <script type="text/javascript">
     var ctx = '<%=request.getContextPath() %>';
@@ -26,6 +26,7 @@
 
 <c:set var="defbodyclass" value="contrast-fb fixed-header fixed-navigation"/>
 
+<%--@elvariable id="user" type="org.activiti.engine.identity.User"--%>
 <% if (!request.getRequestURI().contains("/login")) { %>
 <script type="text/javascript">
     var notLogon = ${empty user};

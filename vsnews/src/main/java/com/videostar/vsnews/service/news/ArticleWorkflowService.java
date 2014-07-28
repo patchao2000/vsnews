@@ -9,6 +9,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
@@ -54,12 +55,6 @@ public class ArticleWorkflowService {
         articleManager.saveArticle(entity);
         logger.debug("save entity: {}", entity);
         String businessKey = entity.getId().toString();
-
-        //  set audit level for each column
-        NewsColumn column = columnManager.getColumn(entity.getColumnId());
-        variables.put("needAudit1", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_1) != 0));
-        variables.put("needAudit2", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_2) != 0));
-        variables.put("needAudit3", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_3) != 0));
 
         ProcessInstance processInstance = null;
         try {
@@ -113,6 +108,31 @@ public class ArticleWorkflowService {
         return results;
     }
 
+    @Transactional(readOnly = true)
+    public List<NewsArticle> findRunningProcessInstances() {
+        List<NewsArticle> results = new ArrayList<NewsArticle>();
+        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.article123).active().orderByProcessInstanceId().desc();
+        List<ProcessInstance> list = query.list();
+
+        // 关联业务实体
+        for (ProcessInstance processInstance : list) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsArticle article = articleManager.getArticle(new Long(businessKey));
+            article.setProcessInstance(processInstance);
+            article.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            results.add(article);
+
+            // 设置当前任务信息
+            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
+            article.setTask(tasks.get(0));
+        }
+
+        return results;
+    }
+    
     @Transactional(readOnly = true)
     public List<NewsArticle> getAllArticles() {
         ArrayList<NewsArticle> result = new ArrayList<NewsArticle>();

@@ -3,9 +3,13 @@ package com.videostar.vsnews.service.news;
 import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.service.identify.UserManager;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ColumnService
@@ -26,6 +30,14 @@ public class ColumnService {
     private UserManager userManager;
 
 
+    public NewsColumn getColumn(Long id) {
+        return columnManager.getColumn(id);
+    }
+
+    public List<NewsColumn> getAllColumns() {
+        return columnManager.getAllColumns();
+    }
+
     public String getGroupId(NewsColumn column) {
         return GROUP_ID_PREFIX + column.getId().toString();
     }
@@ -36,6 +48,16 @@ public class ColumnService {
 
     public Boolean isColumnGroup(Group group) {
         return group.getId().startsWith(GROUP_ID_PREFIX);
+    }
+
+    public List<NewsColumn> getUserColumns(User user) {
+        ArrayList<NewsColumn> result = new ArrayList<NewsColumn>();
+        for (NewsColumn column : columnManager.getAllColumns()) {
+            if (userManager.isUserInGroup(user.getId(), getGroupId(column))) {
+                result.add(column);
+            }
+        }
+        return result;
     }
 
     @Transactional(readOnly = false)

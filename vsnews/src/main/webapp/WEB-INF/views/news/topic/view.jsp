@@ -27,9 +27,6 @@
     %>
     <title>查看选题内容</title>
     <%@ include file="/common/allcss.jsp" %>
-    <link href="${ctx}/assets/stylesheets/plugins/select2/select2.css" media="all" rel="stylesheet" type="text/css"/>
-    <link href="${ctx}/assets/stylesheets/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.min.css" media="all"
-          rel="stylesheet" type="text/css"/>
 </head>
 
 <body class='${defbodyclass}'>
@@ -197,7 +194,6 @@
 </div>
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
-<script src="${ctx}/assets/javascripts/plugins/select2/select2.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     function fillSelectControlWithGroup(controlId, groupId) {

@@ -13,9 +13,20 @@
     <%@ include file="/common/global.jsp" %>
     <%@ include file="/common/meta.jsp" %>
     <%
-        String mainTitle = "编辑文稿";
+        String paraReApply = request.getParameter("reapply");
+        String ctx = request.getContextPath();
+        String action = ctx + "/news/article/start";
+        String htmlTitle = "编辑文稿";
+
+        boolean reApplyMode = false;
+        if (paraReApply != null && paraReApply.equals("true")) {
+            htmlTitle = "调整文稿内容";
+            reApplyMode = true;
+            action = "#";
+        }
     %>
-    <title><%=mainTitle%></title>
+    %>
+    <title><%=htmlTitle%></title>
     <%@ include file="/common/allcss.jsp" %>
 </head>
 
@@ -32,14 +43,23 @@
                 <div class='col-sm-12'>
                     <div class='box' style='margin-bottom:0'>
                         <div class='box-header blue-background'>
-                            <div class='title'><%=mainTitle%></div>
+                            <div class='title'><%=htmlTitle%></div>
                             <div class='actions'>
                                 <a class="btn box-collapse btn-xs btn-link" href="#"><i></i>
                                 </a>
                             </div>
                         </div>
                         <div class='box-content'>
-                            <form id="inputForm" action="#" class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                            <form id="inputForm" action="<%=action%>" class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                                <input name="authenticity_token" type="hidden"/>
+                                <% if (reApplyMode) { %>
+                                <div class='form-group has-error'>
+                                    <label class='col-md-2 control-label' for='auditbackreason'>审批意见：</label>
+                                    <div class='col-md-10'>
+                                        <input class='form-control' id='auditbackreason' name='auditbackreason' type='text' readonly="readonly">
+                                    </div>
+                                </div>
+                                <% } %>
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='mainTitle'>主标题：</label>
                                     <div class='col-md-10'>
@@ -48,8 +68,13 @@
                                 </div>
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='subTitle'>副标题：</label>
-                                    <div class='col-md-10'>
+                                    <div class='col-md-4'>
                                         <input class='form-control' id='subTitle' name='subTitle' placeholder='副标题' type='text'>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='columnId'>栏目：</label>
+                                    <div class='col-md-4'>
+                                        <select class='form-control' id="column_sel"></select>
+                                        <input type='hidden' id='columnId' name='columnId' value=''>
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -104,9 +129,9 @@
                                 </div>
 
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='text'>内容：</label>
+                                    <label class='col-md-2 control-label' for='content1'>内容：</label>
                                     <div class='col-md-10'>
-                                        <textarea class='form-control ckeditor' id='text' name = 'text' placeholder='内容' rows='7'></textarea>
+                                        <textarea class='form-control ckeditor' id='content1' name = 'content' placeholder='内容' rows='7'></textarea>
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -134,6 +159,26 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 <script type="text/javascript">
+    function fillUserColumnsControl(userId) {
+        $.getJSON(ctx + '/news/column/objlist/usercolumns/' + userId, function (data) {
+            var columns = '';
+            var template = "<option value='#id'>#name</option>";
+            $.each(data, function (dk, dv) {
+                var curr = template;
+                $.each(dv, function (k, v) {
+                    if (k == 'id') {
+                        curr = curr.replace(/#id/g, v);
+                    }
+                    else if (k == 'name') {
+                        curr = curr.replace(/#name/g, v);
+                    }
+                });
+                columns += curr;
+            });
+            $('#column_sel').html(columns);
+        });
+    }
+
     function fillSelectControlWithGroup(controlId, groupId) {
         $.getJSON(ctx + '/user/objlist/groupmembers/' + groupId, function (data) {
             var users = '';
@@ -168,14 +213,148 @@
         );
     }
 
+    <% if (reApplyMode) { %>
+    var articleid = '<%=request.getParameter("id") %>';
+    var taskid = '<%=request.getParameter("taskid") %>';
+    function loadDetailWithTaskVars(articleId, taskId, callback) {
+        $.getJSON(ctx + '/news/article/detail-with-vars/' + articleId + "/" + taskId, function (data) {
+            $.each(data, function (k, v) {
+                if (k == "content")
+                    $("#content1").val(v);
+                else if (k == "reporters")
+                    $('#reporters_sel').select2().select2('val', v);
+                else if (k == "cameramen")
+                    $('#cameramen_sel').select2().select2('val', v);
+                else if (k == "editors")
+                    $('#editors_sel').select2().select2('val', v);
+                else if (k == "column")
+                    $('#column_sel').select2().select2('val', v);
+                else if (k == "interviewTime") {
+                    if (v != null) {
+                        var d = new Date(v).format("yyyy-MM-dd hh:mm");
+                        $("#" + k).val(d);
+                    }
+                }
+                else
+                    $("#" + k).val(v);
+            });
+            if ($.isFunction(callback)) {
+                callback(data);
+            }
+        });
+    }
+    <% } %>
+
+    //  ckeditor采取异步方式setData, 以下函数可以在提交时正确得到ckeditor数据
+    function ckupdate() {
+        for (instance in CKEDITOR.instances)
+            CKEDITOR.instances[instance].updateElement();
+    }
+
     $(function () {
         $.ajaxSettings.async = false;
 
         fillSelectControlWithGroup('reporters_sel', 'reporter');
         fillSelectControlWithGroup('cameramen_sel', 'cameraman');
-//        fillSelectControlWithGroup('others_sel', 'stuff');
+        fillSelectControlWithGroup('editors_sel', 'editor');
+
+        fillUserColumnsControl('${user.id }');
+        var column_sel = $("#column_sel");
+        column_sel.select2({minimumResultsForSearch: -1});
+
+        <% if (reApplyMode) { %>
+        loadDetailWithTaskVars(articleid, taskid, function (data) {
+            $("#auditbackreason").val(data.variables.auditBackReason);
+        });
+        column_sel.select2("readonly", true);
+        <% } %>
+
 
         $.ajaxSettings.async = true;
+
+        $("#inputForm").submit(function (event) {
+            ckupdate();
+
+            var mainTitle = $('#mainTitle');
+            var content1 = $('#content1');
+
+            if (mainTitle.val().length == 0) {
+                alert('标题不能为空！');
+                event.preventDefault();
+                return;
+            }
+            if (content1.val().length == 0) {
+                alert('内容不能为空！');
+                event.preventDefault();
+                return;
+            }
+
+            makeMultiSelectValues('reporters_sel', 'reporters');
+            makeMultiSelectValues('cameramen_sel', 'cameramen');
+            makeMultiSelectValues('editors_sel', 'editor');
+
+            $('#columnId').val($('#column_sel').find(':selected').val());
+
+            <% if (reApplyMode) { %>
+
+            var articlemap = {};
+            articlemap["mainTitle"] = mainTitle.val();
+            articlemap["subTitle"] = $('#subTitle').val();
+            articlemap["content"] = content1.val();
+            articlemap["location"] = $('#location').val();
+            articlemap["interviewTime"] = $('#interviewTime').val();
+            articlemap["sourcers"] = $('#sourcers').val();
+            articlemap["sourcersTel"] = $('#sourcersTel').val();
+            articlemap["notes"] = $('#notes').val();
+
+            //  new Array()不能用{}代替，否则会报错！
+            var reps = new Array();
+            var cams = new Array();
+            var edts = new Array();
+            var i = 0;
+            $.each(
+                    $('#reporters_sel' + ' :selected'), function () {
+                        reps[i++] = $(this).val();
+                    }
+            );
+            i = 0;
+            $.each(
+                    $('#cameramen_sel' + ' :selected'), function () {
+                        cams[i++] = $(this).val();
+                    }
+            );
+            i = 0;
+            $.each(
+                    $('#editors_sel' + ' :selected'), function () {
+                        edts[i++] = $(this).val();
+                    }
+            );
+            articlemap["reporters"] = reps;
+            articlemap["cameramen"] = cams;
+            articlemap["editors"] = edts;
+
+            $.ajax({
+                type: 'post',
+                async: false,
+                url: ctx + '/news/article/complete/' + taskid,
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify(articlemap),
+                success: function (resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/news/article/list/task'
+                    } else {
+                        alert('操作失败!');
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('操作失败!!');
+                }
+            });
+
+            event.preventDefault();
+            <% } %>
+        });
     });
 </script>
 

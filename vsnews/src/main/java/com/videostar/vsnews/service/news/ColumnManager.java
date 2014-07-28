@@ -24,6 +24,7 @@ public class ColumnManager {
     private ColumnDao columnDao;
 
     public NewsColumn getColumn(Long id) {
+//        logger.debug("getColumn {}", id);
         return columnDao.findOne(id);
     }
 

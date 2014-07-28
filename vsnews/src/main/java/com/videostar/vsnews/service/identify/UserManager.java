@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * UserManager
@@ -26,10 +24,39 @@ import java.util.Set;
 @Component
 @Transactional(readOnly = true)
 public class UserManager {
-//    @Autowired
+    public static final int RIGHTS_TOPIC_WRITE      = 1;
+    public static final int RIGHTS_TOPIC_AUDIT      = 2;
+    public static final int RIGHTS_TOPIC_DISPATCH   = 3;
+    public static final int RIGHTS_ARTICLE_WRITE    = 4;
+    public static final int RIGHTS_ARTICLE_AUDIT_1  = 5;
+    public static final int RIGHTS_ARTICLE_AUDIT_2  = 6;
+    public static final int RIGHTS_ARTICLE_AUDIT_3  = 7;
+    public static final int RIGHTS_EDITOR           = 8;
+    public static final int RIGHTS_REPORTER         = 9;
+    public static final int RIGHTS_CAMERAMAN        = 10;
+    public static final int RIGHTS_DEVICE_AUDIT     = 11;
+
+    //    @Autowired
     private IdentityService identityService;
 
+    private Map<Integer, String> userRights;
+
 //    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    public UserManager() {
+        userRights = new HashMap<Integer, String>();
+        userRights.put(RIGHTS_TOPIC_WRITE, "topicWrite");
+        userRights.put(RIGHTS_TOPIC_AUDIT, "topicAudit");
+        userRights.put(RIGHTS_TOPIC_DISPATCH, "topicDispatch");
+        userRights.put(RIGHTS_ARTICLE_WRITE, "articleWrite");
+        userRights.put(RIGHTS_ARTICLE_AUDIT_1, "articleAudit1");
+        userRights.put(RIGHTS_ARTICLE_AUDIT_2, "articleAudit2");
+        userRights.put(RIGHTS_ARTICLE_AUDIT_3, "articleAudit3");
+        userRights.put(RIGHTS_EDITOR, "editor");
+        userRights.put(RIGHTS_REPORTER, "reporter");
+        userRights.put(RIGHTS_CAMERAMAN, "cameraman");
+        userRights.put(RIGHTS_DEVICE_AUDIT, "deviceAudit");
+    }
 
     public boolean checkPassword(String userName, String password) {
         return identityService.checkPassword(userName, password);
@@ -172,6 +199,10 @@ public class UserManager {
 
     public List<User> getGroupMembers(String groupId) {
         return identityService.createUserQuery().memberOfGroup(groupId).list();
+    }
+    
+    public Boolean isUserHaveRights(User user, int rights) {
+        return isUserInGroup(user.getId(), userRights.get(rights));
     }
 
     @Autowired

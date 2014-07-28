@@ -2,7 +2,7 @@
 <%
     String uri = request.getRequestURI();
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicRunning = false, inTopicFinished = false;
-    boolean inArticle = false, inArticleEdit = false;
+    boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleRunning = false;
     boolean inManage = false, inUserManage = false, inGroupManage = false, inColumnManage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
@@ -19,6 +19,10 @@
         inTopicFinished = true;
     if (uri.contains("articleEdit"))
         inArticleEdit = true;
+    if (uri.contains("/article/taskList"))
+        inArticleList = true;
+    if (uri.contains("/article/running"))
+        inArticleRunning = true;
     if (uri.contains("/main/welcome"))
         inWelcome = true;
     if (uri.contains("/user") || uri.contains("/news/column"))
@@ -93,18 +97,18 @@
                             <span>创建文稿</span>
                         </a>
                     </li>
-                    <%--<li class=''>--%>
-                        <%--<a href='${ctx}/news/article/list/task'>--%>
-                            <%--<i class='icon-caret-right'></i>--%>
-                            <%--<span>待办任务</span>--%>
-                        <%--</a>--%>
-                    <%--</li>--%>
-                    <%--<li class=''>--%>
-                        <%--<a href='${ctx}/news/article/list/running'>--%>
-                            <%--<i class='icon-caret-right'></i>--%>
-                            <%--<span>运行中任务</span>--%>
-                        <%--</a>--%>
-                    <%--</li>--%>
+                    <li class='<%=inArticleList?"active":""%>'>
+                        <a href='${ctx}/news/article/list/task'>
+                            <i class='icon-caret-right'></i>
+                            <span>待办任务</span>
+                        </a>
+                    </li>
+                    <li class='<%=inArticleRunning?"active":""%>'>
+                        <a href='${ctx}/news/article/list/running'>
+                            <i class='icon-caret-right'></i>
+                            <span>运行中任务</span>
+                        </a>
+                    </li>
                     <li class=''>
                         <a href='${ctx}/news/article/list/all'>
                             <i class='icon-caret-right'></i>

@@ -1,6 +1,7 @@
 package com.videostar.vsnews.entity.news;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,7 +19,14 @@ import java.util.List;
 public class NewsArticle extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    //   状态: 0 -> 撰写中, 1 -> 撰写完毕
+    public static final int STATUS_WRITING = 0;
+    public static final int STATUS_WRITTEN = 1;
+
+    private int status;
+
     //    栏目
+    @NumberFormat(style=NumberFormat.Style.NUMBER)
     private Long columnId;
 
     //    主标题
@@ -163,4 +171,25 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    @Column
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Transient
+    public final String getStatusString() {
+        switch(status) {
+            case STATUS_WRITING:
+                return "撰写中";
+            case STATUS_WRITTEN:
+                return "撰写完毕";
+        }
+        return "ERROR";
+    }
+
 }

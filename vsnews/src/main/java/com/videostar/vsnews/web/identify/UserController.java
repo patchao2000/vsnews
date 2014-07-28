@@ -1,7 +1,7 @@
 package com.videostar.vsnews.web.identify;
 
 import com.videostar.vsnews.service.identify.UserManager;
-import com.videostar.vsnews.service.news.ColumnManager;
+//import com.videostar.vsnews.service.news.ColumnManager;
 import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;

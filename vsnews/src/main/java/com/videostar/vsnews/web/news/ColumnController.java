@@ -1,8 +1,10 @@
 package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.NewsColumn;
+import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnManager;
 import com.videostar.vsnews.service.news.ColumnService;
+import org.activiti.engine.identity.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +31,9 @@ public class ColumnController {
 
     @Autowired
     private ColumnManager columnManager;
+
+    @Autowired
+    private UserManager userManager;
 
     @Autowired
     private ColumnService columnService;
@@ -96,5 +102,16 @@ public class ColumnController {
         return mav;
     }
 
+    @RequestMapping(value = "objlist/usercolumns/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<NewsColumn> getUserColumns(@PathVariable("id") String userId) {
+        return columnService.getUserColumns(userManager.getUserById(userId));
+    }
+
+    @RequestMapping(value = "objlist/allcolumns")
+    @ResponseBody
+    public List<NewsColumn> getAllColumns() {
+        return columnService.getAllColumns();
+    }
 
 }

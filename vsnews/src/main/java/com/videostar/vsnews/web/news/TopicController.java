@@ -64,7 +64,7 @@ public class TopicController {
             return "redirect:/login?timeout=true";
         }
 
-        if(!userManager.isUserInGroup(user.getId(), "topicWrite")) {
+        if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_WRITE)) {
             redirectAttributes.addFlashAttribute("error", "您没有撰写选题权限！");
             return "redirect:/main/welcome";
         }
@@ -83,7 +83,7 @@ public class TopicController {
             topic.setUserId(user.getId());
 
             //  check user is in leader(topicAudit) group
-            Boolean isLeader = userManager.isUserInGroup(user.getId(), "topicAudit");
+            Boolean isLeader = userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT);
 
             Map<String, Object> variables = new HashMap<String, Object>();
             logger.debug("startWorkflow: title {} content {} devices {}", topic.getTitle(), topic.getContent(), topic.getDevices());

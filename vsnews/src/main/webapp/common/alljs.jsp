@@ -30,6 +30,7 @@
 <%--<script src="${ctx}/assets/javascripts/plugins/flot/flot.resize.js" type="text/javascript"></script>--%>
 <!-- / END - page related files and scripts [optional] -->
 <script src="${ctx}/assets/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.js" type="text/javascript"></script>
+<script src="${ctx}/assets/javascripts/plugins/select2/select2.js" type="text/javascript"></script>
 <script>
     $('.datetimepicker').datetimepicker({
         format: 'yyyy-MM-dd hh:mm',
