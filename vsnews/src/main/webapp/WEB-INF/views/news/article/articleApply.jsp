@@ -14,17 +14,21 @@
     <%@ include file="/common/meta.jsp" %>
     <%
         String paraReApply = request.getParameter("reapply");
+        String paraAudit = request.getParameter("audit");
         String ctx = request.getContextPath();
         String action = ctx + "/news/article/start";
         String htmlTitle = "编辑文稿";
 
-        boolean reApplyMode = false;
+        boolean reApplyMode = false, auditMode = false;
         if (paraReApply != null && paraReApply.equals("true")) {
             htmlTitle = "调整文稿内容";
             reApplyMode = true;
             action = "#";
+        } else if (paraAudit != null && paraAudit.equals("true")) {
+            htmlTitle = "审核文稿";
+            auditMode = true;
+            action = "#";
         }
-    %>
     %>
     <title><%=htmlTitle%></title>
     <%@ include file="/common/allcss.jsp" %>
@@ -54,9 +58,9 @@
                                 <input name="authenticity_token" type="hidden"/>
                                 <% if (reApplyMode) { %>
                                 <div class='form-group has-error'>
-                                    <label class='col-md-2 control-label' for='auditbackreason'>审批意见：</label>
+                                    <label class='col-md-2 control-label' for='auditOpinion'>审核意见：</label>
                                     <div class='col-md-10'>
-                                        <input class='form-control' id='auditbackreason' name='auditbackreason' type='text' readonly="readonly">
+                                        <input class='form-control' id='auditOpinion' name='auditOpinion' type='text' readonly="readonly">
                                     </div>
                                 </div>
                                 <% } %>
@@ -140,10 +144,24 @@
                                         <input class='form-control' id='notes' name='notes' placeholder='备注' type='text' rows="2">
                                     </div>
                                 </div>
+                                <% if (auditMode) { %>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='opinion'>审核意见：</label>
+                                    <div class='col-md-10'>
+                                        <input class='form-control' id='opinion' name='opinion' placeholder='审核意见' type='text' rows="2">
+                                    </div>
+                                </div>
+                                <input type="hidden" name="submit_type" value="" id="submit-type"/>
+                                <% } %>
                                 <div class='form-actions form-actions-padding-sm'>
                                     <div class='row'>
                                         <div class='col-md-10 col-md-offset-2'>
+                                            <% if (auditMode) { %>
+                                            <button class='btn btn-primary' type='submit' id="auditPass"><i class='icon-ok'></i>同意</button>
+                                            <button class='btn btn-danger' type='submit' id="auditReject"><i class='icon-remove'></i>驳回</button>
+                                            <% } else { %>
                                             <button class='btn btn-primary' type='submit'><i class='icon-save'></i>提交</button>
+                                            <% } %>
                                         </div>
                                     </div>
                                 </div>
@@ -159,6 +177,28 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 <script type="text/javascript">
+    function complete(taskid, varmap) {
+        // 发送任务完成请求
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/article/complete/' + taskid,
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify(varmap),
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                    location.href = ctx + '/news/article/list/task'
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    }
+
     function fillUserColumnsControl(userId) {
         $.getJSON(ctx + '/news/column/objlist/usercolumns/' + userId, function (data) {
             var columns = '';
@@ -213,7 +253,7 @@
         );
     }
 
-    <% if (reApplyMode) { %>
+    <% if (reApplyMode || auditMode) { %>
     var articleid = '<%=request.getParameter("id") %>';
     var taskid = '<%=request.getParameter("taskid") %>';
     function loadDetailWithTaskVars(articleId, taskId, callback) {
@@ -247,9 +287,18 @@
 
     //  ckeditor采取异步方式setData, 以下函数可以在提交时正确得到ckeditor数据
     function ckupdate() {
+        var instance;
         for (instance in CKEDITOR.instances)
             CKEDITOR.instances[instance].updateElement();
     }
+
+    $("#auditPass").live("click",function(){
+        $("#submit-type").val("pass");
+    });
+
+    $("#auditReject").live("click",function(){
+        $("#submit-type").val("reject");
+    })
 
     $(function () {
         $.ajaxSettings.async = false;
@@ -262,9 +311,9 @@
         var column_sel = $("#column_sel");
         column_sel.select2({minimumResultsForSearch: -1});
 
-        <% if (reApplyMode) { %>
+        <% if (reApplyMode || auditMode) { %>
         loadDetailWithTaskVars(articleid, taskid, function (data) {
-            $("#auditbackreason").val(data.variables.auditBackReason);
+            $("#auditOpinion").val(data.variables.auditOpinion);
         });
         column_sel.select2("readonly", true);
         <% } %>
@@ -295,7 +344,7 @@
 
             $('#columnId').val($('#column_sel').find(':selected').val());
 
-            <% if (reApplyMode) { %>
+            <% if (reApplyMode || auditMode) { %>
 
             var articlemap = {};
             articlemap["mainTitle"] = mainTitle.val();
@@ -333,6 +382,7 @@
             articlemap["cameramen"] = cams;
             articlemap["editors"] = edts;
 
+//            todo: check $("#submit-type").val() for set auditPass variable
             $.ajax({
                 type: 'post',
                 async: false,

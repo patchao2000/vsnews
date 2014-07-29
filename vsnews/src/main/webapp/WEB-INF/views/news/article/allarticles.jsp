@@ -40,6 +40,7 @@
                                     <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
                                         <thead>
                                         <tr>
+                                            <th>栏目</th>
                                             <th>申请人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
@@ -50,14 +51,15 @@
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="article" type="com.videostar.vsnews.entity.news.NewsArticle"--%>
-                                        <c:forEach items="${list }" var="article">
-                                            <tr id="${article.id }">
-                                                <td>${article.userId }</td>
-                                                <td><fmt:formatDate value="${article.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-                                                <td>${article.mainTitle }</td>
-                                                <td>${article.content }</td>
-                                                <td>${article.statusString }</td>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.ArticleDetail"--%>
+                                        <c:forEach items="${list }" var="detail">
+                                            <tr id="${detail.article.id }">
+                                                <td>${detail.columnName }</td>
+                                                <td>${detail.userName }</td>
+                                                <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                                                <td>${detail.article.mainTitle }</td>
+                                                <td>${detail.plainContent }</td>
+                                                <td>${detail.article.statusString }</td>
                                                 <td>
                                                     <a class="viewarticle btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                 </td>
@@ -77,10 +79,10 @@
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
     $(document).ready(function () {
-//        $('.viewtopic').click(function () {
-//            var topicId = $(this).parents('tr').attr('id');
-//            location.href = ctx + '/news/topic/view/' + topicId;
-//        });
+        $('.viewarticle').click(function () {
+            var articleId = $(this).parents('tr').attr('id');
+            location.href = ctx + '/news/article/view/' + articleId;
+        });
     });
 </script>
 </body>

@@ -31,7 +31,7 @@
                 <div class='col-sm-12'>
                     <div class='box bordered-box blue-border' style='margin-bottom:0;'>
                         <div class='box-header blue-background'>
-                            <div class='title'>新闻文稿</div>
+                            <div class='title'>待办文稿任务</div>
                             <div class='actions'>
                                 <a class="btn box-collapse btn-xs btn-link" href="#"><i></i>
                                 </a>
@@ -56,26 +56,25 @@
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="article" type="com.videostar.vsnews.entity.news.NewsArticle"--%>
-                                        <c:forEach items="${list }" var="article">
-                                            <c:set var="task" value="${article.task }"/>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.ArticleDetail"--%>
+                                        <c:forEach items="${list }" var="detail">
+                                            <c:set var="task" value="${detail.article.task }"/>
                                             <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
-                                            <c:set var="pi" value="${article.processInstance }"/>
+                                            <c:set var="pi" value="${detail.article.processInstance }"/>
                                             <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
-
-                                            <tr id="${article.id }" data-tid="${task.id }">
-                                                <td>${article.columnId }</td>
-                                                <td>${article.userId }</td>
-                                                <td><fmt:formatDate value="${article.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                <td>${article.mainTitle }</td>
-                                                <td>${article.content }</td>
+                                            <tr id="${detail.article.id }" data-tid="${task.id }">
+                                                <td>${detail.columnName }</td>
+                                                <td>${detail.userName }</td>
+                                                <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                                <td>${detail.article.mainTitle }</td>
+                                                <td>${detail.plainContent }</td>
                                                 <td>
                                                     <%--<a href='${ctx }/diagram-viewer/index.html?processDefinitionId=${pi.processDefinitionId}&processInstanceId=${pi.id }' title="点击查看流程图">${task.name }</a>--%>
-                                                    <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
+                                                    <a class="trace" href='#' data-pid="${pi.id }" data-pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
                                                     <%--${task.name }--%>
                                                 </td>
                                                 <td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                <td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${article.processDefinition.version }</b></td>
+                                                <td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${detail.article.processDefinition.version }</b></td>
                                                 <td>
 
                                                     <c:if test="${empty task.assignee }">
@@ -131,7 +130,7 @@ function complete(taskid, varmap) {
                 alert('操作失败!');
             }
         },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: function () {
             alert('操作失败!!');
         }
     });
@@ -161,7 +160,7 @@ var handleOpts = {
 
                 var rejcontent = $('<div/>', {
                     title: '填写驳回理由',
-                    html: "<div class='form-group'><textarea id='auditBackReason' class='form-control' rows='2'></textarea></div>"
+                    html: "<div class='form-group'><textarea id='auditOpinion' class='form-control' rows='2'></textarea></div>"
                 });
 
                 var rejdialog = new BootstrapDialog({
@@ -171,16 +170,16 @@ var handleOpts = {
                     buttons: [
                         {
                             label: '驳回',
-                            action: function(dialogRef){
-                                var auditBackReason = $('#auditBackReason').val();
-                                if (auditBackReason == '') {
+                            action: function(){
+                                var auditOpinion = $('#auditOpinion').val();
+                                if (auditOpinion == '') {
                                     alert('请输入驳回理由！');
                                     return;
                                 }
 
                                 var map = {};
                                 map[auditPass] = false;
-                                map['auditBackReason'] = auditBackReason;
+                                map['auditOpinion'] = auditOpinion;
                                 complete(taskId, map);
                             }
                         },
@@ -211,40 +210,27 @@ function loadDetail(id, content) {
         $.each(data, function(k, v) {
             // 格式化日期
             if (k == 'applyTime' || k == 'interviewTime') {
-                $(content).find('td[data-name=' + k + ']').text(new Date(v).format('yyyy-MM-dd hh:mm'));
+                $(content).find('input[data-name=' + k + ']').val(new Date(v).format('yyyy-MM-dd hh:mm'));
+            } else if (k == 'content') {
+                $(content).find('textarea[data-name=' + k + ']').text(v);
             } else {
-                $(content).find('td[data-name=' + k + ']').text(v);
+                $(content).find('input[data-name=' + k + ']').val(v);
             }
+//            // 格式化日期
+//            if (k == 'applyTime' || k == 'interviewTime') {
+//                $(content).find('td[data-name=' + k + ']').text(new Date(v).format('yyyy-MM-dd hh:mm'));
+//            } else {
+//                $(content).find('td[data-name=' + k + ']').text(v);
+//            }
         });
     });
 }
 
 $(document).ready(function () {
-//    var colmap = {};
-//    $.ajaxSettings.async = false;
-//    $.getJSON(ctx + '/news/column/objlist/allcolumns', function (data) {
-//        $.each(data, function (dk, dv) {
-//            var colid;
-//            $.each(dv, function (k, v) {
-//                if (k == 'id') {
-//                    colid = v + "";
-//                }
-//                else if (k == 'name') {
-//                    colmap[colid] = v;
-//                }
-//            });
-//        });
-//    });
-//    $.ajaxSettings.async = true;
-//    $("table #tasklist tr").each(function () {
-//        alert($(this).first('td').text());
-////                html());
-//    });
-
     $('.trace').click(function() {
         var dialog = new BootstrapDialog({
             title: '123',
-            message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('pid') + "' />",
+            message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('data-pid') + "' />",
             buttons: [{
                 id: 'btn-close',
                 label: 'Close',
@@ -256,7 +242,8 @@ $(document).ready(function () {
         dialog.realize();
         dialog.open();
 
-    })
+    });
+    
     $('.handle').click(function () {
         // 当前节点的英文名称
         var tkey = $(this).attr('data-tkey');
@@ -288,15 +275,22 @@ $(document).ready(function () {
                 break;
         }
 
-        var dialog = new BootstrapDialog({
-            title: '流程办理[' + tname + ']',
-            message: content,
-            data: { 'taskId': taskId,
-                    'auditPass': auditPass },
-            buttons: handleOpts.buttons
-        });
-        dialog.realize();
-        dialog.open();
+        if (tkey == 'class1Audit' || tkey == 'class2Audit' || tkey == 'class3Audit') {
+            location.href = ctx + '/news/article/apply?audit=true&id='+rowId+'&taskid='+taskId;
+            return;
+        }
+        
+        alert("ERROR!");
+
+//        var dialog = new BootstrapDialog({
+//            title: '流程办理[' + tname + ']',
+//            message: content,
+//            data: { 'taskId': taskId,
+//                    'auditPass': auditPass },
+//            buttons: handleOpts.buttons
+//        });
+//        dialog.realize();
+//        dialog.open();
 
     });
 });

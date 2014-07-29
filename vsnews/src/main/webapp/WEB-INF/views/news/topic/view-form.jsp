@@ -23,7 +23,7 @@
     <%--</a>--%>
 <%--</div>--%>
 
-<table class='view-info table table-striped'>
+<table class='table table-striped'>
     <tr>
         <td>申请人：</td>
         <td data-name="userId"></td>

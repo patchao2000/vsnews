@@ -7,6 +7,7 @@ import com.videostar.vsnews.service.news.ArticleManager;
 import com.videostar.vsnews.service.news.ArticleWorkflowService;
 import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.util.UserUtil;
+import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
@@ -25,8 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,8 +123,7 @@ public class ArticleController {
     @RequestMapping(value = "detail/{id}")
     @ResponseBody
     public NewsArticle getArticle(@PathVariable("id") Long id) {
-        NewsArticle article = articleManager.getArticle(id);
-        return article;
+        return articleManager.getArticle(id);
     }
 
     @RequestMapping(value = "detail-with-vars/{id}/{taskId}")
@@ -136,16 +137,25 @@ public class ArticleController {
 
 
     @RequestMapping(value = "list/task")
-    public ModelAndView taskList(HttpSession session, HttpServletRequest request) {
+    public ModelAndView taskList(HttpSession session) {
         ModelAndView mav = new ModelAndView("/news/article/taskList");
         String userId = UserUtil.getUserFromSession(session).getId();
-        List<NewsArticle> list = workflowService.findTodoTasks(userId);
+
+        List<ArticleDetail> list = new ArrayList<ArticleDetail>();
+        for (NewsArticle article : workflowService.findTodoTasks(userId)) {
+            ArticleDetail detail = new ArticleDetail();
+            detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
+            detail.setArticle(article);
+            detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
+            detail.setPlainContent(WebUtil.htmlRemoveTag(article.getContent()));
+            list.add(detail);
+        }
         mav.addObject("list", list);
         return mav;
     }
 
     @RequestMapping(value = "list/running")
-    public ModelAndView runningList(HttpServletRequest request) {
+    public ModelAndView runningList() {
         ModelAndView mav = new ModelAndView("/news/article/running");
         List<NewsArticle> list = workflowService.findRunningProcessInstances();
         mav.addObject("list", list);
@@ -153,9 +163,26 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "list/all")
-    public ModelAndView allList(HttpServletRequest request) {
+    public ModelAndView allList() {
         ModelAndView mav = new ModelAndView("/news/article/allarticles");
-        mav.addObject("list", workflowService.getAllArticles());
+        List<ArticleDetail> list = new ArrayList<ArticleDetail>();
+        for (NewsArticle article : workflowService.getAllArticles()) {
+            ArticleDetail detail = new ArticleDetail();
+            detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
+            detail.setArticle(article);
+            detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
+            detail.setPlainContent(WebUtil.htmlRemoveTag(article.getContent()));
+            list.add(detail);
+        }
+        mav.addObject("list", list);
+        return mav;
+    }
+
+    @RequestMapping(value = "view/{id}")
+    public ModelAndView viewArticle(@PathVariable("id") Long id) {
+        ModelAndView mav = new ModelAndView("/news/article/view");
+        NewsArticle article = articleManager.getArticle(id);
+        mav.addObject("article", article);
         return mav;
     }
 
@@ -175,7 +202,7 @@ public class ArticleController {
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, articleMap});
             return "success";
         } catch (Exception e) {
-            logger.error("error on complete task {}, variables={}", new Object[]{taskId, articleMap, e});
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, articleMap, e.getMessage()});
             return "error";
         }
     }

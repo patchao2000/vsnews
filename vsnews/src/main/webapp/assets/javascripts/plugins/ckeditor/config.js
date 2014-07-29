@@ -33,4 +33,8 @@ CKEDITOR.editorConfig = function( config ) {
     config.removeDialogTabs = 'image:advanced;link:advanced';
 
     config.font_names='宋体/SimSun;黑体/SimHei;仿宋/FangSong;楷体/KaiTi;'+ config.font_names;
+
+    config.removePlugins = 'elementspath';
+
+//    config.resize_enabled = false;
 };

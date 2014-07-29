@@ -20,9 +20,6 @@ import java.util.List;
 @Transactional
 public class ColumnService {
 
-    public static final String GROUP_ID_PREFIX = "grp_col_";
-    public static final String GROUP_NAME_PREFIX = "栏目: ";
-
     @Autowired
     private ColumnManager columnManager;
 
@@ -38,26 +35,18 @@ public class ColumnService {
         return columnManager.getAllColumns();
     }
 
-    public String getGroupId(NewsColumn column) {
-        return GROUP_ID_PREFIX + column.getId().toString();
-    }
-
-    public String getGroupName(NewsColumn column) {
-        return GROUP_NAME_PREFIX + column.getName();
-    }
-
-    public Boolean isColumnGroup(Group group) {
-        return group.getId().startsWith(GROUP_ID_PREFIX);
-    }
-
     public List<NewsColumn> getUserColumns(User user) {
         ArrayList<NewsColumn> result = new ArrayList<NewsColumn>();
         for (NewsColumn column : columnManager.getAllColumns()) {
-            if (userManager.isUserInGroup(user.getId(), getGroupId(column))) {
+            if (userManager.isUserInGroup(user.getId(), columnManager.getGroupId(column))) {
                 result.add(column);
             }
         }
         return result;
+    }
+
+    public Boolean isColumnGroup(Group group) {
+        return group.getId().startsWith(columnManager.GROUP_ID_PREFIX);
     }
 
     @Transactional(readOnly = false)
@@ -73,7 +62,7 @@ public class ColumnService {
         columnManager.saveColumn(column);
 
         //  add a group per column
-        userManager.newGroup(getGroupId(column), getGroupName(column));
+        userManager.newGroup(columnManager.getGroupId(column), columnManager.getGroupName(column));
 
         return column;
     }
@@ -92,7 +81,7 @@ public class ColumnService {
         columnManager.saveColumn(column);
 
         //  modify group
-        userManager.modifyGroup(getGroupId(column), getGroupName(column));
+        userManager.modifyGroup(columnManager.getGroupId(column), columnManager.getGroupName(column));
 
         return column;
     }
@@ -105,7 +94,7 @@ public class ColumnService {
         }
 
         //  delete group
-        Group group = userManager.getGroupById(getGroupId(column));
+        Group group = userManager.getGroupById(columnManager.getGroupId(column));
         if (userManager.getGroupMembers(group.getId()).size() != 0) {
             throw new Exception("group not empty");
         }

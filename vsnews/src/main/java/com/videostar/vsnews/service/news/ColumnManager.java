@@ -4,6 +4,7 @@ import com.videostar.vsnews.dao.ColumnDao;
 import com.videostar.vsnews.entity.news.NewsColumn;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
+import org.activiti.engine.identity.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +22,23 @@ import java.util.List;
 public class ColumnManager {
 
 //    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    public static final String GROUP_ID_PREFIX = "grp_col_";
+    public static final String GROUP_NAME_PREFIX = "栏目: ";
+
     private ColumnDao columnDao;
 
     public NewsColumn getColumn(Long id) {
 //        logger.debug("getColumn {}", id);
         return columnDao.findOne(id);
+    }
+
+    public String getGroupId(NewsColumn column) {
+        return GROUP_ID_PREFIX + column.getId().toString();
+    }
+
+    public String getGroupName(NewsColumn column) {
+        return GROUP_NAME_PREFIX + column.getName();
     }
 
     @Transactional(readOnly = false)

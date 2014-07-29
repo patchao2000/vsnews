@@ -3,6 +3,7 @@ package com.videostar.vsnews.service.news;
 import com.videostar.vsnews.constants.WorkflowNames;
 import com.videostar.vsnews.entity.news.NewsArticle;
 import com.videostar.vsnews.entity.news.NewsColumn;
+import com.videostar.vsnews.service.identify.UserManager;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -40,6 +41,9 @@ public class ArticleWorkflowService {
     private ColumnManager columnManager;
 
     @Autowired
+    private UserManager userManager;
+
+    @Autowired
     private RuntimeService runtimeService;
 
     @Autowired
@@ -50,6 +54,10 @@ public class ArticleWorkflowService {
 
     @Autowired
     private IdentityService identityService;
+
+    private Boolean isUserHaveColumnRights(String userId, NewsColumn column) {
+        return userManager.isUserInGroup(userId, columnManager.getGroupId(column));
+    }
 
     public ProcessInstance startArticleWorkflow(NewsArticle entity, Map<String, Object> variables) {
         articleManager.saveArticle(entity);
@@ -84,7 +92,21 @@ public class ArticleWorkflowService {
         // 根据当前人未签收的任务
         TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.article123).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> unsignedTasks = claimQuery.list();
+        //  过滤当前人无权访问的栏目
+        List<Task> unsignedTasks = new ArrayList<Task>();
+        for (Task task : claimQuery.list()) {
+            String processInstanceId = task.getProcessInstanceId();
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsArticle article = articleManager.getArticle(new Long(businessKey));
+            NewsColumn column = columnManager.getColumn(article.getColumnId());
+            if (isUserHaveColumnRights(userId, column)) {
+                unsignedTasks.add(task);
+            }
+        }
 
         // 合并
         tasks.addAll(todoList);
