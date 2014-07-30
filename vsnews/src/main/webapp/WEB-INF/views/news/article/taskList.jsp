@@ -7,7 +7,6 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -98,134 +97,12 @@
                     </div>
                 </div>
         </div>
-
-        <div id="class1Audit" style="display: none">
-            <%@include file="view-form.jsp" %>
-        </div>
-        <div id="class2Audit" style="display: none">
-            <%@include file="view-form.jsp" %>
-        </div>
-        <div id="class3Audit" style="display: none">
-            <%@include file="view-form.jsp" %>
-        </div>
     </section>
 </div>
 
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
-function complete(taskid, varmap) {
-    // 发送任务完成请求
-    $.ajax({
-        type: 'post',
-        async: false,
-        url: ctx + '/news/article/complete/' + taskid,
-        contentType: "application/json; charset=utf-8",
-        data : JSON.stringify(varmap),
-        success: function (resp) {
-            if (resp == 'success') {
-                alert('任务完成');
-                location.href = ctx + '/news/article/list/task'
-            } else {
-                alert('操作失败!');
-            }
-        },
-        error: function () {
-            alert('操作失败!!');
-        }
-    });
-}
-
-var handleOpts = {
-    buttons: [
-        {
-            id: 'btn-agree',
-            label: '同意',
-            cssClass: 'btn-primary',
-            action: function(dialogRef){
-                var taskId = dialogRef.getData('taskId');
-                var auditPass = dialogRef.getData('auditPass');
-                var map = {};
-                map[auditPass] = true;
-
-                complete(taskId, map);
-            }
-        },
-        {
-            id: 'btn-reject',
-            label: '驳回',
-            action: function(dialogRef){
-                var taskId = dialogRef.getData('taskId');
-                var auditPass = dialogRef.getData('auditPass');
-
-                var rejcontent = $('<div/>', {
-                    title: '填写驳回理由',
-                    html: "<div class='form-group'><textarea id='auditOpinion' class='form-control' rows='2'></textarea></div>"
-                });
-
-                var rejdialog = new BootstrapDialog({
-                    title: '填写驳回理由',
-                    message: rejcontent,
-                    data: { 'taskId': taskId },
-                    buttons: [
-                        {
-                            label: '驳回',
-                            action: function(){
-                                var auditOpinion = $('#auditOpinion').val();
-                                if (auditOpinion == '') {
-                                    alert('请输入驳回理由！');
-                                    return;
-                                }
-
-                                var map = {};
-                                map[auditPass] = false;
-                                map['auditOpinion'] = auditOpinion;
-                                complete(taskId, map);
-                            }
-                        },
-                        {
-                            label: '取消',
-                            action: function(dialogRef){
-                                dialogRef.close();
-                            }
-                        }
-                    ]
-                });
-                rejdialog.realize();
-                rejdialog.open();
-            }
-        },
-        {
-            id: 'btn-cancel',
-            label: '取消',
-            action: function(dialogRef){
-                dialogRef.close();
-            }
-        }
-    ]
-};
-
-function loadDetail(id, content) {
-    $.getJSON(ctx + '/news/article/detail/' + id, function(data) {
-        $.each(data, function(k, v) {
-            // 格式化日期
-            if (k == 'applyTime' || k == 'interviewTime') {
-                $(content).find('input[data-name=' + k + ']').val(new Date(v).format('yyyy-MM-dd hh:mm'));
-            } else if (k == 'content') {
-                $(content).find('textarea[data-name=' + k + ']').text(v);
-            } else {
-                $(content).find('input[data-name=' + k + ']').val(v);
-            }
-//            // 格式化日期
-//            if (k == 'applyTime' || k == 'interviewTime') {
-//                $(content).find('td[data-name=' + k + ']').text(new Date(v).format('yyyy-MM-dd hh:mm'));
-//            } else {
-//                $(content).find('td[data-name=' + k + ']').text(v);
-//            }
-        });
-    });
-}
-
 $(document).ready(function () {
     $('.trace').click(function() {
         var dialog = new BootstrapDialog({
@@ -259,39 +136,12 @@ $(document).ready(function () {
             location.href = ctx + '/news/article/apply?reapply=true&id='+rowId+'&taskid='+taskId;
             return;
         }
-
-        var content = $('#' + tkey).clone().attr("style", "display: block");
-        loadDetail(rowId, content);
-        var auditPass;
-        switch (tkey) {
-            case 'class1Audit':
-                auditPass = 'audit1Pass';
-                break;
-            case 'class2Audit':
-                auditPass = 'audit2Pass';
-                break;
-            case 'class3Audit':
-                auditPass = 'audit3Pass';
-                break;
-        }
-
-        if (tkey == 'class1Audit' || tkey == 'class2Audit' || tkey == 'class3Audit') {
-            location.href = ctx + '/news/article/apply?audit=true&id='+rowId+'&taskid='+taskId;
+        else if (tkey == 'class1Audit' || tkey == 'class2Audit' || tkey == 'class3Audit') {
+            location.href = ctx + '/news/article/apply?audit=true&id='+rowId+'&taskid='+taskId+'&tkey='+tkey;
             return;
         }
-        
-        alert("ERROR!");
 
-//        var dialog = new BootstrapDialog({
-//            title: '流程办理[' + tname + ']',
-//            message: content,
-//            data: { 'taskId': taskId,
-//                    'auditPass': auditPass },
-//            buttons: handleOpts.buttons
-//        });
-//        dialog.realize();
-//        dialog.open();
-
+        alert(tkey + " ERROR!");
     });
 });
 </script>

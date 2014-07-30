@@ -48,7 +48,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit2Pass}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="class3Audit" name="三级审批" activiti:candidateGroups="articleAudit3"></userTask>
-    <userTask id="usertask2" name="调整内容" activiti:assignee="${applyUserId}">
+    <userTask id="modifyForAudit3" name="调整内容" activiti:assignee="${applyUserId}">
       <extensionElements>
         <activiti:taskListener event="complete" delegateExpression="${articleAfterModifyProcessor}"></activiti:taskListener>
       </extensionElements>
@@ -56,10 +56,10 @@
     <sequenceFlow id="flow12" name="需要三级审批" sourceRef="exclusivegateway3" targetRef="class3Audit">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${needAudit3}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow13" name="三级审批未通过" sourceRef="class3Audit" targetRef="usertask2">
+    <sequenceFlow id="flow13" name="三级审批未通过" sourceRef="class3Audit" targetRef="modifyForAudit3">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!audit3Pass}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow14" sourceRef="usertask2" targetRef="class3Audit"></sequenceFlow>
+    <sequenceFlow id="flow14" sourceRef="modifyForAudit3" targetRef="class3Audit"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow15" name="不需要三级审批" sourceRef="exclusivegateway3" targetRef="endevent1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!needAudit3}]]></conditionExpression>
@@ -97,7 +97,7 @@
       <bpmndi:BPMNShape bpmnElement="class3Audit" id="BPMNShape_class3Audit">
         <omgdc:Bounds height="55.0" width="105.0" x="768.0" y="220.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+      <bpmndi:BPMNShape bpmnElement="modifyForAudit3" id="BPMNShape_modifyForAudit3">
         <omgdc:Bounds height="61.0" width="105.0" x="768.0" y="299.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">

@@ -85,6 +85,10 @@ SET @i = (SELECT id FROM NEWS_COLUMN WHERE column_name = @t);
 SET @gid = CONCAT('grp_col_', CONCAT(@i, ''));
 SET @gname = CONCAT('栏目: ', @t);
 insert into ACT_ID_GROUP values (@gid, 1, @gname, 'assignment');
+insert into ACT_ID_MEMBERSHIP values ('edta', @gid);
+insert into ACT_ID_MEMBERSHIP values ('chfa', @gid);
+insert into ACT_ID_MEMBERSHIP values ('chfb', @gid);
+insert into ACT_ID_MEMBERSHIP values ('chfc', @gid);
 
 set @t = '爸爸去哪儿';
 insert into NEWS_COLUMN values (2, 3, @t, NULL, NULL);

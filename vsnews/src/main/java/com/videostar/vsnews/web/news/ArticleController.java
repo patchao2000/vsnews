@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 //import javax.servlet.http.HttpServletRequest;
+import javax.persistence.Column;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +72,10 @@ public class ArticleController {
             return "redirect:/login?timeout=true";
         }
 
-        if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE)) {
+        if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
             redirectAttributes.addFlashAttribute("error", "您没有撰写文稿权限！");
             return "redirect:/main/welcome";
         }
@@ -179,10 +183,21 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "view/{id}")
-    public ModelAndView viewArticle(@PathVariable("id") Long id) {
+    public ModelAndView viewArticle(@PathVariable("id") Long id, HttpSession session) {
         ModelAndView mav = new ModelAndView("/news/article/view");
         NewsArticle article = articleManager.getArticle(id);
         mav.addObject("article", article);
+
+        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null || StringUtils.isBlank(user.getId())) {
+            return null;//"redirect:/login?timeout=true";
+        }
+        mav.addObject("columns", columnService.getUserColumns(user));
+
         return mav;
     }
 

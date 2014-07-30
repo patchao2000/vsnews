@@ -7,7 +7,6 @@
 --%>
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -15,6 +14,7 @@
     <%
         String paraReApply = request.getParameter("reapply");
         String paraAudit = request.getParameter("audit");
+        String paraTkey = request.getParameter("tkey");
         String ctx = request.getContextPath();
         String action = ctx + "/news/article/start";
         String htmlTitle = "编辑文稿";
@@ -177,28 +177,6 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 <script type="text/javascript">
-    function complete(taskid, varmap) {
-        // 发送任务完成请求
-        $.ajax({
-            type: 'post',
-            async: false,
-            url: ctx + '/news/article/complete/' + taskid,
-            contentType: "application/json; charset=utf-8",
-            data : JSON.stringify(varmap),
-            success: function (resp) {
-                if (resp == 'success') {
-                    alert('任务完成');
-                    location.href = ctx + '/news/article/list/task'
-                } else {
-                    alert('操作失败!');
-                }
-            },
-            error: function () {
-                alert('操作失败!!');
-            }
-        });
-    }
-
     function fillUserColumnsControl(userId) {
         $.getJSON(ctx + '/news/column/objlist/usercolumns/' + userId, function (data) {
             var columns = '';
@@ -382,7 +360,35 @@
             articlemap["cameramen"] = cams;
             articlemap["editors"] = edts;
 
-//            todo: check $("#submit-type").val() for set auditPass variable
+            <% if (auditMode) { %>
+            var opinion = $('#opinion').val();
+            if (opinion.length == 0) {
+                alert('请输入审核意见！');
+                event.preventDefault();
+                return;
+            }
+
+            var passed = false;
+            if ($("#submit-type").val() == "pass")
+                passed = true;
+
+            var tkey = "<%=paraTkey%>";
+            var auditPass;
+            switch (tkey) {
+                case 'class1Audit':
+                    articlemap["audit1Pass"] = passed;
+                    break;
+                case 'class2Audit':
+                    articlemap["audit2Pass"] = passed;
+                    break;
+                case 'class3Audit':
+                    articlemap["audit3Pass"] = passed;
+                    break;
+            }
+            articlemap["auditOpinion"] = opinion;
+            <% } %>
+
+            //  sending complete req
             $.ajax({
                 type: 'post',
                 async: false,
@@ -397,7 +403,7 @@
                         alert('操作失败!');
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                error: function () {
                     alert('操作失败!!');
                 }
             });

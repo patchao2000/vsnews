@@ -200,6 +200,18 @@ public class UserManager {
     public List<User> getGroupMembers(String groupId) {
         return identityService.createUserQuery().memberOfGroup(groupId).list();
     }
+
+//    public Map<String, String> getGroupMembersIdNameMap(String groupId) {
+//        Map<String, String> map = new HashMap<String, String>();
+//        for (User user : identityService.createUserQuery().memberOfGroup(groupId).list()) {
+//            map.put(user.getId(), user.getFirstName());
+//        }
+//        return map;
+//    }
+
+    public String getUserRightsName(int rightsId) {
+        return userRights.get(rightsId);
+    }
     
     public Boolean isUserHaveRights(User user, int rights) {
         return isUserInGroup(user.getId(), userRights.get(rights));
