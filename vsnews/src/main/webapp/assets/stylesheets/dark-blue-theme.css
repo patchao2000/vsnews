@@ -2718,7 +2718,7 @@ body {
   border-right: none; }
 
 .dataTables_wrapper {
-  overflow: hidden;
+  /*overflow: hidden;*/
   *zoom: 1; }
   .dataTables_wrapper .datatables-top, .dataTables_wrapper .datatables-bottom {
     padding: 5px; }

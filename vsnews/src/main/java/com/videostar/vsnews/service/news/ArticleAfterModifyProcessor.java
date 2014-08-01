@@ -34,19 +34,33 @@ public class ArticleAfterModifyProcessor implements TaskListener {
     @Autowired
     RuntimeService runtimeService;
 
-    /* (non-Javadoc)
-     * @see org.activiti.engine.delegate.TaskListener#notify(org.activiti.engine.delegate.DelegateTask)
-     */
     @SuppressWarnings("unchecked")
     public void notify(DelegateTask delegateTask) {
         String processInstanceId = delegateTask.getProcessInstanceId();
 
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsArticle article = articleManager.getArticle(new Long(processInstance.getBusinessKey()));
+        logger.debug("task assignee {}", delegateTask.getAssignee());
 
-        article.setMainTitle((String) delegateTask.getVariable("mainTitle"));
+        Object mainTitle = delegateTask.getVariable("mainTitle");
+        if (mainTitle != null) {
+            String orgMainTitle = (String)mainTitle;
+            if (!article.getMainTitle().equals(orgMainTitle)) {
+                logger.debug("mainTitle changed.");
+                article.setMainTitle((String) mainTitle);
+            }
+        }
+
+//        article.setContent((String) delegateTask.getVariable("content"));
+        Object content = delegateTask.getVariable("content");
+        if (content != null) {
+            if (!article.getContent().equals(content)) {
+                logger.debug("content changed.");
+                article.setContent((String) content);
+            }
+        }
+
         article.setSubTitle((String) delegateTask.getVariable("subTitle"));
-        article.setContent((String) delegateTask.getVariable("content"));
         article.setReporters((List<String>) delegateTask.getVariable("reporters"));
         article.setCameramen((List<String>) delegateTask.getVariable("cameramen"));
         article.setEditors((List<String>) delegateTask.getVariable("editors"));

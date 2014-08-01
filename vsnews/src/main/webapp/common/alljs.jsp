@@ -22,9 +22,14 @@
 <!-- / demo file [not required!] -->
 <script src="${ctx}/assets/javascripts/demo.js" type="text/javascript"></script>
 <!-- / START - page related files and scripts [optional] -->
+
 <script src="${ctx}/assets/javascripts/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="${ctx}/assets/javascripts/plugins/datatables/jquery.dataTables.columnFilter.js" type="text/javascript"></script>
 <script src="${ctx}/assets/javascripts/plugins/datatables/dataTables.overrides.js" type="text/javascript"></script>
+
+<%--<script src="${ctx}/js/common/plugins/datatables/js/jquery.dataTables.min.js" type="text/javascript"></script>--%>
+<%--<script src="${ctx}/js/common/plugins/datatables/js/dataTables.bootstrap.js" type="text/javascript"></script>--%>
+
 <%--<script src="${ctx}/assets/javascripts/plugins/flot/excanvas.js" type="text/javascript"></script>--%>
 <%--<script src="${ctx}/assets/javascripts/plugins/flot/flot.min.js" type="text/javascript"></script>--%>
 <%--<script src="${ctx}/assets/javascripts/plugins/flot/flot.resize.js" type="text/javascript"></script>--%>

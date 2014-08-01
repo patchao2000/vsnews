@@ -2697,8 +2697,9 @@ body {
   border-right: none; }
 
 .dataTables_wrapper {
-  overflow: hidden;
-  *zoom: 1; }
+  /*overflow: hidden; 不注释掉的话所有datatables无法滚动内容 */
+  *zoom: 1;
+}
   .dataTables_wrapper .datatables-top, .dataTables_wrapper .datatables-bottom {
     padding: 5px; }
   @media (max-width: 767px) {

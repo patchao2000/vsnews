@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 //import javax.servlet.http.HttpServletRequest;
 import javax.persistence.Column;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +68,20 @@ public class ArticleController {
     @Autowired
     protected IdentityService identityService;
 
+    private void addSelectOptions(Model model, User user) {
+        model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        model.addAttribute("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
+        model.addAttribute("columns", columnService.getUserColumns(user));
+    }
+    private void makeCreateArticleModel(Model model, User user, NewsArticle article) {
+        addSelectOptions(model, user);
+
+        model.addAttribute("article", article);
+        model.addAttribute("title", "创建文稿");
+        model.addAttribute("createMode", true);
+    }
+
     @RequestMapping(value = {"apply"})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
@@ -85,18 +102,27 @@ public class ArticleController {
         }
 
         NewsArticle article = new NewsArticle();
-        model.addAttribute("article", article);
-        return "/news/article/articleApply";
+        makeCreateArticleModel(model, user, article);
+        return "/news/article/view";
     }
 
     @RequestMapping(value = "start", method = RequestMethod.POST)
-    public String startArticleWorkflow(NewsArticle article, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String startArticleWorkflow(@ModelAttribute("article") @Valid NewsArticle article, BindingResult bindingResult,
+                                       Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             //  user must logged on first
             User user = UserUtil.getUserFromSession(session);
             if (user == null || StringUtils.isBlank(user.getId())) {
                 return "redirect:/login?timeout=true";
             }
+
+            if (bindingResult.hasErrors()) {
+                logger.debug("has bindingResult errors!");
+
+                makeCreateArticleModel(model, user, article);
+                return "/news/article/view";
+            }
+
             article.setUserId(user.getId());
 
             Map<String, Object> variables = new HashMap<String, Object>();
@@ -151,7 +177,7 @@ public class ArticleController {
             detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
             detail.setArticle(article);
             detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
-            detail.setPlainContent(WebUtil.htmlRemoveTag(article.getContent()));
+            detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
             list.add(detail);
         }
         mav.addObject("list", list);
@@ -175,11 +201,53 @@ public class ArticleController {
             detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
             detail.setArticle(article);
             detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
-            detail.setPlainContent(WebUtil.htmlRemoveTag(article.getContent()));
+            detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
             list.add(detail);
         }
         mav.addObject("list", list);
         return mav;
+    }
+
+    @RequestMapping(value = "audit/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String auditArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
+                               Model model, HttpSession session) {
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null || StringUtils.isBlank(user.getId())) {
+            return "redirect:/login?timeout=true";
+        }
+
+        addSelectOptions(model, user);
+
+        NewsArticle article = articleManager.getArticle(id);
+        model.addAttribute("article", article);
+        model.addAttribute("title", "审核文稿");
+        model.addAttribute("readonly", true);
+        model.addAttribute("auditMode", true);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("taskKey", taskKey);
+
+        return "/news/article/view";
+    }
+
+    @RequestMapping(value = "reapply/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String reapplyArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
+                               Model model, HttpSession session) {
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null || StringUtils.isBlank(user.getId())) {
+            return "redirect:/login?timeout=true";
+        }
+
+        addSelectOptions(model, user);
+
+        NewsArticle article = articleManager.getArticle(id);
+        model.addAttribute("article", article);
+        model.addAttribute("title", "修改文稿内容");
+        model.addAttribute("reapplyMode", true);
+        model.addAttribute("taskId", taskId);
+
+        return "/news/article/view";
     }
 
     @RequestMapping(value = "view/{id}")
@@ -197,6 +265,10 @@ public class ArticleController {
             return null;//"redirect:/login?timeout=true";
         }
         mav.addObject("columns", columnService.getUserColumns(user));
+
+        mav.addObject("title", "查看文稿");
+        mav.addObject("readonly", true);
+        mav.addObject("contentReadonly", true);
 
         return mav;
     }

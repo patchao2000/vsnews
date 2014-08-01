@@ -38,6 +38,8 @@
 <link href="${ctx}/assets/stylesheets/plugins/select2/select2.css" media="all" rel="stylesheet" type="text/css"/>
 <link href="${ctx}/assets/stylesheets/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.min.css" media="all" rel="stylesheet" type="text/css"/>
 
+<%--<link href="${ctx}/js/common/plugins/datatables/css/dataTables.bootstrap.css" media="all" rel="stylesheet" type="text/css"/>--%>
+
 <%--解决使用最新版Bootstrap 3.1.1后顶部navbar中的搜索框超出右边的bug--%>
 <%--若不用最新版，则bootstrap modal弹出后背景所有元素有抖动--%>
 <style>

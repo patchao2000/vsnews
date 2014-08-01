@@ -39,7 +39,7 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class="data-table-column-filter table table-bordered table-striped" style='margin-bottom:0;' id="tasklist">
+                                    <table class="data-table table table-bordered table-striped" style='margin-bottom:0;' id="tasklist">
                                         <thead>
                                         <tr>
                                             <th>栏目</th>
@@ -48,8 +48,8 @@
                                             <th>标题</th>
                                             <th>内容</th>
                                             <th>当前节点</th>
-                                            <th>任务创建时间</th>
-                                            <th>流程状态</th>
+                                            <%--<th>任务创建时间</th>--%>
+                                            <%--<th>流程状态</th>--%>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -72,10 +72,9 @@
                                                     <a class="trace" href='#' data-pid="${pi.id }" data-pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
                                                     <%--${task.name }--%>
                                                 </td>
-                                                <td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                <td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${detail.article.processDefinition.version }</b></td>
+                                                <%--<td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm" /></td>--%>
+                                                <%--<td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${detail.article.processDefinition.version }</b></td>--%>
                                                 <td>
-
                                                     <c:if test="${empty task.assignee }">
                                                         <a class="btn btn-success btn-xs" href="${ctx }/news/article/task/claim/${task.id}">
                                                             <i class="icon-edit"></i>签收</a>
@@ -124,8 +123,8 @@ $(document).ready(function () {
     $('.handle').click(function () {
         // 当前节点的英文名称
         var tkey = $(this).attr('data-tkey');
-        // 当前节点的中文名称
-        var tname = $(this).attr('data-tname');
+//        // 当前节点的中文名称
+//        var tname = $(this).attr('data-tname');
         // 记录ID
         var rowId = $(this).parents('tr').attr('id');
         // 任务ID
@@ -133,11 +132,13 @@ $(document).ready(function () {
 
         //  若调整申请内容
         if (tkey == 'modifyForAudit1' || tkey == 'modifyForAudit2' || tkey == 'modifyForAudit3') {
-            location.href = ctx + '/news/article/apply?reapply=true&id='+rowId+'&taskid='+taskId;
+            location.href = ctx + '/news/article/reapply/'+rowId+'/'+taskId;
+//            location.href = ctx + '/news/article/apply?reapply=true&id='+rowId+'&taskid='+taskId;
             return;
         }
         else if (tkey == 'class1Audit' || tkey == 'class2Audit' || tkey == 'class3Audit') {
-            location.href = ctx + '/news/article/apply?audit=true&id='+rowId+'&taskid='+taskId+'&tkey='+tkey;
+            location.href = ctx + '/news/article/audit/'+rowId+'/'+taskId+'/'+tkey;
+//            location.href = ctx + '/news/article/apply?audit=true&id='+rowId+'&taskid='+taskId+'&tkey='+tkey;
             return;
         }
 

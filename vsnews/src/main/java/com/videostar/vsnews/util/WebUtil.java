@@ -47,4 +47,11 @@ public class WebUtil {
         }
         return textStr;// 返回文本字符串
     }
+
+    public static String stringMaxLength(String input, int max) {
+        String result = input;
+        if (result.length() > max)
+            result = result.substring(0, max) + "...";
+        return result;
+    }
 }

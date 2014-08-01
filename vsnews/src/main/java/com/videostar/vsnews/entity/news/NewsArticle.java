@@ -1,5 +1,6 @@
 package com.videostar.vsnews.entity.news;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -7,6 +8,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -26,14 +29,16 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     private int status;
 
     //    栏目
-    @NumberFormat(style=NumberFormat.Style.NUMBER)
+    @NumberFormat(style = NumberFormat.Style.NUMBER)
     private Long columnId;
 
     //    主标题
+    @NotBlank(message = "主标题不能为空")
     private String mainTitle;
     //    副标题
     private String subTitle;
     //    内容
+    @NotBlank(message = "内容不能为空")
     private String content;
 
     //    记者
@@ -84,7 +89,7 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
         this.subTitle = subTitle;
     }
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     public String getContent() {
         return content;
     }

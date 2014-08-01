@@ -36,7 +36,7 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
+                                    <table class='data-table table table-bordered table-striped' style='margin-bottom:0;'>
                                         <thead>
                                         <tr>
                                             <th>栏目</th>
@@ -78,6 +78,10 @@
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
     $(document).ready(function () {
+//        $('#allarticles').dataTable( {
+//            "scrollX": true
+//        } );
+
         $('.viewarticle').click(function () {
             var articleId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/article/view/' + articleId;
