@@ -68,6 +68,15 @@ public class ArticleController {
     @Autowired
     protected IdentityService identityService;
 
+    private static final String redirectTimeoutString = "redirect:/login?timeout=true";
+
+    private User getCurrentUser(HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null || StringUtils.isBlank(user.getId()))
+            return null;
+        return user;
+    }
+
     private void addSelectOptions(Model model, User user) {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
@@ -84,10 +93,9 @@ public class ArticleController {
 
     @RequestMapping(value = {"apply"})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
-        }
+        User user = getCurrentUser(session);
+        if (user == null)
+            return redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
             !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
@@ -110,11 +118,9 @@ public class ArticleController {
     public String startArticleWorkflow(@ModelAttribute("article") @Valid NewsArticle article, BindingResult bindingResult,
                                        Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
-            //  user must logged on first
-            User user = UserUtil.getUserFromSession(session);
-            if (user == null || StringUtils.isBlank(user.getId())) {
-                return "redirect:/login?timeout=true";
-            }
+            User user = getCurrentUser(session);
+            if (user == null)
+                return redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -184,16 +190,20 @@ public class ArticleController {
         return mav;
     }
 
-    @RequestMapping(value = "list/running")
-    public ModelAndView runningList() {
-        ModelAndView mav = new ModelAndView("/news/article/running");
-        List<NewsArticle> list = workflowService.findRunningProcessInstances();
-        mav.addObject("list", list);
-        return mav;
-    }
+//    @RequestMapping(value = "list/running")
+//    public ModelAndView runningList() {
+//        ModelAndView mav = new ModelAndView("/news/article/running");
+//        List<NewsArticle> list = workflowService.findRunningProcessInstances();
+//        mav.addObject("list", list);
+//        return mav;
+//    }
 
     @RequestMapping(value = "list/all")
-    public ModelAndView allList() {
+    public ModelAndView allList(HttpSession session) {
+        User user = getCurrentUser(session);
+        if (user == null)
+            return new ModelAndView(redirectTimeoutString);
+
         ModelAndView mav = new ModelAndView("/news/article/allarticles");
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
         for (NewsArticle article : workflowService.getAllArticles()) {
@@ -212,10 +222,9 @@ public class ArticleController {
     public String auditArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                                Model model, HttpSession session) {
 
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
-        }
+        User user = getCurrentUser(session);
+        if (user == null)
+            return redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -234,10 +243,9 @@ public class ArticleController {
     public String reapplyArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                                Model model, HttpSession session) {
 
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
-        }
+        User user = getCurrentUser(session);
+        if (user == null)
+            return redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -260,10 +268,10 @@ public class ArticleController {
         mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
         mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
 
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId())) {
-            return null;//"redirect:/login?timeout=true";
-        }
+        User user = getCurrentUser(session);
+        if (user == null)
+            return new ModelAndView(redirectTimeoutString);
+
         mav.addObject("columns", columnService.getUserColumns(user));
 
         mav.addObject("title", "查看文稿");

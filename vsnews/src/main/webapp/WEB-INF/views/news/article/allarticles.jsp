@@ -43,7 +43,8 @@
                                             <th>申请人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
-                                            <th>内容</th>
+                                            <th>当前节点</th>
+                                            <%--<th>内容</th>--%>
                                             <th>状态</th>
                                             <th>操作</th>
                                         </tr>
@@ -52,15 +53,27 @@
                                         <%--@elvariable id="list" type="java.util.List"--%>
                                         <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.ArticleDetail"--%>
                                         <c:forEach items="${list }" var="detail">
+                                            <c:set var="task" value="${detail.article.task }"/>
+                                            <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
+                                            <c:set var="pi" value="${detail.article.processInstance }"/>
+                                            <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
                                             <tr id="${detail.article.id }">
                                                 <td>${detail.columnName }</td>
                                                 <td>${detail.userName }</td>
-                                                <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+                                                <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.article.mainTitle }</td>
-                                                <td>${detail.plainContent }</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${task != null}">
+                                                        <a class="trace" href='#' data-pid="${pi.id }" data-pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
+                                                        </c:when>
+                                                        <c:otherwise>无/已完成</c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <%--<td>${detail.plainContent }</td>--%>
                                                 <td>${detail.article.statusString }</td>
                                                 <td>
-                                                    <a class="viewarticle btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                                                    <a class="viewArticle btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -78,11 +91,24 @@
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
     $(document).ready(function () {
-//        $('#allarticles').dataTable( {
-//            "scrollX": true
-//        } );
+        $('.handle').click(function () {
+            var taskKey = $(this).attr('data-taskKey');
+            var articleId = $(this).parents('tr').attr('id');
+            var taskId = $(this).parents('tr').attr('data-tid');
+            
+            if (taskKey == 'modifyForAudit1' || taskKey == 'modifyForAudit2' || taskKey == 'modifyForAudit3') {
+                location.href = ctx + '/news/article/reapply/'+articleId+'/'+taskId;
+                return;
+            }
+            else if (taskKey == 'class1Audit' || taskKey == 'class2Audit' || taskKey == 'class3Audit') {
+                location.href = ctx + '/news/article/audit/'+articleId+'/'+taskId+'/'+taskKey;
+                return;
+            }
 
-        $('.viewarticle').click(function () {
+            alert(taskKey + " ERROR!");
+        });
+
+        $('.viewArticle').click(function () {
             var articleId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/article/view/' + articleId;
         });

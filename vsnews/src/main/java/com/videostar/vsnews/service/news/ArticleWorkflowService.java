@@ -10,7 +10,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.runtime.ProcessInstanceQuery;
+//import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
@@ -79,9 +79,7 @@ public class ArticleWorkflowService {
         return processInstance;
     }
 
-    @Transactional(readOnly = true)
-    public List<NewsArticle> findTodoTasks(String userId) {
-        List<NewsArticle> results = new ArrayList<NewsArticle>();
+    private List<Task> getTodoTasks(String userId) {
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
@@ -112,8 +110,15 @@ public class ArticleWorkflowService {
         tasks.addAll(todoList);
         tasks.addAll(unsignedTasks);
 
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsArticle> findTodoTasks(String userId) {
+        List<NewsArticle> results = new ArrayList<NewsArticle>();
+
         // 根据流程的业务ID查询实体并关联
-        for (Task task : tasks) {
+        for (Task task : getTodoTasks(userId)) {
             String processInstanceId = task.getProcessInstanceId();
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
             String businessKey = processInstance.getBusinessKey();
@@ -130,37 +135,59 @@ public class ArticleWorkflowService {
         return results;
     }
 
-    @Transactional(readOnly = true)
-    public List<NewsArticle> findRunningProcessInstances() {
-        List<NewsArticle> results = new ArrayList<NewsArticle>();
-        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.article123).active().orderByProcessInstanceId().desc();
-        List<ProcessInstance> list = query.list();
-
-        // 关联业务实体
-        for (ProcessInstance processInstance : list) {
-            String businessKey = processInstance.getBusinessKey();
-            if (businessKey == null) {
-                continue;
-            }
-            NewsArticle article = articleManager.getArticle(new Long(businessKey));
-            article.setProcessInstance(processInstance);
-            article.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-            results.add(article);
-
-            // 设置当前任务信息
-            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
-            article.setTask(tasks.get(0));
-        }
-
-        return results;
-    }
+//    @Transactional(readOnly = true)
+//    public List<NewsArticle> findRunningProcessInstances() {
+//        List<NewsArticle> results = new ArrayList<NewsArticle>();
+//        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.article123).active().orderByProcessInstanceId().desc();
+//        List<ProcessInstance> list = query.list();
+//
+//        // 关联业务实体
+//        for (ProcessInstance processInstance : list) {
+//            String businessKey = processInstance.getBusinessKey();
+//            if (businessKey == null) {
+//                continue;
+//            }
+//            NewsArticle article = articleManager.getArticle(new Long(businessKey));
+//            article.setProcessInstance(processInstance);
+//            article.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+//            results.add(article);
+//
+//            // 设置当前任务信息
+//            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
+//            article.setTask(tasks.get(0));
+//        }
+//
+//        return results;
+//    }
     
     @Transactional(readOnly = true)
     public List<NewsArticle> getAllArticles() {
         ArrayList<NewsArticle> result = new ArrayList<NewsArticle>();
+
         for (NewsArticle article : articleManager.getAllArticles()) {
             result.add(article);
         }
+
+        //  填充running task
+        List<ProcessInstance> listRunning = runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.article123).active().orderByProcessInstanceId().desc().list();
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            for (NewsArticle article : result) {
+                if (article.getId().equals(new Long(businessKey))) {
+                    List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
+                            orderByTaskCreateTime().desc().list();
+                    article.setTask(tasks.get(0));
+                    article.setProcessInstance(processInstance);
+                    article.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+                    break;
+                }
+            }
+        }
+
         return result;
     }
 
