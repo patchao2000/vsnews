@@ -24,6 +24,7 @@ import java.util.*;
 @Component
 @Transactional(readOnly = true)
 public class UserManager {
+    public static final int RIGHTS_USER             = 0;
     public static final int RIGHTS_TOPIC_WRITE      = 1;
     public static final int RIGHTS_TOPIC_AUDIT      = 2;
     public static final int RIGHTS_TOPIC_DISPATCH   = 3;
@@ -45,6 +46,7 @@ public class UserManager {
 
     public UserManager() {
         userRights = new HashMap<Integer, String>();
+        userRights.put(RIGHTS_USER, "user");
         userRights.put(RIGHTS_TOPIC_WRITE, "topicWrite");
         userRights.put(RIGHTS_TOPIC_AUDIT, "topicAudit");
         userRights.put(RIGHTS_TOPIC_DISPATCH, "topicDispatch");

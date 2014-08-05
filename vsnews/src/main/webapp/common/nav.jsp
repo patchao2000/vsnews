@@ -1,31 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     String uri = request.getRequestURI();
-    boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicRunning = false, inTopicFinished = false;
-    boolean inArticle = false, inArticleEdit = false, inArticleList = false;
-//    , inArticleRunning = false
+    boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false;
+    boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inGroupManage = false, inColumnManage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
-    if (uri.contains("/news/article"))
-        inArticle = true;
-    if (uri.contains("topicApply"))
+    if (uri.contains("/topic/view"))
         inTopicApply = true;
     if (uri.contains("/topic/taskList"))
         inTopicList = true;
-    if (uri.contains("/topic/running"))
-        inTopicRunning = true;
     if (uri.contains("/topic/alltopics"))
         inTopicFinished = true;
-    if (uri.contains("articleEdit"))
+
+    if (uri.contains("/news/article"))
+        inArticle = true;
+    if (uri.contains("/article/view"))
         inArticleEdit = true;
     if (uri.contains("/article/taskList"))
         inArticleList = true;
-//    if (uri.contains("/article/running"))
-//        inArticleRunning = true;
+    if (uri.contains("/article/allarticles"))
+        inArticleAll = true;
+
     if (uri.contains("/main/welcome"))
         inWelcome = true;
+
     if (uri.contains("/user") || uri.contains("/news/column"))
         inManage = true;
     if (uri.contains("/list/user"))
@@ -72,12 +72,12 @@
                             <span>待办任务</span>
                         </a>
                     </li>
-                    <li class='<%=inTopicRunning?"active":""%>'>
-                        <a href='${ctx}/news/topic/list/running'>
-                            <i class='icon-caret-right'></i>
-                            <span>运行中任务</span>
-                        </a>
-                    </li>
+                    <%--<li class='<%=inTopicRunning?"active":""%>'>--%>
+                        <%--<a href='${ctx}/news/topic/list/running'>--%>
+                            <%--<i class='icon-caret-right'></i>--%>
+                            <%--<span>运行中任务</span>--%>
+                        <%--</a>--%>
+                    <%--</li>--%>
                     <li class='<%=inTopicFinished?"active":""%>'>
                         <a href='${ctx}/news/topic/list/all'>
                             <i class='icon-caret-right'></i>
@@ -110,7 +110,7 @@
                             <%--<span>运行中任务</span>--%>
                         <%--</a>--%>
                     <%--</li>--%>
-                    <li class=''>
+                    <li class='<%=inArticleAll?"active":""%>'>
                         <a href='${ctx}/news/article/list/all'>
                             <i class='icon-caret-right'></i>
                             <span>所有文稿</span>

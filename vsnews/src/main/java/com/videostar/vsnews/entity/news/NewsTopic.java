@@ -1,5 +1,6 @@
 package com.videostar.vsnews.entity.news;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -26,8 +27,10 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     private int status;
 
     //    标题
+    @NotBlank(message = "标题不能为空")
     private String title;
     //    内容
+    @NotBlank(message = "内容不能为空")
     private String content;
 
     //    记者

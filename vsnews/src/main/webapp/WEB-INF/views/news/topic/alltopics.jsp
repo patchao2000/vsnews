@@ -37,29 +37,33 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
+                                    <table class='data-table table table-bordered table-striped' style='margin-bottom:0;'>
                                         <thead>
                                         <tr>
                                             <th>申请人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
-                                            <th>内容</th>
-                                            <th>设备</th>
+                                            <%--<th>内容</th>--%>
+                                            <%--<th>设备</th>--%>
+                                            <th>当前节点</th>
                                             <th>状态</th>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
-                                        <c:forEach items="${list }" var="topic">
-                                            <tr id="${topic.id }">
-                                                <td>${topic.userId }</td>
-                                                <td><fmt:formatDate value="${topic.applyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-                                                <td>${topic.title }</td>
-                                                <td>${topic.content }</td>
-                                                <td>${topic.devices }</td>
-                                                <td>${topic.statusString }</td>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicDetail"--%>
+                                        <c:forEach items="${list }" var="detail">
+                                            <tr id="${detail.topic.id }">
+                                                <c:set var="task" value="${detail.topic.task }"/>
+                                                <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
+                                                <td>${detail.userName }</td>
+                                                <td><fmt:formatDate value="${detail.topic.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                                <td>${detail.topic.title }</td>
+                                                <%--<td>${topic.content }</td>--%>
+                                                <%--<td>${topic.devices }</td>--%>
+                                                <td>${task.name }</td>
+                                                <td>${detail.topic.statusString }</td>
                                                 <td>
                                                     <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                 </td>

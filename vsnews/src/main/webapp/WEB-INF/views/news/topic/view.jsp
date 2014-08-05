@@ -1,4 +1,4 @@
-<%@ page import="org.activiti.engine.identity.Group" %>
+<%--<%@ page import="org.activiti.engine.identity.Group" %>--%>
 <%--
   Created by IntelliJ IDEA.
   User: patchao2000
@@ -9,23 +9,33 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
+<%--@elvariable id="title" type="java.lang.String"--%>
+<%--@elvariable id="reporters" type="java.util.List"--%>
+<%--@elvariable id="cameramen" type="java.util.List"--%>
+<%--@elvariable id="others" type="java.util.List"--%>
+<%--@elvariable id="readonly" type="java.lang.Boolean"--%>
+<%--@elvariable id="createMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="auditMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="auditDeviceMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="modifyDeviceOnly" type="java.lang.Boolean"--%>
+<%--@elvariable id="dispatch" type="java.lang.Boolean"--%>
+<%--@elvariable id="dispatchers" type="java.util.List"--%>
+<%--@elvariable id="taskId" type="java.lang.String"--%>
+<%--@elvariable id="createArticle" type="java.lang.Boolean"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
     <%@ include file="/common/meta.jsp" %>
-    <%
-        String ctx = request.getContextPath();
-        Boolean canDispatch = false;
-        List<Group> groupList = (List<Group>) session.getAttribute("groups");
-        for (Group group : groupList) {
-            if (group.getId().equals("topicDispatch")) {
-                canDispatch = true;
-                break;
-            }
-        }
-    %>
-    <title>查看选题内容</title>
+    <title>${title}</title>
     <%@ include file="/common/allcss.jsp" %>
+    <style>
+        .help-block { color: #ff0000; }
+    </style>
+    <c:set var="action" value="#" />
+    <c:if test="${createMode == true}">
+        <c:set var="action" value="${ctx}/news/topic/start"/>
+    </c:if>
 </head>
 
 <body class='${defbodyclass}'>
@@ -43,7 +53,7 @@
                         <div class='box-header blue-background'>
                             <div class='title'>
                                 <div class='icon-edit'></div>
-                                查看选题内容
+                                ${title}
                             </div>
                             <div class='actions'>
                                 <a class="btn box-collapse btn-xs btn-link" href="#"><i></i>
@@ -51,139 +61,153 @@
                             </div>
                         </div>
                         <div class='box-content'>
-                            <form id="inputForm"
-                                    <% if (canDispatch) { %>
-                                  action="${ctx}/news/topic/dispatch/${topic.id}/edta"
-                                    <% } else { %>
-                                  action="#"
-                                    <% } %>
-                                  class="form form-horizontal"
+                            <form:form modelAttribute="topic" id="inputForm" action="${action}" class="form form-horizontal"
                                   style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
-                                <input name="authenticity_token" type="hidden"/>
+
+                                <c:if test="${reapplyMode == true && modifyDeviceOnly != true}">
+                                <div class='form-group has-error'>
+                                    <label class='col-md-2 control-label' for='leaderbackreason'>审核意见：</label>
+                                    <div class='col-md-10'>
+                                        <input class='form-control' id='leaderbackreason' name='leaderbackreason' type='text' readonly="readonly">
+                                    </div>
+                                </div>
+                                </c:if>
+                                <c:if test="${reapplyMode == true && modifyDeviceOnly == true}">
+                                <div class='form-group has-error' id="devicebackblock">
+                                    <label class='col-md-2 control-label' for='devicebackreason'>设备部门意见：</label>
+                                    <div class='col-md-10'>
+                                        <input class='form-control' id='devicebackreason' name='devicebackreason' type='text' readonly="readonly">
+                                    </div>
+                                </div>
+                                </c:if>
 
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='title'>标题：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_title'>标题：</label>
                                     <div class='col-md-10'>
-                                        <input class='form-control' id='title' name='title'
-                                               type='text' value="${topic.title }" readonly="readonly">
+                                        <form:input class='form-control' id='topic_title' path='title' type='text' readonly="${readonly}" />
+                                        <form:errors path="title" cssClass="help-block" />
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='reporters'>记者：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_reporters'>记者：</label>
                                     <div class='col-md-10'>
-                                        <select class='select2 form-control' multiple disabled="disabled"
-                                                id="reporters_sel">
-                                        </select>
-                                        <input type='hidden' id='reporters' name='reporters' value=''>
+                                        <form:select class='select2 form-control' id="topic_reporters" multiple="true" path="reporters">
+                                            <form:options items="${reporters}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='cameramen'>摄像员：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_cameramen'>摄像员：</label>
                                     <div class='col-md-10'>
-                                        <select class='select2 form-control' multiple disabled="disabled"
-                                                id="cameramen_sel">
-                                        </select>
-                                        <input type='hidden' id='cameramen' name='cameramen' value=''>
+                                        <form:select class='select2 form-control' id="topic_cameramen" multiple="true" path="cameramen">
+                                            <form:options items="${cameramen}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='others'>其他人员：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_others'>其他人员：</label>
                                     <div class='col-md-10'>
-                                        <select class='select2 form-control' multiple disabled="disabled"
-                                                id="others_sel">
-                                        </select>
-                                        <input type='hidden' id='others' name='others' value=''>
+                                        <form:select class='select2 form-control' id="topic_others" multiple="true" path="others">
+                                            <form:options items="${others}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='interviewTime'>采访时间：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_interviewTime'>采访时间：</label>
                                     <div class='col-md-4'>
                                         <div class='datetimepicker input-group'>
-                                            <fmt:formatDate value="${topic.interviewTime}"
-                                                            type="date"
-                                                            pattern="yyyy-MM-dd HH:mm"
-                                                            var="f_interviewTime"/>
-                                            <input class='form-control' id='interviewTime' name='interviewTime'
-                                                   type='text' value="${f_interviewTime}" readonly="readonly">
+                                            <form:input class='form-control' id='topic_interviewTime' path='interviewTime' type='text' readonly="${readonly}" />
                                             <span class='input-group-addon'>
-                                            <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
+                                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
                                             </span>
                                         </div>
                                     </div>
 
-                                    <label class='col-md-2 control-label' for='location'>采访地点：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_location'>采访地点：</label>
                                     <div class='col-md-4'>
-                                        <input class='form-control' id='location' name='location' type='text'
-                                               value="${topic.location }" readonly="readonly">
+                                        <form:input class='form-control' id='topic_location' path='location' type='text' readonly="${readonly}" />
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='startTime'>出发时间：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_startTime'>出发时间：</label>
                                     <div class='col-md-4'>
                                         <div class='datetimepicker input-group'>
-                                            <fmt:formatDate value="${topic.startTime}"
-                                                            type="date"
-                                                            pattern="yyyy-MM-dd HH:mm"
-                                                            var="f_startTime"/>
-                                            <input class='form-control' id='startTime' name='startTime'
-                                                   type='text' value="${f_startTime}" readonly="readonly">
-                                <span class='input-group-addon'>
-                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
-                                </span>
+                                            <form:input class='form-control' id='topic_startTime' path='startTime' type='text' readonly="${readonly}" />
+                                            <span class='input-group-addon'>
+                                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
+                                            </span>
                                         </div>
                                     </div>
-                                    <label class='col-md-2 control-label' for='endTime'>返回时间：</label>
 
+                                    <label class='col-md-2 control-label' for='topic_endTime'>返回时间：</label>
                                     <div class='col-md-4'>
                                         <div class='datetimepicker input-group'>
-                                            <fmt:formatDate value="${topic.endTime}"
-                                                            type="date"
-                                                            pattern="yyyy-MM-dd HH:mm"
-                                                            var="f_endTime"/>
-                                            <input class='form-control' id='endTime' name='endTime'
-                                                   type='text' value="${f_endTime}" readonly="readonly">
-                                <span class='input-group-addon'>
-                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
-                                </span>
+                                            <form:input class='form-control' id='topic_endTime' path='endTime' type='text' readonly="${readonly}" />
+                                            <span class='input-group-addon'>
+                                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='content1'>内容：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_content'>内容：</label>
                                     <div class='col-md-10'>
-                                        <textarea class='form-control' id='content1' name='content'
-                                                  rows='5' readonly="readonly">${topic.content }</textarea>
+                                        <form:textarea class='form-control' id='topic_content' path='content' readonly="${readonly}" rows='5' />
+                                        <form:errors path="content" cssClass="help-block" />
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='devices'>所需设备/车辆：</label>
-
+                                    <label class='col-md-2 control-label' for='topic_devices'>所需设备/车辆：</label>
                                     <div class='col-md-10'>
-                                        <textarea class='form-control' id='devices' name='devices'
-                                                  rows='3' readonly="readonly">${topic.devices }</textarea>
+                                        <c:set var="devreadonly" value="${readonly}" />
+                                        <c:if test="${modifyDeviceOnly == true}">
+                                            <c:set var="devreadonly" value="false" />
+                                        </c:if>
+                                        <form:textarea class='form-control' id='topic_devices' path='devices' readonly="${devreadonly}" rows='3' />
                                     </div>
                                 </div>
-                                <% if (canDispatch) { %>
-                                <c:if test="${topic.status eq 1}">
-                                    <div class='form-actions form-actions-padding-sm'>
-                                        <div class='row'>
-                                            <div class='col-md-10 col-md-offset-2'>
-                                                <button class='btn btn-info' type='submit'><i class='icon-save'></i> 派遣
-                                                </button>
-                                            </div>
-                                        </div>
+                                <c:if test="${dispatch == true}">
+                                <%--@elvariable id="dispatcher" type="org.activiti.engine.identity.User"--%>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='dispatcher_sel'>派遣对象：</label>
+                                    <div class='col-md-10'>
+                                        <select class='select2 form-control' id="dispatcher_sel">
+                                            <c:forEach items="${dispatchers }" var="dispatcher">
+                                                <option value="${dispatcher.id }">${dispatcher.firstName }</option>
+                                            </c:forEach>
+                                        </select>
                                     </div>
+                                </div>
                                 </c:if>
-                                <% } %>
-                            </form>
+                                <c:if test="${auditMode == true || auditDeviceMode == true}">
+                                    <div class='form-group'>
+                                        <label class='col-md-2 control-label' for='opinion'>审核意见：</label>
+                                        <div class='col-md-10'>
+                                            <input class='form-control' id='opinion' name='opinion' placeholder='审核意见' type='text'>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="submit_type" value="" id="submit-type"/>
+                                </c:if>
+                                <div class='form-actions form-actions-padding-sm'>
+                                    <div class='row'>
+                                        <div class='col-md-10 col-md-offset-2'>
+                                            <c:if test="${createMode == true || reapplyMode == true}">
+                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>提交</button>
+                                            </c:if>
+                                            <c:if test="${dispatch == true}">
+                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>派遣</button>
+                                            </c:if>
+                                            <c:if test="${auditMode == true || auditDeviceMode == true}">
+                                                <button class='btn btn-primary' type='submit' id="auditPass"><i class='icon-ok'></i>同意</button>
+                                                <button class='btn btn-danger' type='submit' id="auditReject"><i class='icon-remove'></i>驳回</button>
+                                            </c:if>
+                                            <c:if test="${createArticle == true}">
+                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>创建文稿</button>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form:form>
                         </div>
                     </div>
                 </div>
@@ -192,54 +216,152 @@
     </section>
 </div>
 <%@ include file="/common/alljs.jsp" %>
-<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    function fillSelectControlWithGroup(controlId, groupId) {
-        $.getJSON(ctx + '/user/objlist/groupmembers/' + groupId, function (data) {
-            var users = '';
-            var template = "<option value='#id'>#name</option>";
-            $.each(data, function (dk, dv) {
-                var curr = template;
-                $.each(dv, function (k, v) {
-                    if (k == 'userId') {
-                        curr = curr.replace(/#id/g, v);
-                    }
-                    else if (k == 'firstName') {
-                        curr = curr.replace(/#name/g, v);
-                    }
-                });
-                users += curr;
-            });
-            $('#' + controlId).html(users);
-        });
-    }
 
-    function loadDetail(topicId) {
-        $.getJSON(ctx + '/news/topic/detail/' + topicId, function (data) {
-            $.each(data, function (k, v) {
-                if (k == "reporters")
-                    $('#reporters_sel').select2().select2('val', v);
-                else if (k == "cameramen")
-                    $('#cameramen_sel').select2().select2('val', v);
-                else if (k == "others")
-                    $('#others_sel').select2().select2('val', v);
-            });
-        });
-    }
+    <c:if test="${auditMode == true || auditDeviceMode == true}">
+    $("#auditPass").live("click",function(){
+        $("#submit-type").val("pass");
+    });
+
+    $("#auditReject").live("click",function(){
+        $("#submit-type").val("reject");
+    });
+    </c:if>
 
     $(function () {
-        $.ajaxSettings.async = false;
+        //  set readonly states of select2 controls
+        <c:if test="${readonly == true}">
+        $("#article_reporters").select2("readonly", true);
+        $("#article_cameramen").select2("readonly", true);
+        $("#article_others").select2("readonly", true);
+        </c:if>
 
-        fillSelectControlWithGroup('reporters_sel', 'reporter');
-        fillSelectControlWithGroup('cameramen_sel', 'cameraman');
-        fillSelectControlWithGroup('others_sel', 'stuff');
+        <c:if test="${dispatch == true}">
+        </c:if>
 
-        loadDetail(${topic.id});
+        <c:if test="${reapplyMode == true}">
+        $.getJSON(ctx + '/news/topic/detail-with-vars/${topic.id}/${taskId}', function(data) {
+            $("#leaderbackreason").val(data.variables.leaderbackreason);
+            $("#devicebackreason").val(data.variables.devicebackreason);
+            if (data.variables.devicebackreason == undefined)
+                $("#devicebackblock").hide();
+        });
+        </c:if>
 
-        $.ajaxSettings.async = true;
+        $("#inputForm").submit(function (event) {
+            var map = {};
 
+            <c:if test="${dispatch == true}">
+            $.ajax({
+                type: 'post',
+                async: true,
+                url: ctx + '/news/topic/dispatch/' + ${topic.id} + '/' + $("#dispatcher_sel").find(":selected").val(),
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify(map),
+                success: function (resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/news/topic/list/task'
+                    } else {
+                        alert('操作失败!');
+                    }
+                },
+                error: function () {
+                    alert('操作失败!!');
+                }
+            });
+            event.preventDefault();
+//            return;
+            </c:if>
+
+            <c:if test="${createArticle == true}">
+            location.href = ctx + '/news/article/apply-topic/' + ${topic.id};
+            event.preventDefault();
+            </c:if>
+
+            //  audit mode
+            <c:if test="${auditMode == true || auditDeviceMode == true}">
+            var opinion = $('#opinion').val();
+            if (opinion.length == 0) {
+                alert('请输入审核意见！');
+                event.preventDefault();
+                return;
+            }
+            var passed = false;
+            if ($("#submit-type").val() == "pass")
+                passed = true;
+            <c:if test="${auditMode == true}">
+            map["leaderPass"] = passed;
+            map["leaderbackreason"] = opinion;
+            </c:if>
+            <c:if test="${auditDeviceMode == true}">
+            map["devicePass"] = passed;
+            map["devicebackreason"] = opinion;
+            </c:if>
+            </c:if>
+
+            //  reapply mode, all changes must send as variable map
+            <c:if test="${reapplyMode == true}">
+            map["title"] = $('#topic_title').val();
+            map["content"] = $('#topic_content').val();
+            map["devices"] = $('#topic_devices').val();
+            map["location"] = $('#topic_location').val();
+            map["interviewTime"] = $('#topic_interviewTime').val();
+            map["startTime"] = $('#topic_startTime').val();
+            map["endTime"] = $('#topic_endTime').val();
+
+            var reps = [];
+            var cams = [];
+            var edts = [];
+            var i = 0;
+            $.each(
+                    $('#topic_reporters' + ' :selected'), function () {
+                        reps[i++] = $(this).val();
+                    }
+            );
+            i = 0;
+            $.each(
+                    $('#topic_cameramen' + ' :selected'), function () {
+                        cams[i++] = $(this).val();
+                    }
+            );
+            i = 0;
+            $.each(
+                    $('#topic_others' + ' :selected'), function () {
+                        edts[i++] = $(this).val();
+                    }
+            );
+            map["reporters"] = reps;
+            map["cameramen"] = cams;
+            map["others"] = edts;
+            </c:if>
+
+            <c:if test="${auditMode == true || auditDeviceMode == true || reapplyMode == true}">
+            //  sending complete req
+            $.ajax({
+                type: 'post',
+                async: true,
+                url: ctx + '/news/topic/complete/' + ${taskId},
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify(map),
+                success: function (resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/news/topic/list/task'
+                    } else {
+                        alert('操作失败!');
+                    }
+                },
+                error: function () {
+                    alert('操作失败!!');
+                }
+            });
+            event.preventDefault();
+            </c:if>
+        });
     });
+
 </script>
 
 </body>

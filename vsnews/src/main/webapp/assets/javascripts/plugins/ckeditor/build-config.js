@@ -62,7 +62,7 @@ var CKBUILDER_CONFIG = {
 		'liststyle' : 1,
 		'magicline' : 1,
 		'maximize' : 1,
-		'newpage' : 1,
+        'newpage' : 1,
 		'pagebreak' : 1,
 		'pastetext' : 1,
 		'pastefromword' : 1,

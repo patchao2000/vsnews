@@ -27,9 +27,7 @@
     <title>${title}</title>
     <%@ include file="/common/allcss.jsp" %>
     <style>
-        .help-block {
-            color: #ff0000;
-        }
+        .help-block { color: #ff0000; }
     </style>
     <c:if test="${createMode == true}">
         <c:set var="action" value="${ctx}/news/article/start"/>
@@ -74,15 +72,15 @@
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='article_subTitle'>副标题：</label>
-                                    <div class='col-md-4'>
-                                        <form:input class='form-control' id='article_subTitle' path='subTitle' type='text' readonly="${readonly}" />
-                                    </div>
                                     <label class='col-md-2 control-label' for='article_columnId'>栏目：</label>
                                     <div class='col-md-4'>
                                         <form:select class='select2 form-control' id="article_columnId" path="columnId">
                                             <form:options items="${columns}" itemValue="id" itemLabel="name" />
                                         </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='article_subTitle'>副标题：</label>
+                                    <div class='col-md-4'>
+                                        <form:input class='form-control' id='article_subTitle' path='subTitle' type='text' readonly="${readonly}" />
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -141,10 +139,56 @@
                                 </div>
 
                                 <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='article_sourcers'>快捷方式：</label>
+                                    <div class='col-md-10'>
+                                        <input class="btn btn-default shortcut" id="sc_content" style="margin-bottom:5px" value="正文" type="button" />
+                                        <input class="btn btn-default shortcut" id="sc_cg" style="margin-bottom:5px" value="CG" type="button" />
+                                        <input class="btn btn-default shortcut" id="sc_interview" style="margin-bottom:5px" value="采访" type="button" />
+                                        <input class="btn btn-default shortcut" id="sc_sync" style="margin-bottom:5px" value="同期" type="button" />
+                                        <input class="btn btn-default shortcut" id="sc_shot" style="margin-bottom:5px" value="空镜" type="button" />
+                                        <input class="btn btn-default shortcut" id="sc_scene" style="margin-bottom:5px" value="现场" type="button" />
+                                    </div>
+                                </div>
+
+                                <div class='form-group'>
                                     <label class='col-md-2 control-label' for='article_content'>内容：</label>
                                     <div class='col-md-10'>
                                         <form:textarea class='form-control ckeditor' id='article_content' path='content' readonly="${contentReadonly}" rows='7' />
                                         <form:errors path="content" cssClass="help-block" />
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='content_time'>时长：</label>
+                                    <div class='col-md-10'>
+                                        <input class='form-control' id='content_time' readonly="readonly" type='text' rows="1" />
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label'>拟报单位：</label>
+                                    <div class='col-md-10'>
+                                        <label class='checkbox-inline' for='article_prepareSendProvTV'>
+                                            <form:checkbox id='article_prepareSendProvTV' path='prepareSendProvTV' value='' />拟报省台
+                                        </label>
+                                        <label class='checkbox-inline' for='article_prepareSendCCTV'>
+                                            <form:checkbox id='article_prepareSendCCTV' path='prepareSendCCTV' value='' />拟报央台
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label'>报送单位：</label>
+                                    <div class='col-md-10'>
+                                        <label class='checkbox-inline' for='article_sentToProvTV'>
+                                            <form:checkbox id='article_sentToProvTV' path='sentToProvTV' value='' />报送省台
+                                        </label>
+                                        <label class='checkbox-inline' for='article_sentToCCTV'>
+                                            <form:checkbox id='article_sentToCCTV' path='sentToCCTV' value='' />报送央台
+                                        </label>
+                                        <label class='checkbox-inline' for='article_adoptedByProvTV'>
+                                            <form:checkbox id='article_adoptedByProvTV' path='adoptedByProvTV' value='' />省台采用
+                                        </label>
+                                        <label class='checkbox-inline' for='article_adoptedByCCTV'>
+                                            <form:checkbox id='article_adoptedByCCTV' path='adoptedByCCTV' value='' />央台采用
+                                        </label>
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -197,7 +241,19 @@
             CKEDITOR.instances[instance].updateElement();
     }
 
-    <c:if test="${auditMode eq true}">
+    function removeHTMLTag(str) {
+        str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+        str = str.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+        str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+        str = str.replace(/&nbsp;/ig,'');   //去掉&nbsp;
+        str = str.replace(/\s/g, '');   //去掉所有空格
+        str = str.replace(/[\ |\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\-|\_|\+|\=|\||\\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?]/g, '');
+        //         。 ；  ， ： “ ”（ ） 、 ？ 《 》
+        str = str.replace(/[\u3002\uff1b\uff0c\uff1a\u201c\u201d\uff08\uff09\u3001\uff1f\u300a\u300b]/g, '');
+        return str;
+    }
+
+    <c:if test="${auditMode == true}">
     $("#auditPass").live("click",function(){
         $("#submit-type").val("pass");
     });
@@ -207,7 +263,48 @@
     });
     </c:if>
 
+    <c:if test="${auditMode == true || createMode == true}">
+    $(".shortcut").live("click",function(){
+        var tag = "";
+        switch ($(this).attr('id')) {
+            case "sc_content":
+                tag = "【正文】";
+                break;
+            case "sc_cg":
+                tag = "【CG】";
+                break;
+            case "sc_interview":
+                tag = "【采访】";
+                break;
+            case "sc_sync":
+                tag = "【同期】";
+                break;
+            case "sc_shot":
+                tag = "【空镜】";
+                break;
+            case "sc_scene":
+                tag = "【现场】";
+                break;
+        }
+        var instance;
+        for (instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].insertHtml("<span style='color:#FF0000'>"+tag+"</span> ");
+        }
+    });
+    </c:if>
+
+    function checkContentLength(){
+        ckupdate();
+        var c = $('#article_content').val();
+        c = removeHTMLTag(c);
+        var chars = c.length;
+        var seconds = chars * 60 / 200;
+        $("#content_time").val("总字数："+chars+",   总时长："+seconds+"秒");
+    }
+
     $(function () {
+        setInterval(checkContentLength, 500);   // 检查ckeditor定时器
+
         var column_sel = $("#article_columnId");
         column_sel.select2({minimumResultsForSearch: -1});
 
@@ -226,10 +323,6 @@
         <c:if test="${reapplyMode == true}">
         $.getJSON(ctx + '/news/article/detail-with-vars/${article.id}/${taskId}', function(data) {
             $("#auditOpinion").val(data.variables.auditOpinion);
-//            $.each(data, function (k, v) {
-//                if (k == "auditOpinion")
-//                    $("#auditOpinion").val(v);
-//            });
         });
         </c:if>
 

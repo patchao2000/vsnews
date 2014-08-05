@@ -1,12 +1,11 @@
 package com.videostar.vsnews.service.news;
 
-//import com.videostar.vsnews.dao.ActivitiDao;
 import org.activiti.engine.*;
-import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.history.HistoricProcessInstanceQuery;
+//import org.activiti.engine.history.HistoricProcessInstance;
+//import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.runtime.ProcessInstanceQuery;
+//import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.videostar.vsnews.entity.news.NewsTopic;
-import com.videostar.vsnews.util.Page;
+//import com.videostar.vsnews.util.Page;
 import com.videostar.vsnews.constants.WorkflowNames;
 
 /**
@@ -91,26 +90,24 @@ public class TopicWorkflowService {
         return processInstance;
     }
 
-    @Transactional(readOnly = true)
-    public List<NewsTopic> findTodoTasks(String userId, Page<NewsTopic> page, int[] pageParams) {
-        List<NewsTopic> results = new ArrayList<NewsTopic>();
+    private List<Task> getTodoTasks(String userId) {
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
         TaskQuery todoQueryWrite = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskAssignee(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> todoListWrite = todoQueryWrite.listPage(pageParams[0], pageParams[1]);
+        List<Task> todoListWrite = todoQueryWrite.list();
         TaskQuery todoQueryDispatch = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicDispatch).taskAssignee(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> todoListDispatch = todoQueryDispatch.listPage(pageParams[0], pageParams[1]);
+        List<Task> todoListDispatch = todoQueryDispatch.list();
 
         // 根据当前人未签收的任务
         TaskQuery claimQueryWrite = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicWrite).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> unsignedTasksWrite = claimQueryWrite.listPage(pageParams[0], pageParams[1]);
+        List<Task> unsignedTasksWrite = claimQueryWrite.list();
         TaskQuery claimQueryDispatch = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicDispatch).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
-        List<Task> unsignedTasksDispatch = claimQueryDispatch.listPage(pageParams[0], pageParams[1]);
+        List<Task> unsignedTasksDispatch = claimQueryDispatch.list();
 
         // 合并
         tasks.addAll(todoListWrite);
@@ -118,8 +115,15 @@ public class TopicWorkflowService {
         tasks.addAll(unsignedTasksWrite);
         tasks.addAll(unsignedTasksDispatch);
 
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsTopic> findTodoTasks(String userId) {
+        List<NewsTopic> results = new ArrayList<NewsTopic>();
+
         // 根据流程的业务ID查询实体并关联
-        for (Task task : tasks) {
+        for (Task task : getTodoTasks(userId)) {
             String processInstanceId = task.getProcessInstanceId();
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
             String businessKey = processInstance.getBusinessKey();
@@ -133,56 +137,59 @@ public class TopicWorkflowService {
             results.add(topic);
         }
 
-        page.setTotalCount(todoQueryWrite.count() + claimQueryWrite.count() + todoQueryDispatch.count() + claimQueryDispatch.count());
-        page.setResult(results);
         return results;
     }
 
     @Transactional(readOnly = true)
-    public List<NewsTopic> findRunningProcessInstaces(Page<NewsTopic> page, int[] pageParams) {
-        List<NewsTopic> results = new ArrayList<NewsTopic>();
-        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc();
-        List<ProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
-
-        // 关联业务实体
-        for (ProcessInstance processInstance : list) {
-            String businessKey = processInstance.getBusinessKey();
-            if (businessKey == null) {
-                continue;
-            }
-            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
-            topic.setProcessInstance(processInstance);
-            topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-            results.add(topic);
-
-            // 设置当前任务信息
-            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
-            topic.setTask(tasks.get(0));
-        }
-
-        page.setTotalCount(query.count());
-        page.setResult(results);
-        return results;
+    public int getTodoTasksCount(String userId) {
+        return getTodoTasks(userId).size();
     }
+
+//    @Transactional(readOnly = true)
+//    public List<NewsTopic> findRunningProcessInstaces(Page<NewsTopic> page, int[] pageParams) {
+//        List<NewsTopic> results = new ArrayList<NewsTopic>();
+//        ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc();
+//        List<ProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
+//
+//        // 关联业务实体
+//        for (ProcessInstance processInstance : list) {
+//            String businessKey = processInstance.getBusinessKey();
+//            if (businessKey == null) {
+//                continue;
+//            }
+//            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
+//            topic.setProcessInstance(processInstance);
+//            topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+//            results.add(topic);
+//
+//            // 设置当前任务信息
+//            List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().orderByTaskCreateTime().desc().listPage(0, 1);
+//            topic.setTask(tasks.get(0));
+//        }
+//
+//        page.setTotalCount(query.count());
+//        page.setResult(results);
+//        return results;
+//    }
     
-    @Transactional(readOnly = true)
-    public List<NewsTopic> findFinishedProcessInstaces(Page<NewsTopic> page, int[] pageParams) {
-        List<NewsTopic> results = new ArrayList<NewsTopic>();
-        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).finished().orderByProcessInstanceEndTime().desc();
-        List<HistoricProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
-
-        // 关联业务实体
-        for (HistoricProcessInstance historicProcessInstance : list) {
-            String businessKey = historicProcessInstance.getBusinessKey();
-            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
-            topic.setProcessDefinition(getProcessDefinition(historicProcessInstance.getProcessDefinitionId()));
-            topic.setHistoricProcessInstance(historicProcessInstance);
-            results.add(topic);
-        }
-        page.setTotalCount(query.count());
-        page.setResult(results);
-        return results;
-    }
+//    @Transactional(readOnly = true)
+//    public List<NewsTopic> findFinishedProcessInstaces(Page<NewsTopic> page, int[] pageParams) {
+//        List<NewsTopic> results = new ArrayList<NewsTopic>();
+//        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(WorkflowNames.topicWrite).finished().orderByProcessInstanceEndTime().desc();
+//        List<HistoricProcessInstance> list = query.listPage(pageParams[0], pageParams[1]);
+//
+//        // 关联业务实体
+//        for (HistoricProcessInstance historicProcessInstance : list) {
+//            String businessKey = historicProcessInstance.getBusinessKey();
+//            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
+//            topic.setProcessDefinition(getProcessDefinition(historicProcessInstance.getProcessDefinitionId()));
+//            topic.setHistoricProcessInstance(historicProcessInstance);
+//            results.add(topic);
+//        }
+//        page.setTotalCount(query.count());
+//        page.setResult(results);
+//        return results;
+//    }
 
 //    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
@@ -190,6 +197,29 @@ public class TopicWorkflowService {
         ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
         for (NewsTopic topic : topicManager.getAllTopics()) {
             result.add(topic);
+        }
+        
+        //  填充running task
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+            processDefinitionKey(WorkflowNames.topicWrite).active().orderByProcessInstanceId().desc().list());
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+            processDefinitionKey(WorkflowNames.topicDispatch).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            for (NewsTopic topic : result) {
+                if (topic.getId().equals(new Long(businessKey))) {
+                    List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
+                            orderByTaskCreateTime().desc().list();
+                    topic.setTask(tasks.get(0));
+                    topic.setProcessInstance(processInstance);
+                    topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+                    break;
+                }
+            }
         }
         return result;
     }

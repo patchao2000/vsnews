@@ -44,7 +44,7 @@ public class UserControllerTest extends AbstractTransactionalJUnit4SpringContext
 //        c.setIdentityService(identityService);
         MockHttpSession session = new MockHttpSession();
         String view = c.logon("leader", "000000", session);
-        assertEquals("redirect:/main/index", view);
+        assertEquals("redirect:/main/welcome", view);
         assertNotNull(session.getAttribute("user"));
         User user = (User) session.getAttribute("user");
         assertEquals("leader", user.getId());

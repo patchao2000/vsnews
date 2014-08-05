@@ -2,10 +2,12 @@ package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.NewsArticle;
 import com.videostar.vsnews.entity.news.NewsColumn;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ArticleManager;
 import com.videostar.vsnews.service.news.ArticleWorkflowService;
 import com.videostar.vsnews.service.news.ColumnService;
+import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.ActivitiException;
@@ -60,6 +62,9 @@ public class ArticleController {
     protected ColumnService columnService;
 
     @Autowired
+    protected TopicManager topicManager;
+
+    @Autowired
     protected RuntimeService runtimeService;
 
     @Autowired
@@ -83,6 +88,7 @@ public class ArticleController {
         model.addAttribute("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
         model.addAttribute("columns", columnService.getUserColumns(user));
     }
+
     private void makeCreateArticleModel(Model model, User user, NewsArticle article) {
         addSelectOptions(model, user);
 
@@ -98,9 +104,9 @@ public class ArticleController {
             return redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
-            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
-            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
-            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
+                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
+                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
+                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
             redirectAttributes.addFlashAttribute("error", "您没有撰写文稿权限！");
             return "redirect:/main/welcome";
         }
@@ -111,6 +117,34 @@ public class ArticleController {
 
         NewsArticle article = new NewsArticle();
         makeCreateArticleModel(model, user, article);
+        return "/news/article/view";
+    }
+
+    @RequestMapping(value = {"apply-topic/{topicId}"}, method = {RequestMethod.POST, RequestMethod.GET})
+    public String createFromTopic(@PathVariable("topicId") Long topicId,
+                                  Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        User user = getCurrentUser(session);
+        if (user == null)
+            return redirectTimeoutString;
+
+        if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
+                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
+                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
+                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
+            redirectAttributes.addFlashAttribute("error", "您没有撰写文稿权限！");
+            return "redirect:/main/welcome";
+        }
+        if (columnService.getUserColumns(user).size() == 0) {
+            redirectAttributes.addFlashAttribute("error", "您没有任何栏目权限！");
+            return "redirect:/main/welcome";
+        }
+
+        NewsTopic topic = topicManager.getTopic(topicId);
+        NewsArticle article = new NewsArticle();
+        makeCreateArticleModel(model, user, article);
+        article.setMainTitle(topic.getTitle());
+        article.setContent("<p>" + topic.getContent() + "</p>");
+
         return "/news/article/view";
     }
 
@@ -188,6 +222,20 @@ public class ArticleController {
         }
         mav.addObject("list", list);
         return mav;
+    }
+
+    @RequestMapping(value = "count/task", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String complete(HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            Integer count = workflowService.getTodoTasksCount(userId);
+            logger.debug("todo task count: {}", count);
+            return count.toString();
+        } catch (Exception e) {
+            logger.error("error on get todo task count!");
+            return "error";
+        }
     }
 
 //    @RequestMapping(value = "list/running")

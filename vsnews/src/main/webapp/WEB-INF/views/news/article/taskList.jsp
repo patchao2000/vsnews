@@ -39,7 +39,7 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class="data-table table table-bordered table-striped" style='margin-bottom:0;' id="tasklist">
+                                    <table class="data-table table table-bordered table-striped" style='margin-bottom:0;'>
                                         <thead>
                                         <tr>
                                             <th>栏目</th>

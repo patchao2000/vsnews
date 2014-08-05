@@ -135,6 +135,11 @@ public class ArticleWorkflowService {
         return results;
     }
 
+    @Transactional(readOnly = true)
+    public int getTodoTasksCount(String userId) {
+        return getTodoTasks(userId).size();
+    }
+
 //    @Transactional(readOnly = true)
 //    public List<NewsArticle> findRunningProcessInstances() {
 //        List<NewsArticle> results = new ArrayList<NewsArticle>();

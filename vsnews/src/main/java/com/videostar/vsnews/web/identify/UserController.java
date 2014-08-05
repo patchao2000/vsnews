@@ -67,7 +67,7 @@ public class UserController {
 
             session.setAttribute("groupNames", ArrayUtils.toString(groupNames));
 
-            return "redirect:/main/index";
+            return "redirect:/main/welcome";
         } else {
             return "redirect:/login?error=true";
         }

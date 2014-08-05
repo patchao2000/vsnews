@@ -9,7 +9,7 @@
     <script>
         var logon = ${not empty user};
         if (logon) {
-            location.href = '${ctx}/main/index';
+            location.href = '${ctx}/main/welcome';
         }
     </script>
     <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">

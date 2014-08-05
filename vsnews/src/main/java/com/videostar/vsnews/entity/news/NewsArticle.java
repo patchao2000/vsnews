@@ -62,6 +62,19 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     //    备注
     private String notes;
 
+    //    拟报省台
+    private Boolean prepareSendProvTV;
+    //    拟报央台
+    private Boolean prepareSendCCTV;
+    //    报送省台
+    private Boolean sentToProvTV;
+    //    报送央台
+    private Boolean sentToCCTV;
+    //    省台采用
+    private Boolean adoptedByProvTV;
+    //    央台采用
+    private Boolean adoptedByCCTV;
+
     @Column
     public Long getColumnId() {
         return columnId;
@@ -184,6 +197,60 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    @Column
+    public Boolean getPrepareSendProvTV() {
+        return prepareSendProvTV;
+    }
+
+    public void setPrepareSendProvTV(Boolean prepareSendProvTV) {
+        this.prepareSendProvTV = prepareSendProvTV;
+    }
+
+    @Column
+    public Boolean getPrepareSendCCTV() {
+        return prepareSendCCTV;
+    }
+
+    public void setPrepareSendCCTV(Boolean prepareSendCCTV) {
+        this.prepareSendCCTV = prepareSendCCTV;
+    }
+
+    @Column
+    public Boolean getSentToProvTV() {
+        return sentToProvTV;
+    }
+
+    public void setSentToProvTV(Boolean sentToProvTV) {
+        this.sentToProvTV = sentToProvTV;
+    }
+
+    @Column
+    public Boolean getSentToCCTV() {
+        return sentToCCTV;
+    }
+
+    public void setSentToCCTV(Boolean sentToCCTV) {
+        this.sentToCCTV = sentToCCTV;
+    }
+
+    @Column
+    public Boolean getAdoptedByProvTV() {
+        return adoptedByProvTV;
+    }
+
+    public void setAdoptedByProvTV(Boolean adoptedByProvTV) {
+        this.adoptedByProvTV = adoptedByProvTV;
+    }
+
+    @Column
+    public Boolean getAdoptedByCCTV() {
+        return adoptedByCCTV;
+    }
+
+    public void setAdoptedByCCTV(Boolean adoptedByCCTV) {
+        this.adoptedByCCTV = adoptedByCCTV;
     }
 
     @Transient

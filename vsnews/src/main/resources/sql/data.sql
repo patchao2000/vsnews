@@ -48,6 +48,7 @@ insert into ACT_ID_MEMBERSHIP values ('edta', 'editor');
 insert into ACT_ID_MEMBERSHIP values ('edta', 'user');
 
 insert into ACT_ID_USER values ('edtb', 1, '编辑B', '', 'edtb@videostar.com', '000000', '');
+insert into ACT_ID_MEMBERSHIP values ('edtb', 'topicWrite');
 insert into ACT_ID_MEMBERSHIP values ('edtb', 'editor');
 insert into ACT_ID_MEMBERSHIP values ('edtb', 'user');
 
