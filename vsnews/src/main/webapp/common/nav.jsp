@@ -3,7 +3,7 @@
     String uri = request.getRequestURI();
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false;
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
-    boolean inManage = false, inUserManage = false, inGroupManage = false, inColumnManage = false;
+    boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -31,7 +31,7 @@
     if (uri.contains("/list/user"))
         inUserManage = true;
     if (uri.contains("/list/group"))
-        inGroupManage = true;
+        inRoleManage = true;
     if (uri.contains("/news/column"))
         inColumnManage = true;
 %>
@@ -130,8 +130,8 @@
                             <span>用户管理</span>
                         </a>
                     </li>
-                    <li class='<%=inGroupManage?"active":""%>'>
-                        <a href='${ctx}/user/list/group'>
+                    <li class='<%=inRoleManage?"active":""%>'>
+                        <a href='${ctx}/user/list/role'>
                             <i class='icon-caret-right'></i>
                             <span>角色管理</span>
                         </a>

@@ -1,7 +1,7 @@
 package com.videostar.vsnews.web.identify;
 
+import com.videostar.vsnews.entity.Role;
 import com.videostar.vsnews.service.identify.UserManager;
-//import com.videostar.vsnews.service.news.ColumnManager;
 import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
@@ -123,6 +123,13 @@ public class UserController {
         return mav;
     }
 
+    @RequestMapping(value = "list/role")
+    public ModelAndView roleList() {
+        ModelAndView mav = new ModelAndView("/user/roleList");
+        mav.addObject("list", userManager.getAllRoles());
+        return mav;
+    }
+
     @RequestMapping(value = "add/user/{id}/{firstname}/{password}/{email}/{lastname}", method = {RequestMethod.POST})
     @ResponseBody
     public String addUser(@PathVariable("id") String userId,
@@ -181,8 +188,7 @@ public class UserController {
     public UserDetail getUser(@PathVariable("id") String userId) {
         User user = userManager.getUserById(userId);
         logger.debug("get user detail {}", user.getId());
-        UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-        return detail;
+        return new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
     }
 
     @RequestMapping(value = "add/group/{id}/{name}", method = {RequestMethod.POST})
@@ -236,8 +242,17 @@ public class UserController {
 
     @RequestMapping(value = "objlist/allgroups")
     @ResponseBody
-    public List<Group> getAllGroup(HttpServletRequest request) {
-        return userManager.createGroupQuery().list();
+    public List<Group> getAllGroups() {
+
+        List<Group> list = new ArrayList<Group>();
+        //  skip column group
+        for (Group group : userManager.createGroupQuery().list()) {
+            if (!columnService.isColumnGroup(group)) {
+                list.add(group);
+            }
+        }
+
+        return list;
     }
 
     @RequestMapping(value = "idlist/usergroups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
@@ -260,14 +275,115 @@ public class UserController {
         return result;
     }
 
-    @RequestMapping(value = "modify/user/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+//    @RequestMapping(value = "modify/user/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+//    @ResponseBody
+//    public String setUserGroups(@PathVariable("id") String userId, Variable var) {
+//        try {
+//            userManager.setUserGroups(userId, var);
+//            return "success";
+//        } catch (Exception e) {
+//            logger.error("error on set user groups {}, variables={}", userId, var.getVariableMap());
+//            logger.error(e.getMessage());
+//            return "error";
+//        }
+//    }
+
+    @RequestMapping(value = "add/role/{name}", method = {RequestMethod.POST})
     @ResponseBody
-    public String setUserGroups(@PathVariable("id") String userId, Variable var) {
+    public String addRole(@PathVariable("name") String name) {
         try {
-            userManager.setUserGroups(userId, var);
+            Role role = userManager.newRole(name);
+            logger.debug("role created: {}", role.getId());
+            return role.getId().toString();//"success";
+        } catch (Exception e) {
+            logger.error("error on create role: {}", name);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "modify/role/{id}/{name}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String modifyRole(@PathVariable("id") Long id, @PathVariable("name") String name) {
+        try {
+            Role role = userManager.modifyRole(id, name);
+            logger.debug("role modified: {}", role.getId());
+            return role.getId().toString();//"success";
+        } catch (Exception e) {
+            logger.error("error on modify role: {}", id);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "modify/role/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String setRoleGroups(@PathVariable("id") Long roleId, Variable var) {
+        try {
+            List<String> groupList = new ArrayList<String>();
+            Map<String, Object> variables = var.getVariableMap();
+            Set<String> set = variables.keySet();
+            for (Object groupObj : set) {
+                String group = (String)groupObj;
+                Boolean v = (Boolean)variables.get(group);
+                if (v) {
+                    groupList.add(group);
+                }
+            }
+
+            userManager.setRoleGroups(roleId, groupList);
             return "success";
         } catch (Exception e) {
-            logger.error("error on set user groups {}, variables={}", userId, var.getVariableMap());
+            logger.error("error on set role groups {}, variables={}", roleId, var.getVariableMap());
+            logger.error(e.getMessage());
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "delete/role/{id}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String deleteRole(@PathVariable("id") Long roleId) {
+        try {
+            userManager.deleteRole(roleId);
+            logger.debug("role deleted: {}", roleId);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on delete role: {}", roleId);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "detail/role/{id}")
+    @ResponseBody
+    public Role getRole(@PathVariable("id") Long roleId) {
+        Role role = userManager.getRoleById(roleId);
+        logger.debug("get role detail {}", role.getId());
+        return role;
+    }
+
+    @RequestMapping(value = "idlist/rolegroups/{roleId}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<String> getRoleGroups(@PathVariable("roleId") Long roleId) {
+        return userManager.getRoleGroups(roleId);
+    }
+
+    @RequestMapping(value = "modify/user/roles/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String setUserRoles(@PathVariable("id") String userId, Variable var) {
+        try {
+            List<Long> roleList = new ArrayList<Long>();
+            Map<String, Object> variables = var.getVariableMap();
+            Set<String> set = variables.keySet();
+            for (Object roleObj : set) {
+                String role = (String)roleObj;
+                Boolean v = (Boolean)variables.get(role);
+                if (v) {
+                    roleList.add(Long.parseLong(role));
+                }
+            }
+            userManager.setUserRoles(userId, roleList);
+
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on set user roles {}, variables={}", userId, var.getVariableMap());
             logger.error(e.getMessage());
             return "error";
         }

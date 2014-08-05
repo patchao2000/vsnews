@@ -1,5 +1,7 @@
 package com.videostar.vsnews.service.identify;
 
+import com.videostar.vsnews.dao.RoleDao;
+import com.videostar.vsnews.entity.Role;
 import com.videostar.vsnews.util.Variable;
 
 import org.activiti.engine.ActivitiException;
@@ -10,6 +12,8 @@ import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,13 +40,20 @@ public class UserManager {
     public static final int RIGHTS_REPORTER         = 9;
     public static final int RIGHTS_CAMERAMAN        = 10;
     public static final int RIGHTS_DEVICE_AUDIT     = 11;
+    public static final int RIGHTS_ADMIN            = 99;
+
+    public static final String INFO_USER_ROLES      = "roles";
 
     //    @Autowired
     private IdentityService identityService;
 
+    @Autowired
+    private RoleDao roleDao;
+
+
     private Map<Integer, String> userRights;
 
-//    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public UserManager() {
         userRights = new HashMap<Integer, String>();
@@ -58,6 +69,7 @@ public class UserManager {
         userRights.put(RIGHTS_REPORTER, "reporter");
         userRights.put(RIGHTS_CAMERAMAN, "cameraman");
         userRights.put(RIGHTS_DEVICE_AUDIT, "deviceAudit");
+        userRights.put(RIGHTS_ADMIN, "admin");
     }
 
     public boolean checkPassword(String userName, String password) {
@@ -217,6 +229,99 @@ public class UserManager {
     
     public Boolean isUserHaveRights(User user, int rights) {
         return isUserInGroup(user.getId(), userRights.get(rights));
+    }
+
+    public List<Role> getAllRoles() {
+        List<Role> list = new ArrayList<Role>();
+        for (Role role : roleDao.findAll())
+            list.add(role);
+
+        return list;
+    }
+
+    @Transactional(readOnly = false)
+    public Role newRole(String name) {
+        Role role = new Role();
+        role.setName(name);
+        roleDao.save(role);
+
+        return role;
+    }
+
+    @Transactional(readOnly = false)
+    public Role modifyRole(Long roleId, String name) {
+        Role role = roleDao.findOne(roleId);
+        role.setName(name);
+        roleDao.save(role);
+
+        return role;
+    }
+
+    @Transactional(readOnly = false)
+    public void setRoleGroups(Long roleId, List<String> groupList) {
+        Role role = roleDao.findOne(roleId);
+        role.setGroups(groupList);
+    }
+
+    public List<String> getRoleGroups(Long roleId) {
+        Role role = roleDao.findOne(roleId);
+        return role.getGroups();
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteRole(Long roleId) {
+        roleDao.delete(roleId);
+    }
+
+    public Role getRoleById(Long roleId) {
+        return roleDao.findOne(roleId);
+    }
+
+    @Transactional(readOnly = false)
+    public void setUserRoles(String userId, List<Long> roleIdList) {
+
+        //  roleIdList ==> string, separated by ","
+        StringBuilder strbuf = new StringBuilder();
+        for (Long roleId : roleIdList) {
+            strbuf.append(",").append(roleId.toString());
+        }
+        String roleInfo = strbuf.deleteCharAt(0).toString();
+
+        String oldRoles = identityService.getUserInfo(userId, INFO_USER_ROLES);
+        logger.debug("old roles: {}", oldRoles);
+        identityService.setUserInfo(userId, INFO_USER_ROLES, roleInfo);
+        logger.debug("new roles: {}", roleInfo);
+
+        //  add all group id without repeated
+        HashSet<String> hs = new HashSet<String>();
+        for (Long roleId : roleIdList) {
+            List<String> groups = roleDao.findOne(roleId).getGroups();
+            for (String g : groups) {
+                hs.add(g);
+            }
+        }
+
+        //  make user's group sync with role's setting
+        List<Group> currentGroupList = getGroupListByUserId(userId);
+        for (String mustIn : hs) {
+            Boolean inCurrList = false;
+            for(Group g : currentGroupList) {
+                if (g.getId().equals(mustIn)) {
+                    inCurrList = true;
+                    break;
+                }
+            }
+            if (!inCurrList) {
+                identityService.createMembership(userId, mustIn);
+            }
+        }
+        currentGroupList = getGroupListByUserId(userId);
+        for (Group currIn : currentGroupList) {
+            if (!hs.contains(currIn.getId())) {
+                identityService.deleteMembership(userId, currIn.getId());
+            }
+        }
+
     }
 
     @Autowired
