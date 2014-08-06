@@ -57,7 +57,7 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
+                                    <table class='data-table table table-bordered table-striped' style='margin-bottom:0;' id="columnListTable">
                                         <thead>
                                         <tr>
                                             <th>栏目名</th>
@@ -137,8 +137,66 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
+
+    var saveaction = '/news/column/add/';
+    var tbody = $('#columnListTable').find('tbody');
+
+    tbody.on('click', 'td .deletecolumn', function() {
+        var columnId = $(this).parents('tr').attr('id');
+        var dlg = new BootstrapDialog({
+            type: BootstrapDialog.TYPE_WARNING,
+            title: '删除栏目',
+            message: '<div><h3>真要删除栏目' + columnId + '吗？</h3></div>',
+            buttons: [{
+                icon: 'icon-remove',
+                label: '删除',
+                cssClass: 'btn-danger',
+                action: function(){
+                    $.post(ctx + '/news/column/delete/' + columnId,
+                            function(resp) {
+                                if (resp == 'success') {
+                                    alert('任务完成');
+                                    location.href = ctx + '/news/column/list';
+                                } else {
+                                    alert('操作失败!');
+                                }
+                            });
+                }
+            }, {
+                label: '关闭',
+                action: function(dialog){
+                    dialog.close();
+                }
+            }]
+        });
+        dlg.realize();
+        dlg.open();
+    });
+
+    tbody.on('click', 'td .editcolumn', function() {
+        var columnId = $(this).parents('tr').attr('id');
+        $.getJSON(ctx + '/news/column/detail/' + columnId, function(data) {
+            $.each(data, function(k, v) {
+                if (k == 'name')
+                    $('#name').val(v);
+                else if (k == 'auditLevel') {
+                    var level = parseInt(v);
+                    $("#level1").prop("checked", (level & 1));
+                    $("#level2").prop("checked", (level & 2));
+                    $("#level3").prop("checked", (level & 4));
+                }
+            });
+            if ($.isFunction(callback)) {
+                callback(data);
+            }
+        });
+        $('#columnModalLabel').text('修改栏目');
+        saveaction = '/news/column/modify/' + columnId + '/';
+
+        $('#columnModal').modal('toggle');
+    });
+
     $(document).ready(function () {
-        var saveaction = '/news/column/add/';
         $('#addcolumn').click(function () {
             $('#columnModalLabel').text('创建新栏目');
             $('#name').attr("value", "");
@@ -146,29 +204,6 @@
             $("#level2").prop("checked", false);
             $("#level3").prop("checked", false);
             saveaction = '/news/column/add/';
-            $('#columnModal').modal('toggle');
-        });
-
-        $('.editcolumn').click(function () {
-            var columnId = $(this).parents('tr').attr('id');
-            $.getJSON(ctx + '/news/column/detail/' + columnId, function(data) {
-                $.each(data, function(k, v) {
-                    if (k == 'name')
-                        $('#name').val(v);
-                    else if (k == 'auditLevel') {
-                        var level = parseInt(v);
-                        $("#level1").prop("checked", (level & 1));
-                        $("#level2").prop("checked", (level & 2));
-                        $("#level3").prop("checked", (level & 4));
-                    }
-                });
-                if ($.isFunction(callback)) {
-                    callback(data);
-                }
-            });
-            $('#columnModalLabel').text('修改栏目');
-            saveaction = '/news/column/modify/' + columnId + '/';
-
             $('#columnModal').modal('toggle');
         });
 
@@ -196,39 +231,6 @@
                     alert('操作失败!');
                 }
             });
-        });
-
-        $('.deletecolumn').click(function () {
-            var columnId = $(this).parents('tr').attr('id');
-            var dialog = new BootstrapDialog({
-                type: BootstrapDialog.TYPE_WARNING,
-                title: '删除栏目',
-                message: '<div><h3>真要删除栏目' + columnId + '吗？</h3></div>',
-                buttons: [{
-                    icon: 'icon-remove',
-                    label: '删除',
-                    cssClass: 'btn-danger',
-                    action: function(){
-                        $.post(ctx + '/news/column/delete/' + columnId,
-                                function(resp) {
-                                    if (resp == 'success') {
-                                        alert('任务完成');
-                                        location.href = ctx + '/news/column/list';
-                                    } else {
-                                        alert('操作失败!');
-                                    }
-                                });
-                    }
-                }, {
-                    label: '关闭',
-                    action: function(dialog){
-                        dialog.close();
-                    }
-                }]
-            });
-            dialog.realize();
-            dialog.open();
-
         });
     });
 </script>

@@ -215,8 +215,9 @@
     }
 
     var saveaction = '/user/add/user/';
+    var tbody = $('#userListTable').find('tbody');
 
-    $('#userListTable tbody').on('click', 'td .deleteuser', function(event) {
+    tbody.on('click', 'td .deleteuser', function(event) {
         var userId = $(this).parents('tr').attr('id');
         var dialog = new BootstrapDialog({
             type: BootstrapDialog.TYPE_WARNING,
@@ -249,7 +250,7 @@
 
     });
 
-    $('#userListTable tbody').on('click', 'td .edituser', function(event) {
+    tbody.on('click', 'td .edituser', function(event) {
 //        alert($(this).parents('tr').attr('id'));
         var userId = $(this).parents('tr').attr('id');
         $.getJSON(ctx + '/user/detail/user/' + userId, function(data) {

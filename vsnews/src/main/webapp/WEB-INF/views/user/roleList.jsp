@@ -57,7 +57,8 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class='data-table table table-bordered table-striped' style='margin-bottom:0;'>
+                                    <table class='data-table table table-bordered table-striped' style='margin-bottom:0;'
+                                            id="roleListTable">
                                         <thead>
                                         <tr>
                                             <th>角色名</th>
@@ -180,38 +181,74 @@
         });
     }
 
+    var saveAction = '/user/add/role/';
+    var tbody = $('#roleListTable').find('tbody');
+
+    tbody.on('click', 'td .editRole', function(event) {
+        var roleId = $(this).parents('tr').attr('id');
+        $.getJSON(ctx + '/user/detail/role/' + roleId, function(data) {
+            $("#groups").find("input").prop('checked', false);
+            $.each(data, function(k, v) {
+                if (k == 'name')
+                    $('#name').val(v);
+                else if (k == 'groups') {
+                    $.each(v, function(kk, vv) {
+                        $("#group_" + vv).prop('checked', true);
+                    });
+                }
+            });
+            if ($.isFunction(callback)) {
+                callback(data);
+            }
+        });
+        $('#roleModalLabel').text('修改角色');
+        saveAction = '/user/modify/role/' + roleId + '/';
+
+        $('#roleModal').modal('toggle');
+    });
+
+    tbody.on('click', 'td .deleteRole', function(event) {
+        var roleId = $(this).parents('tr').attr('id');
+        var roleName = $(this).parents('tr').attr('data-name');
+        var dialog = new BootstrapDialog({
+            type: BootstrapDialog.TYPE_WARNING,
+            title: '删除角色',
+            message: '<div><h3>真要删除角色[' + roleName + ']吗？</h3></div>',
+            buttons: [{
+                icon: 'icon-remove',
+                label: '删除',
+                cssClass: 'btn-danger',
+                action: function(){
+                    $.post(ctx + '/user/delete/role/' + roleId,
+                            function(resp) {
+                                if (resp == 'success') {
+                                    alert('任务完成');
+                                    location.href = ctx + '/user/list/role';
+                                } else {
+                                    alert('操作失败!');
+                                }
+                            });
+                }
+            }, {
+                label: '关闭',
+                action: function(dialog){
+                    dialog.close();
+                }
+            }]
+        });
+        dialog.realize();
+        dialog.open();
+
+    });
+
     $(document).ready(function () {
         fillGroupsCheckBoxes();
 
-        var saveAction = '/user/add/role/';
         $('#addRole').click(function () {
             saveAction = '/user/add/role/';
             $("#groups").find("input").prop('checked', false);
             $("#name").attr("value", "");
             $('#roleModalLabel').text('创建新角色');
-
-            $('#roleModal').modal('toggle');
-        });
-
-        $('.editRole').click(function () {
-            var roleId = $(this).parents('tr').attr('id');
-            $.getJSON(ctx + '/user/detail/role/' + roleId, function(data) {
-                $("#groups").find("input").prop('checked', false);
-                $.each(data, function(k, v) {
-                    if (k == 'name')
-                        $('#name').val(v);
-                    else if (k == 'groups') {
-                        $.each(v, function(kk, vv) {
-                            $("#group_" + vv).prop('checked', true);
-                        });
-                    }
-                });
-                if ($.isFunction(callback)) {
-                    callback(data);
-                }
-            });
-            $('#roleModalLabel').text('修改角色');
-            saveAction = '/user/modify/role/' + roleId + '/';
 
             $('#roleModal').modal('toggle');
         });
@@ -243,40 +280,6 @@
                         modifyGroups(roleId, variables);
                     }
                 });
-        });
-
-        $('.deleteRole').click(function () {
-            var roleId = $(this).parents('tr').attr('id');
-            var roleName = $(this).parents('tr').attr('data-name');
-            var dialog = new BootstrapDialog({
-                type: BootstrapDialog.TYPE_WARNING,
-                title: '删除角色',
-                message: '<div><h3>真要删除角色[' + roleName + ']吗？</h3></div>',
-                buttons: [{
-                    icon: 'icon-remove',
-                    label: '删除',
-                    cssClass: 'btn-danger',
-                    action: function(){
-                        $.post(ctx + '/user/delete/role/' + roleId,
-                                function(resp) {
-                                    if (resp == 'success') {
-                                        alert('任务完成');
-                                        location.href = ctx + '/user/list/role';
-                                    } else {
-                                        alert('操作失败!');
-                                    }
-                                });
-                    }
-                }, {
-                    label: '关闭',
-                    action: function(dialog){
-                        dialog.close();
-                    }
-                }]
-            });
-            dialog.realize();
-            dialog.open();
-
         });
     });
 </script>
