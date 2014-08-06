@@ -140,6 +140,12 @@
     $(document).ready(function () {
         var saveaction = '/news/column/add/';
         $('#addcolumn').click(function () {
+            $('#columnModalLabel').text('创建新栏目');
+            $('#name').attr("value", "");
+            $("#level1").prop("checked", false);
+            $("#level2").prop("checked", false);
+            $("#level3").prop("checked", false);
+            saveaction = '/news/column/add/';
             $('#columnModal').modal('toggle');
         });
 

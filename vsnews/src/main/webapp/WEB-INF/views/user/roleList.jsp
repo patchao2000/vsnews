@@ -185,6 +185,11 @@
 
         var saveAction = '/user/add/role/';
         $('#addRole').click(function () {
+            saveAction = '/user/add/role/';
+            $("#groups").find("input").prop('checked', false);
+            $("#name").attr("value", "");
+            $('#roleModalLabel').text('创建新角色');
+
             $('#roleModal').modal('toggle');
         });
 
@@ -246,7 +251,7 @@
             var dialog = new BootstrapDialog({
                 type: BootstrapDialog.TYPE_WARNING,
                 title: '删除角色',
-                message: '<div><h3>真要删除角色' + roleName + '吗？</h3></div>',
+                message: '<div><h3>真要删除角色[' + roleName + ']吗？</h3></div>',
                 buttons: [{
                     icon: 'icon-remove',
                     label: '删除',

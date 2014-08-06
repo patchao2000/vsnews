@@ -277,15 +277,33 @@ public class UserManager {
         return roleDao.findOne(roleId);
     }
 
+    public List<Long> getUserRoles(String userId) {
+        List<Long> result = new ArrayList<Long>();
+        String oldRoles = identityService.getUserInfo(userId, INFO_USER_ROLES);
+        if (oldRoles != null) {
+            if (!oldRoles.isEmpty()) {
+                String[] roles = oldRoles.split(",");
+                for (int i = 0; i < roles.length; i++) {
+                    result.add(Long.parseLong(roles[i]));
+                }
+            }
+        }
+        return result;
+    }
+
     @Transactional(readOnly = false)
     public void setUserRoles(String userId, List<Long> roleIdList) {
+//        logger.debug("setUserRoles begin");
 
         //  roleIdList ==> string, separated by ","
         StringBuilder strbuf = new StringBuilder();
         for (Long roleId : roleIdList) {
             strbuf.append(",").append(roleId.toString());
         }
-        String roleInfo = strbuf.deleteCharAt(0).toString();
+        String roleInfo = "";
+        if (strbuf.length() > 0) {
+            roleInfo = strbuf.deleteCharAt(0).toString();
+        }
 
         String oldRoles = identityService.getUserInfo(userId, INFO_USER_ROLES);
         logger.debug("old roles: {}", oldRoles);

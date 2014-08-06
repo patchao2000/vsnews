@@ -57,14 +57,13 @@
                         <div class='box-content box-no-padding'>
                             <div class='responsive-table'>
                                 <div class='scrollable-area'>
-                                    <table class='data-table-column-filter table table-bordered table-striped' style='margin-bottom:0;'>
+                                    <table class='data-table table table-bordered table-striped' style='margin-bottom:0;' id="userListTable">
                                         <thead>
                                         <tr>
                                             <th>用户名</th>
                                             <th>全名</th>
                                             <th>角色</th>
-                                            <th>电子邮件</th>
-                                            <th>附注</th>
+                                            <th>栏目</th>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -75,9 +74,8 @@
                                             <tr id="${detail.userId }">
                                                 <td>${detail.userId }</td>
                                                 <td>${detail.firstName }</td>
-                                                <td>${detail.role }</td>
-                                                <td>${detail.email }</td>
-                                                <td>${detail.lastName }</td>
+                                                <td>${detail.roles }</td>
+                                                <td>${detail.columns }</td>
                                                 <td>
                                                     <div>
                                                         <a class='btn btn-success btn-xs edituser' href='#'>
@@ -150,8 +148,11 @@
                     </tr>
                     <tr>
                         <td>所属角色：</td>
-                        <td id="roles">
-                        </td>
+                        <td id="roles"></td>
+                    </tr>
+                    <tr>
+                        <td>所属栏目：</td>
+                        <td id="columns"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -166,37 +167,143 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
-    function modifyGroups(userId, variables) {
+    function modifyRolesColumns(userId, rolesVars, columnsVars) {
         var keys = "", values = "", types = "";
-        if (variables) {
-            $.each(variables, function() {
-                if (keys != "") {
-                    keys += ",";
-                    values += ",";
-                    types += ",";
-                }
-                keys += this.key;
-                values += this.value;
-                types += this.type;
-            });
-        }
-        $.post(ctx + '/user/modify/user/groups/' + userId, {
+        $.each(rolesVars, function() {
+            if (keys != "") {
+                keys += ",";
+                values += ",";
+                types += ",";
+            }
+            keys += this.key;
+            values += this.value;
+            types += this.type;
+        });
+        $.post(ctx + '/user/modify/user/roles/' + userId, {
             keys: keys,
             values: values,
             types: types
         }, function(resp) {
             if (resp == 'success') {
-                alert('任务完成');
-                location.href = ctx + '/user/list/user';
+                keys = "", values = "", types = "";
+                $.each(columnsVars, function() {
+                    if (keys != "") {
+                        keys += ",";
+                        values += ",";
+                        types += ",";
+                    }
+                    keys += this.key;
+                    values += this.value;
+                    types += this.type;
+                });
+                $.post(ctx + '/user/modify/user/columns/' + userId, {
+                    keys: keys,
+                    values: values,
+                    types: types
+                }, function(resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/user/list/user';
+                    } else {
+                        alert('modify/user/columns 操作失败!');
+                    }
+                });
             } else {
-                alert('操作失败!');
+                alert('modify/user/roles 操作失败!');
             }
         });
     }
 
+    var saveaction = '/user/add/user/';
+
+    $('#userListTable tbody').on('click', 'td .deleteuser', function(event) {
+        var userId = $(this).parents('tr').attr('id');
+        var dialog = new BootstrapDialog({
+            type: BootstrapDialog.TYPE_WARNING,
+            title: '删除用户',
+            message: '<div><h3>真要删除用户' + userId + '吗？</h3></div>',
+            buttons: [{
+                icon: 'icon-remove',
+                label: '删除',
+                cssClass: 'btn-danger',
+                action: function(){
+                    $.post(ctx + '/user/delete/user/' + userId,
+                            function(resp) {
+                                if (resp == 'success') {
+                                    alert('任务完成');
+                                    location.href = ctx + '/user/list/user';
+                                } else {
+                                    alert('操作失败!');
+                                }
+                            });
+                }
+            }, {
+                label: '关闭',
+                action: function(dialog){
+                    dialog.close();
+                }
+            }]
+        });
+        dialog.realize();
+        dialog.open();
+
+    });
+
+    $('#userListTable tbody').on('click', 'td .edituser', function(event) {
+//        alert($(this).parents('tr').attr('id'));
+        var userId = $(this).parents('tr').attr('id');
+        $.getJSON(ctx + '/user/detail/user/' + userId, function(data) {
+            $.each(data, function(k, v) {
+                $("#" + k.toLowerCase()).val(v);
+                if (k == "password") {
+                    $("#password2").val(v);
+                }
+            });
+        });
+
+        $.getJSON(ctx + '/user/idlist/user/roles/' + userId, function(data) {
+            $("#roles").find("input").prop('checked', false);
+            $.each(data, function(k, v) {
+                $("#role_" + v).prop('checked', true);
+            });
+
+            $.getJSON(ctx + '/user/idlist/user/columns/' + userId, function(data) {
+                $("#columns").find("input").prop('checked', false);
+                $.each(data, function(k, v) {
+                    $("#group_" + v).prop('checked', true);
+                });
+
+                $('#userModalLabel').text('修改用户');
+                $('#userid').prop('readonly', true);
+                saveaction = '/user/modify/user/';
+
+                $('#userModal').modal('toggle');
+            });
+        });
+    });
+
     $(document).ready(function () {
-        $.getJSON(ctx + '/user/objlist/allgroups', function(data) {
+        $.getJSON(ctx + '/user/objlist/allroles', function(data) {
             var roles = '';
+            var template = "<div class='checkbox'><label><input type='checkbox' value='' id='#id'>  #name</label></div>";
+            $.each(data, function(dk, dv) {
+                var curr = template;
+                $.each(dv, function(k, v) {
+                    var id = '';
+                    if (k == 'id') {
+                        curr = curr.replace(/#id/g, 'role_' + v);
+                    }
+                    else if (k == 'name') {
+                        curr = curr.replace(/#name/g, v);
+                    }
+                });
+                roles += curr;
+            });
+            $('#roles').html(roles);
+        });
+
+        $.getJSON(ctx + '/user/objlist/columngroups', function(data) {
+            var columns = '';
             var template = "<div class='checkbox'><label><input type='checkbox' value='' id='#id'>  #name</label></div>";
             $.each(data, function(dk, dv) {
                 var curr = template;
@@ -209,43 +316,24 @@
                         curr = curr.replace(/#name/g, v);
                     }
                 });
-                roles += curr;
+                columns += curr;
             });
-            $('#roles').html(roles);
+            $('#columns').html(columns);
         });
 
-        var saveaction = '/user/add/user/';
         $('#adduser').click(function () {
+            $('#userModalLabel').text('创建新用户');
+            $('#userid').prop('readonly', false);
+            $("#roles").find("input").prop('checked', false);
+            $("#columns").find("input").prop('checked', false);
+            $('#userid').attr('value', '');
+            $('#firstname').attr('value', '');
+            $('#password').attr('value', '');
+            $('#password2').attr('value', '');
+            $('#email').attr('value', '');
+            $('#lastname').attr('value', '');
+            saveaction = '/user/add/user/';
             $('#userModal').modal('toggle');
-        });
-
-        $('.edituser').click(function () {
-            var userId = $(this).parents('tr').attr('id');
-            $.getJSON(ctx + '/user/detail/user/' + userId, function(data) {
-                $.each(data, function(k, v) {
-                    $("#" + k.toLowerCase()).val(v);
-                    if (k == "password") {
-                        $("#password2").val(v);
-                    }
-                });
-            });
-
-//            $.ajaxSettings.async = false;
-            $.getJSON(ctx + '/user/idlist/usergroups/' + userId, function(data) {
-                $("#roles input").prop('checked', false);
-
-                $.each(data, function(k, v) {
-                    $("#group_" + v).prop('checked', true);
-                });
-
-                $('#userModalLabel').text('修改用户');
-                $('#userid').prop('readonly', true);
-                saveaction = '/user/modify/user/';
-
-                $('#userModal').modal('toggle');
-            });
-//            $.ajaxSettings.async = true;
-
         });
 
         $('#saveuser').click(function () {
@@ -276,59 +364,34 @@
             if (lastname.length == 0) {
                 lastname = "null";
             }
-            
+
             $.post(ctx + saveaction + userid + '/' + firstname + '/' +
-                password1 + '/' + email + '/' + lastname,
-                function(resp) {
-                    if (resp == 'success') {
+                            password1 + '/' + email + '/' + lastname,
+                    function(resp) {
+                        if (resp == 'success') {
 //                        alert('任务完成');
 //                        location.href = ctx + '/user/list/user';
-                        var variables = [];
-                        $('#roles').find('input').each(function(){
-                            var id = $(this).attr('id').substr(6);
-                            if ($(this).prop('checked'))
-                                variables.push({key: id, value: true, type: 'B'});
-                            else
-                                variables.push({key: id, value: false, type: 'B'});
-                        })
-                        modifyGroups(userid, variables);
-                    } else {
-                        alert('操作失败!');
-                }
-            });
-        });
-
-        $('.deleteuser').click(function () {
-            var userId = $(this).parents('tr').attr('id');
-            var dialog = new BootstrapDialog({
-                type: BootstrapDialog.TYPE_WARNING,
-                title: '删除用户',
-                message: '<div><h3>真要删除用户' + userId + '吗？</h3></div>',
-                buttons: [{
-                    icon: 'icon-remove',
-                    label: '删除',
-                    cssClass: 'btn-danger',
-                    action: function(){
-                        $.post(ctx + '/user/delete/user/' + userId,
-                            function(resp) {
-                                if (resp == 'success') {
-                                    alert('任务完成');
-                                    location.href = ctx + '/user/list/user';
-                                } else {
-                                    alert('操作失败!');
-                                }
+                            var rolesVars = [];
+                            $('#roles').find('input').each(function(){
+                                var id = $(this).attr('id').substr(5);
+                                if ($(this).prop('checked'))
+                                    rolesVars.push({key: id, value: true, type: 'B'});
+                                else
+                                    rolesVars.push({key: id, value: false, type: 'B'});
                             });
-                    }
-                }, {
-                    label: '关闭',
-                    action: function(dialog){
-                        dialog.close();
-                    }
-                }]
-            });
-            dialog.realize();
-            dialog.open();
-
+                            var columnsVars = [];
+                            $('#columns').find('input').each(function(){
+                                var id = $(this).attr('id').substr(6);
+                                if ($(this).prop('checked'))
+                                    columnsVars.push({key: id, value: true, type: 'B'});
+                                else
+                                    columnsVars.push({key: id, value: false, type: 'B'});
+                            });
+                            modifyRolesColumns(userid, rolesVars, columnsVars);
+                        } else {
+                            alert('操作失败!');
+                        }
+                    });
         });
     });
 </script>

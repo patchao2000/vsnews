@@ -12,7 +12,8 @@ public class UserDetail implements java.io.Serializable {
     private String lastName;
     private String email;
     private String password;
-    private String role;
+    private String roles;
+    private String columns;
 
     public UserDetail(String userId,
                       String firstName,
@@ -66,12 +67,19 @@ public class UserDetail implements java.io.Serializable {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 
+    public String getColumns() {
+        return columns;
+    }
+
+    public void setColumns(String columns) {
+        this.columns = columns;
+    }
 }

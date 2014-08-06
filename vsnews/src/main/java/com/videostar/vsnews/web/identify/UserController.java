@@ -91,15 +91,25 @@ public class UserController {
         GroupQuery groupQuery = userManager.createGroupQuery();
         List<UserDetail> detailList = new ArrayList<UserDetail>();
         for (User user : query.list()) {
-            UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
-            String groupNames = "";
-            int i = 0;
+            UserDetail detail = new UserDetail(user.getId(), user.getFirstName(), user.getLastName(),
+                    user.getEmail(), user.getPassword());
+            String roleNames = "", columnNames = "";
+            int i = 0, j = 0;
             for (Group group : groupQuery.groupMember(user.getId()).list()) {
-                if (i++ > 0)
-                    groupNames += ", ";
-                groupNames += group.getName();
+                if (columnService.isColumnGroup(group)) {
+                    if (j++ > 0)
+                        columnNames += ", ";
+                    columnNames += group.getName();
+                }
             }
-            detail.setRole(groupNames);
+            for (Long roleId : userManager.getUserRoles(user.getId())) {
+                if (i++ > 0)
+                    roleNames += ", ";
+                roleNames += userManager.getRoleById(roleId).getName();
+            }
+
+            detail.setRoles(roleNames);
+            detail.setColumns(columnNames);
             detailList.add(detail);
         }
         mav.addObject("list", detailList);
@@ -255,12 +265,38 @@ public class UserController {
         return list;
     }
 
-    @RequestMapping(value = "idlist/usergroups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "objlist/columngroups")
     @ResponseBody
-    public List<String> getUserGroups(@PathVariable("id") String userId) {
+    public List<Group> getColumnGroups() {
+
+        List<Group> list = new ArrayList<Group>();
+        for (Group group : userManager.createGroupQuery().list()) {
+            if (columnService.isColumnGroup(group)) {
+                list.add(group);
+            }
+        }
+
+        return list;
+    }
+
+//    @RequestMapping(value = "idlist/usergroups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+//    @ResponseBody
+//    public List<String> getUserGroups(@PathVariable("id") String userId) {
+//        List<String> result = new ArrayList<String>();
+//        for (Group group : userManager.getGroupListByUserId(userId)) {
+//            result.add(group.getId());
+//        }
+//        return result;
+//    }
+
+    @RequestMapping(value = "idlist/user/columns/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<String> getUserColumnGroups(@PathVariable("id") String userId) {
         List<String> result = new ArrayList<String>();
         for (Group group : userManager.getGroupListByUserId(userId)) {
-            result.add(group.getId());
+            if (columnService.isColumnGroup(group)) {
+                result.add(group.getId());
+            }
         }
         return result;
     }
@@ -287,6 +323,19 @@ public class UserController {
 //            return "error";
 //        }
 //    }
+
+    @RequestMapping(value = "modify/user/columns/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String setUserColumns(@PathVariable("id") String userId, Variable var) {
+        try {
+            userManager.setUserGroups(userId, var);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on set user columns {}, variables={}", userId, var.getVariableMap());
+            logger.error(e.getMessage());
+            return "error";
+        }
+    }
 
     @RequestMapping(value = "add/role/{name}", method = {RequestMethod.POST})
     @ResponseBody
@@ -365,6 +414,22 @@ public class UserController {
         return userManager.getRoleGroups(roleId);
     }
 
+    @RequestMapping(value = "idlist/user/roles/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<String> getUserRoles(@PathVariable("id") String userId) {
+        List<String> result = new ArrayList<String>();
+        for (Long roleId : userManager.getUserRoles(userId)) {
+            result.add(roleId.toString());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "objlist/allroles", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<Role> getAllRoles() {
+        return userManager.getAllRoles();
+    }
+
     @RequestMapping(value = "modify/user/roles/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public String setUserRoles(@PathVariable("id") String userId, Variable var) {
@@ -374,6 +439,7 @@ public class UserController {
             Set<String> set = variables.keySet();
             for (Object roleObj : set) {
                 String role = (String)roleObj;
+//                logger.debug("role: {}", role);
                 Boolean v = (Boolean)variables.get(role);
                 if (v) {
                     roleList.add(Long.parseLong(role));
