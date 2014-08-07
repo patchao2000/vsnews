@@ -155,6 +155,18 @@
                 </div>
             </div>
 
+            <div class='col-md-12'>
+                <textarea class='form-control' id='track_sample' rows='20' >
+                    近日，新加坡联合早报网刊登对台湾军事学者、淡江大学国际事务与战略研究所教授林中斌的专访，认为习近平有“七项超越”，包括在福建、浙江和上海任职长达23年，深耕台商人脉，对台湾的理解超越历史;对国际社会的了解超越历史；对军队的了解超越历史;父亲习仲勋在党内的良好名声，使习近平接班时的党内地位就很高;他也是中共第一个“博士总书记”；有亮丽的夫人可为他“政治加分”；对宗教问题也比较同情。现予转发，与网友分享：
+
+                    台湾著名军事学者、现任淡江大学国际事务与战略研究所教授林中斌，可以说是一个奇人。
+
+                    说林教授是“奇人”，一是他曾先后在台湾蓝绿执政时担任国民主政的“行政院”大陆委员会副主委，以及民进党主政时的“国防部”副部长;二是他曾长时间无法踏足中国大陆，却依然深谙中国时局变化，提出的见解与预测深受重视。
+
+                    在新加坡出席“慧眼中国环球论坛”期间，林中斌接受专访时向《联合早报》证实，从1996年他出任陆委会副主委，到2003年至2004年出任“国防部”副部长，此后再守住敏感公职人员离任后不得访问大陆的“冷冻期”。算起来，从1996年到2009年，他有整整13年没有到大陆。
+                </textarea>
+            </div>
+
             <%--<div class="center">--%>
                 <%--<div style="text-align: center;">--%>
                     <%--<h1>欢迎访问VSNews</h1>--%>
@@ -185,6 +197,8 @@
 </div>
 
 <%@ include file="/common/alljs.jsp" %>
+<script src="${ctx}/js/ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="${ctx}/js/ckeditor/plugins/lite/lite_interface.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
         $.ajax({
@@ -218,7 +232,28 @@
                 alert('articleTodo error!!');
             }
         });
+
+        var editor = CKEDITOR.replace("track_sample", {
+            height: "400",
+            customConfig: "${ctx}/js/ckeditor/ckeditor-loopindex-conf.js"
+        });
+
+//        function onConfigLoaded(e) {
+//            var conf = e.editor.config;
+//            var lt = conf.lite = conf.lite || {};
+//            if (location.href.indexOf("debug") > 0) {
+//                lt.includeType = "debug";
+//            }
+//        }
+//        editor.on('configLoaded', onConfigLoaded);
+
+        editor.on(LITE.Events.INIT, function(event) {
+            var lite = event.data.lite;
+            lite.toggleShow(true);
+        });
     });
+
+
 </script>
 </body>
 </html>
