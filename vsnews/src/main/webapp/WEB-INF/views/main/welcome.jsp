@@ -155,17 +155,11 @@
                 </div>
             </div>
 
-            <div class='col-md-12'>
-                <textarea class='form-control' id='track_sample' rows='20' >
-                    近日，新加坡联合早报网刊登对台湾军事学者、淡江大学国际事务与战略研究所教授林中斌的专访，认为习近平有“七项超越”，包括在福建、浙江和上海任职长达23年，深耕台商人脉，对台湾的理解超越历史;对国际社会的了解超越历史；对军队的了解超越历史;父亲习仲勋在党内的良好名声，使习近平接班时的党内地位就很高;他也是中共第一个“博士总书记”；有亮丽的夫人可为他“政治加分”；对宗教问题也比较同情。现予转发，与网友分享：
-
-                    台湾著名军事学者、现任淡江大学国际事务与战略研究所教授林中斌，可以说是一个奇人。
-
-                    说林教授是“奇人”，一是他曾先后在台湾蓝绿执政时担任国民主政的“行政院”大陆委员会副主委，以及民进党主政时的“国防部”副部长;二是他曾长时间无法踏足中国大陆，却依然深谙中国时局变化，提出的见解与预测深受重视。
-
-                    在新加坡出席“慧眼中国环球论坛”期间，林中斌接受专访时向《联合早报》证实，从1996年他出任陆委会副主委，到2003年至2004年出任“国防部”副部长，此后再守住敏感公职人员离任后不得访问大陆的“冷冻期”。算起来，从1996年到2009年，他有整整13年没有到大陆。
-                </textarea>
-            </div>
+            <%--<div class='col-md-12'>--%>
+                <%--<div class='form-group'>--%>
+                    <%--<textarea class='ckeditor form-control' id='track_sample' rows='20' ></textarea>--%>
+                <%--</div>--%>
+            <%--</div>--%>
 
             <%--<div class="center">--%>
                 <%--<div style="text-align: center;">--%>
@@ -197,8 +191,8 @@
 </div>
 
 <%@ include file="/common/alljs.jsp" %>
-<script src="${ctx}/js/ckeditor/ckeditor.js" type="text/javascript"></script>
-<script src="${ctx}/js/ckeditor/plugins/lite/lite_interface.js" type="text/javascript"></script>
+<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="${ctx}/js/htmldiff.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
         $.ajax({
@@ -233,27 +227,19 @@
             }
         });
 
-        var editor = CKEDITOR.replace("track_sample", {
-            height: "400",
-            customConfig: "${ctx}/js/ckeditor/ckeditor-loopindex-conf.js"
-        });
+//        var oldT = '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">【媒体称叶迎春和沈冰卷入周永康案 正接受调查】据媒体从权威渠道了解到的消息，央视主播叶迎春和前主播沈冰卷入周永康案，目前正接受调查。今年年初，曾有传言称叶迎春被调查。她在央视许久未露面，但她未通过任何渠道澄清过传闻。沈冰08年北京奥运会后淡出央视。据悉，其自2009年2月起，担任中央政法委信息中心副主任。当时周永康任中共中央政治局常委、中央政法委书记。</p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">周永康被立案审查后，有传闻称央视女主播欧阳夏丹、李小萌、劳春燕涉案，经查证，三人目前均正常工作。有关传闻均系谣言。</p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;"><strong>贾晓烨曾经和叶迎春、沈冰等一起任职央视</strong></p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">据东北网报道，近日，鉴于周永康涉嫌严重违纪，中共中央决定，依据《中国共产党章程》和《中国共产党纪律检查机关案件检查工作条例》的有关规定，由中共中央纪律检查委员会对其立案审查。周永康现任妻子贾晓烨曾供职央视，2001年嫁给周永康。贾晓烨的身份一直很神秘，据传，目前在国内的互联网上搜索到的照片均不是贾晓烨本人。另据传言，央视女主播叶迎春是周永康的秘密情人。</p>';
+//        var newT = '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">【媒体称，叶某某和沈火</p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">卷入周永康案 正接受调查】据媒体从权威渠道了解到的消息，央视主播叶某某和前主播沈火卷入周永康案，目前正接受调查。今年年初，曾有传言称叶某某被调查。她在央视许久未露面，但她未通过渠道澄清过传闻。沈火08年北京奥运会后淡出央视。据悉，其自2009年2月起，担任中央政法委信息中心副主任。当时周永康任中共中央政治局常委、中央政法委书记。</p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">周永康被立案审查后，有传闻称央视女主播<span style="font-size:18px;">欧阳夏丹、李小萌</span>、劳春燕涉案，经查证，三人目前均正常工作。有关传闻均系谣言。</p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;"><strong>贾晓烨曾经和叶某某、沈火等一起任职央视</strong></p>'+
+//        '<p style="padding: 0px; margin: 26px 0px; font-size: 16px; text-indent: 2em; color: rgb(37, 37, 37); font-family: 宋体, sans-serif; line-height: 28px; text-align: justify;">据东北网报道，由中共中央纪律检查委员会对其立案审查。周永康现任妻子贾晓烨曾供职央视，2001年嫁给周永康。贾晓烨的身份一直很神秘，据传，目前在国内的互联网上搜索到的照片均不是贾晓烨本人。另据传言，央视女主播叶某某是周永康的秘密情人。</p>';
+//
+//        $("#track_sample").html(getHTMLDiff(oldT, newT));
 
-//        function onConfigLoaded(e) {
-//            var conf = e.editor.config;
-//            var lt = conf.lite = conf.lite || {};
-//            if (location.href.indexOf("debug") > 0) {
-//                lt.includeType = "debug";
-//            }
-//        }
-//        editor.on('configLoaded', onConfigLoaded);
-
-        editor.on(LITE.Events.INIT, function(event) {
-            var lite = event.data.lite;
-            lite.toggleShow(true);
-        });
     });
-
-
 </script>
 </body>
 </html>

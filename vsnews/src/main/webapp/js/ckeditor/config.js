@@ -38,5 +38,5 @@ CKEDITOR.editorConfig = function( config ) {
 
     config.font_names='宋体/SimSun;黑体/SimHei;仿宋/FangSong;楷体/KaiTi;'+ config.font_names;
 
-    config.extraPlugins = 'lite';
+//    config.extraPlugins = 'lite';
 };

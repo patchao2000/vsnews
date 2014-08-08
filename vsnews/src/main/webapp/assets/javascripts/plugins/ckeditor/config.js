@@ -12,13 +12,17 @@ CKEDITOR.editorConfig = function( config ) {
     config.toolbarGroups = [
         { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
         { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+
+        //  remove:
 //        { name: 'links' },
 //        { name: 'insert' },
 //        { name: 'forms' },
 //        { name: 'tools' },
-//        { name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
+        { name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
 //        { name: 'others' },
 //        '/',
+        //  end remove
+
         { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
         { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
         { name: 'styles' },
@@ -36,5 +40,6 @@ CKEDITOR.editorConfig = function( config ) {
 
     config.removePlugins = 'elementspath';
 
+    config.allowedContent = true;
 //    config.resize_enabled = false;
 };
