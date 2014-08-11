@@ -51,12 +51,13 @@ public class ArticleAfterModifyProcessor implements TaskListener {
             }
         }
 
-//        article.setContent((String) delegateTask.getVariable("content"));
         Object content = delegateTask.getVariable("content");
         if (content != null) {
             if (!article.getContent().equals(content)) {
                 logger.debug("content changed.");
                 article.setContent((String) content);
+
+                articleManager.applyArticleHistory(delegateTask.getAssignee(), article.getId(), "content", (String)content);
             }
         }
 
@@ -69,11 +70,14 @@ public class ArticleAfterModifyProcessor implements TaskListener {
         article.setSourcers((String) delegateTask.getVariable("sourcers"));
         article.setSourcersTel((String) delegateTask.getVariable("sourcersTel"));
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        try {
-            article.setInterviewTime(format.parse((String) delegateTask.getVariable("interviewTime")));
-        } catch (ParseException e) {
-            logger.error("interviewTime wrong!");
+        Object interviewTime = delegateTask.getVariable("interviewTime");
+        if (interviewTime != null) {
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                article.setInterviewTime(format.parse((String)interviewTime));
+            } catch (ParseException e) {
+                logger.error("interviewTime wrong!");
+            }
         }
 
         logger.debug("AfterModifyArticleProcessor: {} {}", article.getMainTitle(), article.getContent());

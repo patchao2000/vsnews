@@ -1,6 +1,7 @@
 package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.NewsArticle;
+import com.videostar.vsnews.entity.news.NewsArticleHistory;
 import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.persistence.Column;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -345,8 +348,28 @@ public class ArticleController {
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, articleMap});
             return "success";
         } catch (Exception e) {
-            logger.error("error on complete task {}, variables={}", new Object[]{taskId, articleMap, e.getMessage()});
+            logger.error("error on complete task {}, variables={}, error: {}", taskId, articleMap, e.getMessage());
             return "error";
         }
     }
+
+    @RequestMapping(value = "objlist/histories/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public List<NewsArticleHistory> getArticleHistories(@PathVariable("id") Long articleId) {
+        List<NewsArticleHistory> list = articleManager.getArticleContentHistories(articleId);
+        for (NewsArticleHistory history : list) {
+            User user = userManager.getUserById(history.getUserId());
+            String userName = (user == null ? "用户" + history.getUserId().toString() : user.getFirstName());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            history.setDisplayTitle(format.format(history.getTime()) + " - 由" + userName + "修改");
+        }
+        return list;
+    }
+
+    @RequestMapping(value = "history/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public NewsArticleHistory getArticleHistory(@PathVariable("id") Long historyId) {
+        return articleManager.getArticleHistory(historyId);
+    }
+
 }

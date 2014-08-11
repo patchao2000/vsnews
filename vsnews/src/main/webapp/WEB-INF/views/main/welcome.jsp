@@ -191,8 +191,8 @@
 </div>
 
 <%@ include file="/common/alljs.jsp" %>
-<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
-<script src="${ctx}/js/htmldiff.js" type="text/javascript"></script>
+<%--<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>--%>
+<%--<script src="${ctx}/js/htmldiff.js" type="text/javascript"></script>--%>
 <script type="text/javascript">
     $(function () {
         $.ajax({

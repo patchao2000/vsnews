@@ -5,7 +5,11 @@
       <activiti:executionListener event="end" delegateExpression="${articleWorkflowFinishProcessor}"></activiti:executionListener>
     </extensionElements>
     <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
-    <userTask id="class1Audit" name="一级审批" activiti:candidateGroups="articleAudit1"></userTask>
+    <userTask id="class1Audit" name="一级审批" activiti:candidateGroups="articleAudit1">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${articleAfterModifyProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow2" name="需要一级审批" sourceRef="exclusivegateway1" targetRef="class1Audit">
@@ -31,7 +35,11 @@
     <sequenceFlow id="flow7" name="不需要二级审批" sourceRef="exclusivegateway2" targetRef="exclusivegateway3">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!needAudit2}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="class2Audit" name="二级审批" activiti:candidateGroups="articleAudit2"></userTask>
+    <userTask id="class2Audit" name="二级审批" activiti:candidateGroups="articleAudit2">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${articleAfterModifyProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow8" name="需要二级审批" sourceRef="exclusivegateway2" targetRef="class2Audit">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${needAudit2}]]></conditionExpression>
     </sequenceFlow>
@@ -47,7 +55,11 @@
     <sequenceFlow id="flow11" name="二级审批通过" sourceRef="class2Audit" targetRef="exclusivegateway3">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit2Pass}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="class3Audit" name="三级审批" activiti:candidateGroups="articleAudit3"></userTask>
+    <userTask id="class3Audit" name="三级审批" activiti:candidateGroups="articleAudit3">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${articleAfterModifyProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <userTask id="modifyForAudit3" name="调整内容" activiti:assignee="${applyUserId}">
       <extensionElements>
         <activiti:taskListener event="complete" delegateExpression="${articleAfterModifyProcessor}"></activiti:taskListener>

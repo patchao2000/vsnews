@@ -140,7 +140,7 @@
 
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='article_sourcers'>快捷方式：</label>
-                                    <div class='col-md-10'>
+                                    <div class='col-md-4'>
                                         <input class="btn btn-default shortcut" id="sc_content" style="margin-bottom:5px" value="正文" type="button" />
                                         <input class="btn btn-default shortcut" id="sc_cg" style="margin-bottom:5px" value="CG" type="button" />
                                         <input class="btn btn-default shortcut" id="sc_interview" style="margin-bottom:5px" value="采访" type="button" />
@@ -148,6 +148,16 @@
                                         <input class="btn btn-default shortcut" id="sc_shot" style="margin-bottom:5px" value="空镜" type="button" />
                                         <input class="btn btn-default shortcut" id="sc_scene" style="margin-bottom:5px" value="现场" type="button" />
                                     </div>
+                                    <c:if test="${reapplyMode == true || auditMode == true}">
+                                        <%--<div class='form-group'>--%>
+                                            <label class='col-md-2 control-label' for='article_history'>修改历史：</label>
+                                            <div class='col-md-3'>
+                                                <select class='select2 form-control' id="article_history"></select>
+                                            </div>
+                                            <input class="btn btn-primary" id="check_article_history" value="比较" type="button" />
+                                        <%--</div>--%>
+                                    </c:if>
+
                                 </div>
 
                                 <div class='form-group'>
@@ -213,11 +223,11 @@
                                     <div class='row'>
                                         <div class='col-md-10 col-md-offset-2'>
                                             <c:if test="${createMode == true || reapplyMode == true}">
-                                            <button class='btn btn-primary' type='submit'><i class='icon-save'></i>提交</button>
+                                            <button class='btn btn-primary' type='submit'><i class='icon-save'></i> 提交</button>
                                             </c:if>
                                             <c:if test="${auditMode == true}">
-                                            <button class='btn btn-primary' type='submit' id="auditPass"><i class='icon-ok'></i>同意</button>
-                                            <button class='btn btn-danger' type='submit' id="auditReject"><i class='icon-remove'></i>驳回</button>
+                                            <button class='btn btn-primary' type='submit' id="auditPass"><i class='icon-ok'></i> 同意</button>
+                                            <button class='btn btn-danger' type='submit' id="auditReject"><i class='icon-remove'></i> 驳回</button>
                                             </c:if>
                                         </div>
                                     </div>
@@ -233,12 +243,13 @@
 
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="${ctx}/js/htmldiff.js" type="text/javascript"></script>
 <script type="text/javascript">
     //  ckeditor采取异步方式setData, 以下函数可以在提交时正确得到ckeditor数据
     function ckupdate() {
-        var instance;
-        for (instance in CKEDITOR.instances)
-            CKEDITOR.instances[instance].updateElement();
+//        var instance;
+//        for (instance in CKEDITOR.instances)
+            CKEDITOR.instances['article_content'].updateElement();
     }
 
     function removeHTMLTag(str) {
@@ -260,6 +271,34 @@
 
     $("#auditReject").live("click",function(){
         $("#submit-type").val("reject");
+    });
+    </c:if>
+
+    var history_diff_mode = false;
+    var current_content = "";
+    <c:if test="${auditMode == true || reapplyMode == true}">
+    $("#check_article_history").live("click",function(){
+        var editor = CKEDITOR.instances['article_content'];
+        if (history_diff_mode) {
+            editor.setReadOnly(false);
+            history_diff_mode = false;
+            editor.setData(current_content);
+            $("#check_article_history").val("比较");
+        }
+        else {
+            ckupdate();
+
+            current_content = $('#article_content').val();
+            var selected = $("#article_history").find(" :selected").val();
+            $.getJSON(ctx + '/news/article/history/' + selected, function (data) {
+                var history = data.content;
+                var diff = getHTMLDiff(history, current_content);
+                editor.setData(diff);
+                editor.setReadOnly(true);
+                history_diff_mode = true;
+                $("#check_article_history").val("退出比较");
+            });
+        }
     });
     </c:if>
 
@@ -286,10 +325,7 @@
                 tag = "【现场】";
                 break;
         }
-        var instance;
-        for (instance in CKEDITOR.instances) {
-            CKEDITOR.instances[instance].insertHtml("<span style='color:#FF0000'>"+tag+"</span> ");
-        }
+        CKEDITOR.instances['article_content'].insertHtml("<span style='color:#FF0000'>"+tag+"</span> ");
     });
     </c:if>
 
@@ -317,7 +353,7 @@
         </c:if>
         //  set readonly states of ckeditor
         <c:if test="${contentReadonly eq true}">
-            CKEDITOR.config.readOnly = true;
+        CKEDITOR.instances['article_content'].setReadOnly(true);
         </c:if>
 
         <c:if test="${reapplyMode == true}">
@@ -326,7 +362,43 @@
         });
         </c:if>
 
+        <c:if test="${reapplyMode == true || auditMode == true}">
+        $.getJSON(ctx + '/news/article/objlist/histories/' + ${article.id}, function(data) {
+            var histories = '';
+            var template = "<option value='#id'>#name</option>";
+            var templateSelected = "<option value='#id' selected='selected'>#name</option>";
+            var i = 0;
+            $.each(data, function(dk, dv) {
+                var curr;
+                if (i++ == 0)
+                    curr = templateSelected;
+                else
+                    curr = template;
+                $.each(dv, function(k, v) {
+                    var id = '';
+                    if (k == 'id') {
+                        curr = curr.replace(/#id/g, v);
+                    }
+                    else if (k == 'displayTitle') {
+                        curr = curr.replace(/#name/g, v);
+                    }
+                });
+                histories += curr;
+            });
+            var article_sel = $('#article_history');
+            article_sel.html(histories);
+            article_sel.select2({minimumResultsForSearch: -1});
+        });
+        </c:if>
+
         $("#inputForm").submit(function (event) {
+            if (history_diff_mode) {
+                CKEDITOR.instances['article_content'].setData(current_content);
+//                alert('请退出历史比较模式！');
+//                event.preventDefault();
+//                return;
+            }
+
             ckupdate();
             
             var map = {};
@@ -357,8 +429,8 @@
             map["auditOpinion"] = opinion;
             </c:if>
             
-            //  reapply mode, all changes must send as variable map
-            <c:if test="${reapplyMode == true}">
+            //  reapply mode and audit mode, all changes must send as variable map
+            <c:if test="${reapplyMode == true || auditMode == true}">
             map["mainTitle"] = $('#article_mainTitle').val();
             map["subTitle"] = $('#article_subTitle').val();
             map["content"] = $('#article_content').val();
@@ -393,9 +465,9 @@
             map["reporters"] = reps;
             map["cameramen"] = cams;
             map["editors"] = edts;
-            </c:if>
+            <%--</c:if>--%>
 
-            <c:if test="${auditMode == true || reapplyMode == true}">
+            <%--<c:if test="${auditMode == true || reapplyMode == true}">--%>
             //  sending complete req
             $.ajax({
                 type: 'post',

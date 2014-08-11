@@ -62,6 +62,10 @@ public class ArticleWorkflowService {
     public ProcessInstance startArticleWorkflow(NewsArticle entity, Map<String, Object> variables) {
         articleManager.saveArticle(entity);
         logger.debug("save entity: {}", entity);
+
+        //  apply initial content history
+        articleManager.applyArticleHistory(entity.getUserId(), entity.getId(), "content", entity.getContent());
+
         String businessKey = entity.getId().toString();
 
         ProcessInstance processInstance = null;

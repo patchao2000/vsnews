@@ -46,7 +46,7 @@
                                             <th>申请人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
-                                            <th>内容</th>
+                                            <%--<th>内容</th>--%>
                                             <th>当前节点</th>
                                             <%--<th>任务创建时间</th>--%>
                                             <%--<th>流程状态</th>--%>
@@ -66,7 +66,7 @@
                                                 <td>${detail.userName }</td>
                                                 <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.article.mainTitle }</td>
-                                                <td>${detail.plainContent }</td>
+                                                <%--<td>${detail.plainContent }</td>--%>
                                                 <td>
                                                     <%--<a href='${ctx }/diagram-viewer/index.html?processDefinitionId=${pi.processDefinitionId}&processInstanceId=${pi.id }' title="点击查看流程图">${task.name }</a>--%>
                                                     <a class="trace" href='#' data-pid="${pi.id }" data-pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>

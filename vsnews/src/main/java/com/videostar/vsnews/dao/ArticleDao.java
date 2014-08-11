@@ -1,7 +1,7 @@
 package com.videostar.vsnews.dao;
 
 import com.videostar.vsnews.entity.news.NewsArticle;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Component;
  * Created by patchao2000 on 14-7-25.
  */
 @Component
-public interface ArticleDao extends CrudRepository<NewsArticle, Long>{
+public interface ArticleDao extends PagingAndSortingRepository<NewsArticle, Long> {
 }
