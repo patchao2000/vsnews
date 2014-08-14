@@ -155,6 +155,10 @@
                 </div>
             </div>
 
+            <div class="col-md-6">
+                <div id="video">Loading the player...</div>
+            </div>
+
             <%--<div class='col-md-12'>--%>
                 <%--<div class='form-group'>--%>
                     <%--<textarea class='ckeditor form-control' id='track_sample' rows='20' ></textarea>--%>
@@ -193,8 +197,38 @@
 <%@ include file="/common/alljs.jsp" %>
 <%--<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>--%>
 <%--<script src="${ctx}/js/htmldiff.js" type="text/javascript"></script>--%>
+
+<%--<script src="${ctx}/js/jwplayer/jwplayer.js" ></script>--%>
+<%--<script>jwplayer.key="H6eyBd5KQX42h8hPhe04Ldd7sd9a24ZYwXh5sA==";</script>--%>
+
+<script src="${ctx}/js/ckplayer/ckplayer.js" ></script>
 <script type="text/javascript">
     $(function () {
+//        jwplayer("video").setup({
+//            file: "http://192.168.1.119/Sample2.mp4",
+//            image: "http://192.168.1.119/Sample2.jpg",
+//            width: 640,
+//            height: 360
+//        });
+
+//        CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);
+        //  swf
+        var flashvars={ f:'http://192.168.1.119/Sample1.mp4', c:0, b:1 };
+        var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};
+        CKobject.embedSWF('${ctx}/js/ckplayer/ckplayer.swf','video','ckplayer_a1','640','360',flashvars,params);
+
+        //  html5
+        var video=['http://192.168.1.119/1.mp4->video/mp4','http://www.ckplayer.com/webm/0.webm->video/webm','http://www.ckplayer.com/webm/0.ogv->video/ogg'];
+        var support=['iPad','iPhone','ios','android+false','msie10+false'];
+        CKobject.embedHTML5('video','ckplayer_a1',640,360,video,flashvars,support);
+
+        function closelights(){//关灯
+            alert(' 本演示不支持开关灯');
+        }
+        function openlights(){//开灯
+            alert(' 本演示不支持开关灯');
+        }
+
         $.ajax({
             type: 'post',
             async: true,
