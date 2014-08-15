@@ -2,8 +2,8 @@ package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.entity.news.NewsTopic;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.delegate.DelegateExecution;
-import org.activiti.engine.delegate.ExecutionListener;
+import org.activiti.engine.delegate.DelegateTask;
+import org.activiti.engine.delegate.TaskListener;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * TopicWriteWorkflowFinishProcessor
+ * TopicAfterAuditProcessor
  *
- * Created by patchao2000 on 14-7-18.
+ * Created by patchao2000 on 14-8-15.
  */
 @Component
 @Transactional
-public class TopicWriteWorkflowFinishProcessor implements ExecutionListener {
+public class TopicAfterAuditProcessor implements TaskListener {
     private static final long serialVersionUID = 1L;
 
-    private static Logger logger = LoggerFactory.getLogger(TopicWriteWorkflowFinishProcessor.class);
+    private static Logger logger = LoggerFactory.getLogger(TopicAfterAuditProcessor.class);
 
     @Autowired
     TopicManager topicManager;
@@ -32,15 +32,16 @@ public class TopicWriteWorkflowFinishProcessor implements ExecutionListener {
     /* (non-Javadoc)
      * @see org.activiti.engine.delegate.TaskListener#notify(org.activiti.engine.delegate.DelegateTask)
      */
-    public void notify(DelegateExecution execution) throws Exception {
-        String processInstanceId = execution.getProcessInstanceId();
+    @SuppressWarnings("unchecked")
+    public void notify(DelegateTask delegateTask) {
+        String processInstanceId = delegateTask.getProcessInstanceId();
 
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsTopic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
 
-        topic.setStatus(NewsTopic.STATUS_WRITTEN);
+        topic.setDispatcher((String) delegateTask.getVariable("dispatcher"));
 
-        logger.debug("TopicWriteWorkflowFinishProcessor: {}", topic.getId());
+        logger.debug("TopicAfterAuditProcessor: {}", topic.getId());
 
         topicManager.saveTopic(topic);
     }

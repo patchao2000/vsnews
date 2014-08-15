@@ -19,10 +19,11 @@
 <%--@elvariable id="auditDeviceMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="modifyDeviceOnly" type="java.lang.Boolean"--%>
-<%--@elvariable id="dispatch" type="java.lang.Boolean"--%>
-<%--@elvariable id="dispatchers" type="java.util.List"--%>
 <%--@elvariable id="taskId" type="java.lang.String"--%>
 <%--@elvariable id="createArticle" type="java.lang.Boolean"--%>
+<%--@elvariable id="dispatcher" type="java.lang.String"--%>
+<%--@elvariable id="dispatchers" type="java.util.List"--%>
+<%--@elvariable id="dispatcherReadonly" type="java.lang.Boolean"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -105,8 +106,14 @@
                                     </div>
                                 </div>
                                 <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='topic_dispatcher'>派遣人：</label>
+                                    <div class='col-md-4'>
+                                        <form:select class='select2 form-control' id="topic_dispatcher" path="dispatcher">
+                                            <form:options items="${dispatchers}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
                                     <label class='col-md-2 control-label' for='topic_others'>其他人员：</label>
-                                    <div class='col-md-10'>
+                                    <div class='col-md-4'>
                                         <form:select class='select2 form-control' id="topic_others" multiple="true" path="others">
                                             <form:options items="${others}" itemValue="id" itemLabel="firstName" />
                                         </form:select>
@@ -166,19 +173,6 @@
                                         <form:textarea class='form-control' id='topic_devices' path='devices' readonly="${devreadonly}" rows='3' />
                                     </div>
                                 </div>
-                                <c:if test="${dispatch == true}">
-                                <%--@elvariable id="dispatcher" type="org.activiti.engine.identity.User"--%>
-                                <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='dispatcher_sel'>派遣对象：</label>
-                                    <div class='col-md-10'>
-                                        <select class='select2 form-control' id="dispatcher_sel">
-                                            <c:forEach items="${dispatchers }" var="dispatcher">
-                                                <option value="${dispatcher.id }">${dispatcher.firstName }</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                </c:if>
                                 <c:if test="${auditMode == true || auditDeviceMode == true}">
                                     <div class='form-group'>
                                         <label class='col-md-2 control-label' for='opinion'>审核意见：</label>
@@ -193,9 +187,6 @@
                                         <div class='col-md-10 col-md-offset-2'>
                                             <c:if test="${createMode == true || reapplyMode == true}">
                                                 <button class='btn btn-primary' type='submit'><i class='icon-save'></i>提交</button>
-                                            </c:if>
-                                            <c:if test="${dispatch == true}">
-                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>派遣</button>
                                             </c:if>
                                             <c:if test="${auditMode == true || auditDeviceMode == true}">
                                                 <button class='btn btn-primary' type='submit' id="auditPass"><i class='icon-ok'></i>同意</button>
@@ -232,12 +223,12 @@
     $(function () {
         //  set readonly states of select2 controls
         <c:if test="${readonly == true}">
-        $("#article_reporters").select2("readonly", true);
-        $("#article_cameramen").select2("readonly", true);
-        $("#article_others").select2("readonly", true);
+        $("#topic_reporters").select2("readonly", true);
+        $("#topic_cameramen").select2("readonly", true);
+        $("#topic_others").select2("readonly", true);
         </c:if>
-
-        <c:if test="${dispatch == true}">
+        <c:if test="${dispatcherReadonly == true}">
+        $("#topic_dispatcher").select2("readonly", true);
         </c:if>
 
         <c:if test="${reapplyMode == true}">
@@ -251,29 +242,6 @@
 
         $("#inputForm").submit(function (event) {
             var map = {};
-
-            <c:if test="${dispatch == true}">
-            $.ajax({
-                type: 'post',
-                async: true,
-                url: ctx + '/news/topic/dispatch/' + ${topic.id} + '/' + $("#dispatcher_sel").find(":selected").val(),
-                contentType: "application/json; charset=utf-8",
-                data : JSON.stringify(map),
-                success: function (resp) {
-                    if (resp == 'success') {
-                        alert('任务完成');
-                        location.href = ctx + '/news/topic/list/task'
-                    } else {
-                        alert('操作失败!');
-                    }
-                },
-                error: function () {
-                    alert('操作失败!!');
-                }
-            });
-            event.preventDefault();
-//            return;
-            </c:if>
 
             <c:if test="${createArticle == true}">
             location.href = ctx + '/news/article/apply-topic/' + ${topic.id};
@@ -294,6 +262,9 @@
             <c:if test="${auditMode == true}">
             map["leaderPass"] = passed;
             map["leaderbackreason"] = opinion;
+            if (passed == true) {
+                map["dispatcher"] = $('#topic_dispatcher').find(':selected').val();
+            }
             </c:if>
             <c:if test="${auditDeviceMode == true}">
             map["devicePass"] = passed;
@@ -302,7 +273,7 @@
             </c:if>
 
             //  reapply mode, all changes must send as variable map
-            <c:if test="${reapplyMode == true}">
+            <c:if test="${reapplyMode == true || auditMode == true}">
             map["title"] = $('#topic_title').val();
             map["content"] = $('#topic_content').val();
             map["devices"] = $('#topic_devices').val();

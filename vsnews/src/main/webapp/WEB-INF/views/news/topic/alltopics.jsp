@@ -41,12 +41,13 @@
                                         <thead>
                                         <tr>
                                             <th>申请人</th>
+                                            <th>派遣人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
                                             <%--<th>内容</th>--%>
                                             <%--<th>设备</th>--%>
                                             <th>当前节点</th>
-                                            <th>状态</th>
+                                            <%--<th>状态</th>--%>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -58,12 +59,13 @@
                                                 <c:set var="task" value="${detail.topic.task }"/>
                                                 <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
                                                 <td>${detail.userName }</td>
+                                                <td>${detail.dispatcherName }</td>
                                                 <td><fmt:formatDate value="${detail.topic.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.topic.title }</td>
                                                 <%--<td>${topic.content }</td>--%>
                                                 <%--<td>${topic.devices }</td>--%>
                                                 <td>${task.name }</td>
-                                                <td>${detail.topic.statusString }</td>
+                                                <%--<td>${detail.topic.statusString }</td>--%>
                                                 <td>
                                                     <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                 </td>

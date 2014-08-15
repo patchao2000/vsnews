@@ -38,7 +38,7 @@ public class TopicWorkflowFinishProcessor implements ExecutionListener {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsTopic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
 
-        topic.setStatus(1);
+//        topic.setStatus(1);
 
         logger.debug("TopicWorkflowFinishProcessor: {}", topic.getId());
 

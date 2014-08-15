@@ -124,25 +124,29 @@
                                             <div class='scrollable' data-scrollable-height='300' data-scrollable-start='bottom'>
                                                 <ul class='list-unstyled list-hover list-striped'>
                                                     <li class='message'>
-                                                        <div class='avatar'>
-                                                            <img alt='Avatar' height='23' src='${ctx}/assets/images/avatar.gif' width='23'>
-                                                        </div>
-                                                        <div class='name-and-time'>
-                                                            <div class='name pull-left'>
-                                                                <small>
-                                                                    <a class="text-contrast" href="#">张三</a>
-                                                                </small>
-                                                            </div>
-                                                            <div class='time pull-right'>
-                                                                <small class='date pull-right text-muted'>
-                                                                    <span class='timeago fade has-tooltip' data-placement='top' title='2013-09-15 17:42:37 +0200'>September 15, 2013 - 17:42</span>
-                                                                    <i class='icon-time'></i>
-                                                                </small>
-                                                            </div>
-                                                        </div>
                                                         <div class='body'>
-                                                            下班后请来我办公室领奖金
+                                                            您没有任何留言
                                                         </div>
+
+                                                        <%--<div class='avatar'>--%>
+                                                            <%--<img alt='Avatar' height='23' src='${ctx}/assets/images/avatar.gif' width='23'>--%>
+                                                        <%--</div>--%>
+                                                        <%--<div class='name-and-time'>--%>
+                                                            <%--<div class='name pull-left'>--%>
+                                                                <%--<small>--%>
+                                                                    <%--<a class="text-contrast" href="#">张三</a>--%>
+                                                                <%--</small>--%>
+                                                            <%--</div>--%>
+                                                            <%--<div class='time pull-right'>--%>
+                                                                <%--<small class='date pull-right text-muted'>--%>
+                                                                    <%--<span class='timeago fade has-tooltip' data-placement='top' title='2013-09-15 17:42:37 +0200'>September 15, 2013 - 17:42</span>--%>
+                                                                    <%--<i class='icon-time'></i>--%>
+                                                                <%--</small>--%>
+                                                            <%--</div>--%>
+                                                        <%--</div>--%>
+                                                        <%--<div class='body'>--%>
+                                                            <%--下班后请来我办公室领奖金--%>
+                                                        <%--</div>--%>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -155,9 +159,9 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div id="video">Loading the player...</div>
-            </div>
+            <%--<div class="col-md-6">--%>
+                <%--<div id="video">Loading the player...</div>--%>
+            <%--</div>--%>
 
             <%--<div class='col-md-12'>--%>
                 <%--<div class='form-group'>--%>
@@ -201,7 +205,8 @@
 <%--<script src="${ctx}/js/jwplayer/jwplayer.js" ></script>--%>
 <%--<script>jwplayer.key="H6eyBd5KQX42h8hPhe04Ldd7sd9a24ZYwXh5sA==";</script>--%>
 
-<script src="${ctx}/js/ckplayer/ckplayer.js" ></script>
+<%--<script src="${ctx}/js/ckplayer/ckplayer.js" ></script>--%>
+
 <script type="text/javascript">
     $(function () {
 //        jwplayer("video").setup({
@@ -211,23 +216,23 @@
 //            height: 360
 //        });
 
-//        CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);
-        //  swf
-        var flashvars={ f:'http://192.168.1.119/Sample1.mp4', c:0, b:1 };
-        var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};
-        CKobject.embedSWF('${ctx}/js/ckplayer/ckplayer.swf','video','ckplayer_a1','640','360',flashvars,params);
+        <%--//  CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);--%>
+        <%--//  swf--%>
+        <%--var flashvars={ f:'http://192.168.1.119/Sample1.mp4', c:0, b:1 };--%>
+        <%--var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};--%>
+        <%--CKobject.embedSWF('${ctx}/js/ckplayer/ckplayer.swf','video','ckplayer_a1','640','360',flashvars,params);--%>
 
-        //  html5
-        var video=['http://192.168.1.119/1.mp4->video/mp4','http://www.ckplayer.com/webm/0.webm->video/webm','http://www.ckplayer.com/webm/0.ogv->video/ogg'];
-        var support=['iPad','iPhone','ios','android+false','msie10+false'];
-        CKobject.embedHTML5('video','ckplayer_a1',640,360,video,flashvars,support);
+        <%--//  html5--%>
+        <%--var video=['http://192.168.1.119/1.mp4->video/mp4','http://www.ckplayer.com/webm/0.webm->video/webm','http://www.ckplayer.com/webm/0.ogv->video/ogg'];--%>
+        <%--var support=['iPad','iPhone','ios','android+false','msie10+false'];--%>
+        <%--CKobject.embedHTML5('video','ckplayer_a1',640,360,video,flashvars,support);--%>
 
-        function closelights(){//关灯
-            alert(' 本演示不支持开关灯');
-        }
-        function openlights(){//开灯
-            alert(' 本演示不支持开关灯');
-        }
+        <%--function closelights(){//关灯--%>
+            <%--alert(' 本演示不支持开关灯');--%>
+        <%--}--%>
+        <%--function openlights(){//开灯--%>
+            <%--alert(' 本演示不支持开关灯');--%>
+        <%--}--%>
 
         $.ajax({
             type: 'post',

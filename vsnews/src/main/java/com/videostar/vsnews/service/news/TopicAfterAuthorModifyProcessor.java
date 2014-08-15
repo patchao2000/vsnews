@@ -24,10 +24,10 @@ import java.util.List;
  */
 @Component
 @Transactional
-public class TopicAfterModifyProcessor implements TaskListener {
+public class TopicAfterAuthorModifyProcessor implements TaskListener {
     private static final long serialVersionUID = 1L;
 
-    private static Logger logger = LoggerFactory.getLogger(TopicAfterModifyProcessor.class);
+    private static Logger logger = LoggerFactory.getLogger(TopicAfterAuthorModifyProcessor.class);
 
     @Autowired
     TopicManager topicManager;
@@ -52,6 +52,7 @@ public class TopicAfterModifyProcessor implements TaskListener {
         topic.setCameramen((List<String>) delegateTask.getVariable("cameramen"));
         topic.setOthers((List<String>) delegateTask.getVariable("others"));
         topic.setLocation((String) delegateTask.getVariable("location"));
+        topic.setDispatcher((String) delegateTask.getVariable("dispatcher"));
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
@@ -70,7 +71,7 @@ public class TopicAfterModifyProcessor implements TaskListener {
             logger.error("endTime wrong!");
         }
 
-        logger.debug("AfterModifyTopicProcessor: {} {} {}", topic.getTitle(), topic.getContent(), topic.getDevices());
+        logger.debug("TopicAfterAuthorModifyProcessor: {} {}", topic.getId(), topic.getTitle());
 
         topicManager.saveTopic(topic);
     }

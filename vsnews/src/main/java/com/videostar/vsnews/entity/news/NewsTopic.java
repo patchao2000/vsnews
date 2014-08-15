@@ -18,13 +18,13 @@ import java.util.List;
 public class NewsTopic extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    //   选题状态: 0 -> 选题撰写中, 1 -> 选题撰写完毕, 2 -> 选题派遣中, 3 -> 选题派遣完毕
-    public static final int STATUS_WRITING = 0;
-    public static final int STATUS_WRITTEN = 1;
-    public static final int STATUS_DISPATCHING = 2;
-    public static final int STATUS_DISPATCHED = 3;
-
-    private int status;
+//    //   选题状态: 0 -> 选题撰写中, 1 -> 选题撰写完毕, 2 -> 选题派遣中, 3 -> 选题派遣完毕
+//    public static final int STATUS_WRITING = 0;
+//    public static final int STATUS_WRITTEN = 1;
+//    public static final int STATUS_DISPATCHING = 2;
+//    public static final int STATUS_DISPATCHED = 3;
+//
+//    private int status;
 
     //    标题
     @NotBlank(message = "标题不能为空")
@@ -39,6 +39,8 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     private List<String> cameramen;
     //    其他人员
     private List<String> others;
+    //    派遣对象
+    private String dispatcher;
 
     //    采访时间
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
@@ -55,7 +57,7 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     private Date endTime;
 
     public NewsTopic() {
-        this.status = STATUS_WRITING;
+//        this.status = STATUS_WRITING;
     }
 
     @Column
@@ -85,29 +87,29 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
         this.devices = devices;
     }
 
-    @Column
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    @Transient
-    public final String getStatusString() {
-        switch(status) {
-            case STATUS_WRITING:
-                return "撰写中";
-            case STATUS_WRITTEN:
-                return "撰写完毕";
-            case STATUS_DISPATCHING:
-                return "派遣中";
-            case STATUS_DISPATCHED:
-                return "派遣完毕";
-        }
-        return "ERROR";
-    }
+//    @Column
+//    public int getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(int status) {
+//        this.status = status;
+//    }
+//
+//    @Transient
+//    public final String getStatusString() {
+//        switch(status) {
+//            case STATUS_WRITING:
+//                return "撰写中";
+//            case STATUS_WRITTEN:
+//                return "撰写完毕";
+//            case STATUS_DISPATCHING:
+//                return "派遣中";
+//            case STATUS_DISPATCHED:
+//                return "派遣完毕";
+//        }
+//        return "ERROR";
+//    }
 
     @Column
     @ElementCollection
@@ -179,5 +181,14 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    @Column
+    public String getDispatcher() {
+        return dispatcher;
+    }
+
+    public void setDispatcher(String dispatcher) {
+        this.dispatcher = dispatcher;
     }
 }

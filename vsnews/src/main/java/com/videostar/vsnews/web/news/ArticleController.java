@@ -147,6 +147,8 @@ public class ArticleController {
         makeCreateArticleModel(model, user, article);
         article.setMainTitle(topic.getTitle());
         article.setContent("<p>" + topic.getContent() + "</p>");
+        article.setCameramen(topic.getCameramen());
+        article.setReporters(topic.getReporters());
 
         return "/news/article/view";
     }

@@ -13,6 +13,7 @@ public class TopicDetail implements java.io.Serializable {
 
     private NewsTopic Topic;
     private String userName;
+    private String dispatcherName;
 //    private String columnName;
 //    private String plainTitle;
 
@@ -46,6 +47,14 @@ public class TopicDetail implements java.io.Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getDispatcherName() {
+        return dispatcherName;
+    }
+
+    public void setDispatcherName(String dispatcherName) {
+        this.dispatcherName = dispatcherName;
     }
 }
 
