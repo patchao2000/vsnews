@@ -18,6 +18,7 @@
 <%--@elvariable id="taskId" type="java.lang.String"--%>
 <%--@elvariable id="taskKey" type="java.lang.String"--%>
 <%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="videos" type="java.util.List"--%>
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
@@ -167,9 +168,24 @@
                                         <form:errors path="content" cssClass="help-block" />
                                     </div>
                                 </div>
+                                <div class='form-group' id="video_group" hidden="hidden">
+                                    <label class='col-md-2 control-label' for='article_content'>视频：</label>
+                                    <div class='col-md-10' id="video_parent">
+                                        <div id="video"></div>
+                                    </div>
+                                </div>
                                 <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='article_video'>视频选择：</label>
+                                    <div class='col-md-3'>
+                                        <form:select class='select2 form-control' id="article_video" path="video">
+                                            <form:options items="${videos}" itemValue="fileName" itemLabel="title" />
+                                        </form:select>
+                                    </div>
+                                    <div class='col-md-1'>
+                                        <input class="btn btn-default shortcut" id="article_show_video" style="margin-bottom:5px" value="显示" type="button" />
+                                    </div>
                                     <label class='col-md-2 control-label' for='content_time'>时长：</label>
-                                    <div class='col-md-10'>
+                                    <div class='col-md-4'>
                                         <input class='form-control' id='content_time' readonly="readonly" type='text' rows="1" />
                                     </div>
                                 </div>
@@ -243,8 +259,41 @@
 
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="${ctx}/js/ckplayer/ckplayer.js" ></script>
 <script src="${ctx}/js/htmldiff.js" type="text/javascript"></script>
 <script type="text/javascript">
+
+    var video_shown = false;
+    $("#article_show_video").live("click",function(){
+        var group = $("#video_group");
+        var button = $("#article_show_video");
+        if (video_shown == false) {
+            group.show();
+            var file = 'http://192.168.1.119/' + $("#article_video").find(" :selected").val();
+
+            <%--//  CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);--%>
+            <%--//  swf--%>
+            var flashvars={ f:file, c:0, b:1 };
+            var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};
+            CKobject.embedSWF('${ctx}/js/ckplayer/ckplayer.swf','video','ckplayer_a1','640','360',flashvars,params);
+
+            //  html5
+            var video=[file + '->video/mp4','http://www.ckplayer.com/webm/0.webm->video/webm','http://www.ckplayer.com/webm/0.ogv->video/ogg'];
+            var support=['iPad','iPhone','ios','android+false','msie10+false'];
+            CKobject.embedHTML5('video','ckplayer_a1',640,360,video,flashvars,support);
+
+            button.val("隐藏");
+            video_shown = true;
+        }
+        else {
+            CKobject.videoPause();
+
+            group.hide();
+            button.val("显示");
+            video_shown = false;
+        }
+    });
+
     //  ckeditor采取异步方式setData, 以下函数可以在提交时正确得到ckeditor数据
     function ckupdate() {
 //        var instance;
@@ -344,12 +393,16 @@
         var column_sel = $("#article_columnId");
         column_sel.select2({minimumResultsForSearch: -1});
 
+        var video_sel = $("#article_video");
+        video_sel.select2({minimumResultsForSearch: -1});
+
         //  set readonly states of select2 controls
         <c:if test="${readonly == true}">
             column_sel.select2("readonly", true);
             $("#article_reporters").select2("readonly", true);
             $("#article_cameramen").select2("readonly", true);
             $("#article_editors").select2("readonly", true);
+            video_sel.select2("readonly", true);
         </c:if>
         //  set readonly states of ckeditor
         <c:if test="${contentReadonly eq true}">
@@ -439,6 +492,12 @@
             map["sourcers"] = $('#article_sourcers').val();
             map["sourcersTel"] = $('#article_sourcersTel').val();
             map["notes"] = $('#article_notes').val();
+            map["prepareSendProvTV"] = $('#article_prepareSendProvTV').is(':checked');
+            map["prepareSendCCTV"] = $('#article_prepareSendCCTV').is(':checked');
+            map["sentToProvTV"] = $('#article_sentToProvTV').is(':checked');
+            map["sentToCCTV"] = $('#article_sentToCCTV').is(':checked');
+            map["adoptedByProvTV"] = $('#article_adoptedByProvTV').is(':checked');
+            map["adoptedByCCTV"] = $('#article_adoptedByCCTV').is(':checked');
 
             //  new Array()不能用{}代替，否则会报错！
             var reps = [];//new Array();
@@ -465,6 +524,7 @@
             map["reporters"] = reps;
             map["cameramen"] = cams;
             map["editors"] = edts;
+            map["video"] = video_sel.find(" :selected").val();
             <%--</c:if>--%>
 
             <%--<c:if test="${auditMode == true || reapplyMode == true}">--%>

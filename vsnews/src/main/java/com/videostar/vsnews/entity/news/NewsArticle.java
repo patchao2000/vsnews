@@ -61,6 +61,8 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
 
     //    备注
     private String notes;
+    //    视频
+    private String video;
 
     //    拟报省台
     private Boolean prepareSendProvTV;
@@ -264,4 +266,12 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
         return "ERROR";
     }
 
+    @Column
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
+    }
 }

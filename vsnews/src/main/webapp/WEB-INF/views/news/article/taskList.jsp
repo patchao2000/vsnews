@@ -75,15 +75,15 @@
                                                 <%--<td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm" /></td>--%>
                                                 <%--<td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${detail.article.processDefinition.version }</b></td>--%>
                                                 <td>
-                                                    <c:if test="${empty task.assignee }">
-                                                        <a class="btn btn-success btn-xs" href="${ctx }/news/article/task/claim/${task.id}">
-                                                            <i class="icon-edit"></i>签收</a>
-                                                    </c:if>
-                                                    <c:if test="${not empty task.assignee }">
+                                                    <%--<c:if test="${empty task.assignee }">--%>
+                                                        <%--<a class="btn btn-success btn-xs" href="${ctx }/news/article/task/claim/${task.id}">--%>
+                                                            <%--<i class="icon-edit"></i>签收</a>--%>
+                                                    <%--</c:if>--%>
+                                                    <%--<c:if test="${not empty task.assignee }">--%>
                                                         <%-- 此处用tkey记录当前节点的名称 --%>
                                                         <a class="handle btn btn-primary btn-xs" data-tkey='${task.taskDefinitionKey }' data-tname='${task.name }'
-                                                           href="#"><i class="icon-edit"></i>办理</a>
-                                                    </c:if>
+                                                           data-assignee="${task.assignee }" href="#"><i class="icon-edit"></i>办理</a>
+                                                    <%--</c:if>--%>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -103,6 +103,21 @@
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function () {
+    function handle(tkey, articleId, taskId) {
+        //  若调整申请内容
+        if (tkey == 'modifyForAudit1' || tkey == 'modifyForAudit2' || tkey == 'modifyForAudit3') {
+            location.href = ctx + '/news/article/reapply/'+articleId+'/'+taskId;
+            return;
+        }
+        else if (tkey == 'class1Audit' || tkey == 'class2Audit' || tkey == 'class3Audit') {
+            location.href = ctx + '/news/article/audit/'+articleId+'/'+taskId+'/'+tkey;
+            return;
+        }
+        else {
+            alert(tkey + " ERROR!");
+        }
+    }
+
     $('.trace').click(function() {
         var dialog = new BootstrapDialog({
             title: '123',
@@ -121,28 +136,38 @@ $(document).ready(function () {
     });
     
     $('.handle').click(function () {
+        var assignee = $(this).attr('data-assignee');
         // 当前节点的英文名称
         var tkey = $(this).attr('data-tkey');
 //        // 当前节点的中文名称
 //        var tname = $(this).attr('data-tname');
         // 记录ID
-        var rowId = $(this).parents('tr').attr('id');
+        var articleId = $(this).parents('tr').attr('id');
         // 任务ID
         var taskId = $(this).parents('tr').attr('data-tid');
 
-        //  若调整申请内容
-        if (tkey == 'modifyForAudit1' || tkey == 'modifyForAudit2' || tkey == 'modifyForAudit3') {
-            location.href = ctx + '/news/article/reapply/'+rowId+'/'+taskId;
-//            location.href = ctx + '/news/article/apply?reapply=true&id='+rowId+'&taskid='+taskId;
-            return;
-        }
-        else if (tkey == 'class1Audit' || tkey == 'class2Audit' || tkey == 'class3Audit') {
-            location.href = ctx + '/news/article/audit/'+rowId+'/'+taskId+'/'+tkey;
-//            location.href = ctx + '/news/article/apply?audit=true&id='+rowId+'&taskid='+taskId+'&tkey='+tkey;
-            return;
-        }
+        if (assignee.length == 0) {
+            $.ajax({
+                type: 'post',
+                async: true,
+                url: ctx + '/news/article/task/claim/' + taskId,
+                contentType: "application/json; charset=utf-8",
+                success: function (resp) {
+                    if (resp == 'success') {
+                        handle(tkey, articleId, taskId);
+                    } else {
+                        alert('任务签收失败!');
+                    }
+                },
+                error: function () {
+                    alert('任务签收失败!!');
+                }
+            });
 
-        alert(tkey + " ERROR!");
+        }
+        else {
+            handle(tkey, articleId, taskId);
+        }
     });
 });
 </script>

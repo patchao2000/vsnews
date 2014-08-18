@@ -5,10 +5,7 @@ import com.videostar.vsnews.entity.news.NewsArticleHistory;
 import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
-import com.videostar.vsnews.service.news.ArticleManager;
-import com.videostar.vsnews.service.news.ArticleWorkflowService;
-import com.videostar.vsnews.service.news.ColumnService;
-import com.videostar.vsnews.service.news.TopicManager;
+import com.videostar.vsnews.service.news.*;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.ActivitiException;
@@ -68,6 +65,9 @@ public class ArticleController {
     protected TopicManager topicManager;
 
     @Autowired
+    protected VideoManager videoManager;
+
+    @Autowired
     protected RuntimeService runtimeService;
 
     @Autowired
@@ -90,6 +90,8 @@ public class ArticleController {
         model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
         model.addAttribute("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
         model.addAttribute("columns", columnService.getUserColumns(user));
+
+        model.addAttribute("videos", videoManager.getAllVideos());
     }
 
     private void makeCreateArticleModel(Model model, User user, NewsArticle article) {
@@ -317,15 +319,16 @@ public class ArticleController {
         NewsArticle article = articleManager.getArticle(id);
         mav.addObject("article", article);
 
-        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
-        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
-        mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
-
         User user = getCurrentUser(session);
         if (user == null)
             return new ModelAndView(redirectTimeoutString);
 
+        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
         mav.addObject("columns", columnService.getUserColumns(user));
+
+        mav.addObject("videos", videoManager.getAllVideos());
 
         mav.addObject("title", "查看文稿");
         mav.addObject("readonly", true);
@@ -335,11 +338,19 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "task/claim/{id}")
+    @ResponseBody
     public String claim(@PathVariable("id") String taskId, HttpSession session, RedirectAttributes redirectAttributes) {
-        String userId = UserUtil.getUserFromSession(session).getId();
-        taskService.claim(taskId, userId);
-        redirectAttributes.addFlashAttribute("message", "任务已签收");
-        return "redirect:/news/article/list/task";
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            taskService.claim(taskId, userId);
+            logger.debug("claim task {}", taskId);
+            return "success";
+//            redirectAttributes.addFlashAttribute("message", "任务已签收");
+//            return "redirect:/news/article/list/task";
+        } catch (Exception e) {
+            logger.error("error on claim task {}, {}", taskId, e.getMessage());
+            return "error";
+        }
     }
 
     @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")

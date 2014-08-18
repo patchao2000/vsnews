@@ -13,61 +13,19 @@ insert into ACT_ID_GROUP values ('cameraman', 1, '摄像员', 'assignment');
 insert into ACT_ID_GROUP values ('deviceAudit', 1, '设备管理', 'assignment');
 
 insert into ACT_ID_USER values ('admin', 1, 'Admin', '', 'admin@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('admin', 'admin');
-# insert into ACT_ID_MEMBERSHIP values ('admin', 'user');
-
-# insert into ACT_ID_USER values ('user', 1, 'User', '', 'user@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('user', 'admin');
-# insert into ACT_ID_MEMBERSHIP values ('user', 'user');
 
 insert into ACT_ID_USER values ('repa', 1, '记者A', '', 'repa@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('repa', 'reporter');
-# insert into ACT_ID_MEMBERSHIP values ('repa', 'user');
 insert into ACT_ID_USER values ('repb', 1, '记者B', '', 'repb@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('repb', 'reporter');
-# insert into ACT_ID_MEMBERSHIP values ('repb', 'user');
 insert into ACT_ID_USER values ('repc', 1, '记者C', '', 'repc@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('repc', 'reporter');
-# insert into ACT_ID_MEMBERSHIP values ('repc', 'user');
-
 insert into ACT_ID_USER values ('cama', 1, '摄像员A', '', 'cama@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('cama', 'cameraman');
-# insert into ACT_ID_MEMBERSHIP values ('cama', 'user');
 insert into ACT_ID_USER values ('camb', 1, '摄像员B', '', 'camb@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('camb', 'cameraman');
-# insert into ACT_ID_MEMBERSHIP values ('camb', 'user');
 insert into ACT_ID_USER values ('camc', 1, '摄像员C', '', 'camc@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('camc', 'cameraman');
-# insert into ACT_ID_MEMBERSHIP values ('camc', 'user');
-
 insert into ACT_ID_USER values ('edta', 1, '编辑A', '', 'edta@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('edta', 'topicWrite');
-# insert into ACT_ID_MEMBERSHIP values ('edta', 'articleWrite');
-# insert into ACT_ID_MEMBERSHIP values ('edta', 'editor');
-# insert into ACT_ID_MEMBERSHIP values ('edta', 'user');
-
 insert into ACT_ID_USER values ('edtb', 1, '编辑B', '', 'edtb@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('edtb', 'topicWrite');
-# insert into ACT_ID_MEMBERSHIP values ('edtb', 'editor');
-# insert into ACT_ID_MEMBERSHIP values ('edtb', 'user');
-
 insert into ACT_ID_USER values ('chfa', 1, '主编A', '', 'chfa@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('chfa', 'topicAudit');
-# insert into ACT_ID_MEMBERSHIP values ('chfa', 'topicDispatch');
-# insert into ACT_ID_MEMBERSHIP values ('chfa', 'articleAudit1');
-# insert into ACT_ID_MEMBERSHIP values ('chfa', 'user');
-
 insert into ACT_ID_USER values ('chfb', 1, '主编B', '', 'chfb@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('chfb', 'articleAudit2');
-# insert into ACT_ID_MEMBERSHIP values ('chfb', 'user');
-
 insert into ACT_ID_USER values ('chfc', 1, '主编C', '', 'chfc@videostar.com', '000000', '');
-# insert into ACT_ID_MEMBERSHIP values ('chfc', 'articleAudit3');
-# insert into ACT_ID_MEMBERSHIP values ('chfc', 'user');
-
 insert into ACT_ID_USER values ('deva', 1, '设备员A', '', 'deva@videostar.com', '000000','');
-# insert into ACT_ID_MEMBERSHIP values ('deva', 'deviceAudit');
-# insert into ACT_ID_MEMBERSHIP values ('deva', 'user');
 
 CREATE TABLE `role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -198,5 +156,24 @@ SET @i = (SELECT id FROM NEWS_COLUMN WHERE column_name = @t);
 SET @gid = CONCAT('grp_col_', CONCAT(@i, ''));
 SET @gname = CONCAT('栏目: ', @t);
 insert into ACT_ID_GROUP values (@gid, 1, @gname, 'assignment');
+
+CREATE TABLE `news_video` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `video_filename` varchar(255) DEFAULT NULL,
+  `video_title` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_tqv6c4d3ue9e5efbes1ucpwy7` (`video_filename`),
+  UNIQUE KEY `UK_4x5k5f5g0vvfowwwhmjjljh20` (`video_title`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO NEWS_VIDEO VALUES (1, 'Sample1.mp4', '文稿视频1');
+INSERT INTO NEWS_VIDEO VALUES (2, 'Sample2.mp4', '文稿视频2');
+INSERT INTO NEWS_VIDEO VALUES (3, 'Sample3.mp4', '文稿视频3');
+INSERT INTO NEWS_VIDEO VALUES (4, 'Sample4.mp4', '文稿视频4');
+INSERT INTO NEWS_VIDEO VALUES (5, 'Sample5.mp4', '文稿视频5');
+INSERT INTO NEWS_VIDEO VALUES (6, 'Sample6.mp4', '文稿视频6');
+INSERT INTO NEWS_VIDEO VALUES (7, 'Sample7.mp4', '文稿视频7');
+INSERT INTO NEWS_VIDEO VALUES (8, 'Sample8.mp4', '文稿视频8');
+INSERT INTO NEWS_VIDEO VALUES (9, 'Sample9.mp4', '文稿视频9');
+
 
 update ACT_GE_PROPERTY set VALUE_ = '10' where NAME_ = 'next.dbid';

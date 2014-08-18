@@ -66,9 +66,16 @@ public class ArticleAfterModifyProcessor implements TaskListener {
         article.setCameramen((List<String>) delegateTask.getVariable("cameramen"));
         article.setEditors((List<String>) delegateTask.getVariable("editors"));
         article.setLocation((String) delegateTask.getVariable("location"));
+        article.setVideo((String) delegateTask.getVariable("video"));
         article.setNotes((String) delegateTask.getVariable("notes"));
         article.setSourcers((String) delegateTask.getVariable("sourcers"));
         article.setSourcersTel((String) delegateTask.getVariable("sourcersTel"));
+        article.setPrepareSendProvTV((Boolean)delegateTask.getVariable("prepareSendProvTV"));
+        article.setPrepareSendCCTV((Boolean)delegateTask.getVariable("prepareSendCCTV"));
+        article.setSentToProvTV((Boolean)delegateTask.getVariable("sentToProvTV"));
+        article.setSentToCCTV((Boolean)delegateTask.getVariable("sentToCCTV"));
+        article.setAdoptedByProvTV((Boolean)delegateTask.getVariable("adoptedByProvTV"));
+        article.setAdoptedByCCTV((Boolean)delegateTask.getVariable("adoptedByCCTV"));
 
         Object interviewTime = delegateTask.getVariable("interviewTime");
         if (interviewTime != null) {
