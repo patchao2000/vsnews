@@ -8,6 +8,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <script type="text/javascript">
     var ctx = '<%=request.getContextPath() %>';
+    var nginx = 'http://192.168.11.99:5080/';
 </script>
 <%--<%--%>
 	<%--//jquery.ui主题--%>

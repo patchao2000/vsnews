@@ -264,23 +264,35 @@
 <script type="text/javascript">
 
     var video_shown = false;
+
+    function show_video() {
+        var file = nginx + $("#article_video").find(" :selected").val();
+
+        <%--//  CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);--%>
+        <%--//  swf--%>
+        var flashvars={ f:file, c:0, b:1 };
+        var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};
+        CKobject.embedSWF('${ctx}/js/ckplayer/ckplayer.swf','video','ckplayer_a1','640','360',flashvars,params);
+
+        //  html5
+        var video=[file + '->video/mp4','http://www.ckplayer.com/webm/0.webm->video/webm','http://www.ckplayer.com/webm/0.ogv->video/ogg'];
+        var support=['iPad','iPhone','ios','android+false','msie10+false'];
+        CKobject.embedHTML5('video','ckplayer_a1',640,360,video,flashvars,support);
+    }
+
+    $("#article_video").change(function(){
+        if (video_shown == true) {
+            show_video();
+        }
+    });
+
     $("#article_show_video").live("click",function(){
         var group = $("#video_group");
         var button = $("#article_show_video");
         if (video_shown == false) {
             group.show();
-            var file = 'http://192.168.1.119/' + $("#article_video").find(" :selected").val();
 
-            <%--//  CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);--%>
-            <%--//  swf--%>
-            var flashvars={ f:file, c:0, b:1 };
-            var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always',wmode:'transparent'};
-            CKobject.embedSWF('${ctx}/js/ckplayer/ckplayer.swf','video','ckplayer_a1','640','360',flashvars,params);
-
-            //  html5
-            var video=[file + '->video/mp4','http://www.ckplayer.com/webm/0.webm->video/webm','http://www.ckplayer.com/webm/0.ogv->video/ogg'];
-            var support=['iPad','iPhone','ios','android+false','msie10+false'];
-            CKobject.embedHTML5('video','ckplayer_a1',640,360,video,flashvars,support);
+            show_video();
 
             button.val("隐藏");
             video_shown = true;
