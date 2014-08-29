@@ -21,4 +21,9 @@ public class MainController {
         return "/main/welcome";
     }
 
+    @RequestMapping(value = "/test")
+    public String test() {
+        return "/main/test";
+    }
+
 }

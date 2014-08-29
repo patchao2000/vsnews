@@ -4,6 +4,7 @@
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false;
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
+    boolean inFileMan = false, inFileUpload = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -34,6 +35,12 @@
         inRoleManage = true;
     if (uri.contains("/news/column"))
         inColumnManage = true;
+
+    if (uri.contains("/video"))
+        inFileMan = true;
+    if (uri.contains("/video/upload"))
+        inFileUpload = true;
+
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -140,6 +147,20 @@
                         <a href='${ctx}/news/column/list'>
                             <i class='icon-caret-right'></i>
                             <span>栏目管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class='<%=inFileMan?"active":""%>'>
+                <a class="dropdown-collapse" href="#"><i class='icon-user'></i>
+                    <span>文件管理</span>
+                    <i class='icon-angle-down angle-down'></i>
+                </a>
+                <ul class='<%=inFileMan?"in":""%> nav nav-stacked'>
+                    <li class='<%=inFileUpload?"active":""%>'>
+                        <a href='${ctx}/news/video/upload'>
+                            <i class='icon-caret-right'></i>
+                            <span>文件上载</span>
                         </a>
                     </li>
                 </ul>

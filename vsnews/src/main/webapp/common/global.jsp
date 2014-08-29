@@ -6,9 +6,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%--<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>--%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<%@page import="com.videostar.vsnews.util.ConfigXmlReader" %>
+<% ConfigXmlReader.parseConfig(); %>
 <script type="text/javascript">
     var ctx = '<%=request.getContextPath() %>';
-    var nginx = 'http://192.168.11.99:5080/';
+    var nginx_url = '<%=ConfigXmlReader.getNginxUrl()%>';
 </script>
 <%--<%--%>
 	<%--//jquery.ui主题--%>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <nginxUrl>http://192.168.11.99:5080/</nginxUrl>
+    <fileUploadDir>/Users/patchao2000/Documents/apache-tomcat-6.0.39/temp/</fileUploadDir>
+    <maxUploadSize>314572800</maxUploadSize>
+</config>

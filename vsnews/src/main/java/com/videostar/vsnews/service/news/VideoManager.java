@@ -30,6 +30,14 @@ public class VideoManager {
         return videoDao.findAll();
     }
 
+    public NewsVideo findByFileName(String fileName) {
+        return videoDao.findByFileName(fileName);
+    }
+
+    public NewsVideo findByTitle(String title) {
+        return videoDao.findByTitle(title);
+    }
+
     @Autowired
     public void setVideoDao(VideoDao dao) {
         this.videoDao = dao;

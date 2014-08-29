@@ -1,11 +1,11 @@
 package com.videostar.vsnews.entity.news;
 
 import com.videostar.vsnews.entity.IdEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * NewsVideo
@@ -17,8 +17,24 @@ import java.io.Serializable;
 public class NewsVideo extends IdEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private Long columnId;
     private String title;
     private String fileName;
+    private String originalFileName;
+
+    private String uploadUserId;
+
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
+    private Date uploadDate;
+
+    @Column
+    public Long getColumnId() {
+        return columnId;
+    }
+
+    public void setColumnId(Long columnId) {
+        this.columnId = columnId;
+    }
 
     @Column(name = "VIDEO_FILENAME", unique = true)
     public String getFileName() {
@@ -36,5 +52,33 @@ public class NewsVideo extends IdEntity implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Column
+    public String getUploadUserId() {
+        return uploadUserId;
+    }
+
+    public void setUploadUserId(String uploadUserId) {
+        this.uploadUserId = uploadUserId;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    public Date getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Date uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    @Column
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 }
