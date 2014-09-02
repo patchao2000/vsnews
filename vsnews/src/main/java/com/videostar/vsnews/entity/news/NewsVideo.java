@@ -21,6 +21,8 @@ public class NewsVideo extends IdEntity implements Serializable {
     private String title;
     private String fileName;
     private String originalFileName;
+    private Long fileSize;
+    private String fileType;
 
     private String uploadUserId;
 
@@ -80,5 +82,23 @@ public class NewsVideo extends IdEntity implements Serializable {
 
     public void setOriginalFileName(String originalFileName) {
         this.originalFileName = originalFileName;
+    }
+
+    @Column
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    @Column
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }

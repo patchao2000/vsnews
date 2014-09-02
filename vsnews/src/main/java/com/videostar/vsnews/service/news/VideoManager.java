@@ -1,10 +1,13 @@
 package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.dao.VideoDao;
+import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.entity.news.NewsVideo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * VideoManager
@@ -36,6 +39,15 @@ public class VideoManager {
 
     public NewsVideo findByTitle(String title) {
         return videoDao.findByTitle(title);
+    }
+
+    public List<NewsVideo> findByColumnId(Long columnId) {
+        return videoDao.findByColumnId(columnId);
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteVideo(NewsVideo entity) {
+        videoDao.delete(entity);
     }
 
     @Autowired

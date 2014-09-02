@@ -4,6 +4,8 @@ import com.videostar.vsnews.entity.news.NewsVideo;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * VideoDao
  *
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Component;
 public interface VideoDao extends PagingAndSortingRepository<NewsVideo, Long> {
     NewsVideo findByFileName(String fileName);
     NewsVideo findByTitle(String title);
+    List<NewsVideo> findByColumnId(Long columnId);
 }

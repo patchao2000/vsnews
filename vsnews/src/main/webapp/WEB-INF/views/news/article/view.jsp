@@ -266,7 +266,8 @@
     var video_shown = false;
 
     function show_video() {
-        var file = nginx + $("#article_video").find(" :selected").val();
+        var file = nginx_url + $("#article_video").find(" :selected").val();
+        alert(file);
 
         <%--//  CKobject.embedSWF(播放器路径,容器id,播放器id/name,播放器宽,播放器高,flashvars的值,其它定义也可省略);--%>
         <%--//  swf--%>

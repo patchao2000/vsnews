@@ -1,9 +1,6 @@
 package com.videostar.vsnews.web.news;
 
-import com.videostar.vsnews.entity.news.NewsArticle;
-import com.videostar.vsnews.entity.news.NewsArticleHistory;
-import com.videostar.vsnews.entity.news.NewsColumn;
-import com.videostar.vsnews.entity.news.NewsTopic;
+import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.*;
 import com.videostar.vsnews.util.UserUtil;
@@ -89,9 +86,16 @@ public class ArticleController {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
         model.addAttribute("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
-        model.addAttribute("columns", columnService.getUserColumns(user));
+        List<NewsColumn> userColumns = columnService.getUserColumns(user);
+        model.addAttribute("columns", userColumns);
 
-        model.addAttribute("videos", videoManager.getAllVideos());
+        List<NewsVideo> videoList = new ArrayList<NewsVideo>();
+        for (NewsColumn column : userColumns) {
+            for(NewsVideo video : videoManager.findByColumnId(column.getId())) {
+                videoList.add(video);
+            }
+        }
+        model.addAttribute("videos", videoList);
     }
 
     private void makeCreateArticleModel(Model model, User user, NewsArticle article) {
@@ -326,9 +330,18 @@ public class ArticleController {
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
         mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
-        mav.addObject("columns", columnService.getUserColumns(user));
+//        mav.addObject("columns", columnService.getUserColumns(user));
 
-        mav.addObject("videos", videoManager.getAllVideos());
+        List<NewsColumn> userColumns = columnService.getUserColumns(user);
+        mav.addObject("columns", userColumns);
+
+        List<NewsVideo> videoList = new ArrayList<NewsVideo>();
+        for (NewsColumn column : userColumns) {
+            for(NewsVideo video : videoManager.findByColumnId(column.getId())) {
+                videoList.add(video);
+            }
+        }
+        mav.addObject("videos", videoList);
 
         mav.addObject("title", "查看文稿");
         mav.addObject("readonly", true);

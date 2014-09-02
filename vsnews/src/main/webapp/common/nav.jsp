@@ -4,7 +4,7 @@
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false;
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
-    boolean inFileMan = false, inFileUpload = false;
+    boolean inFileMan = false, inFileUpload = false, inFileList = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -40,6 +40,8 @@
         inFileMan = true;
     if (uri.contains("/video/upload"))
         inFileUpload = true;
+    if (uri.contains("/video/list"))
+        inFileList = true;
 
 %>
 <div id='main-nav-bg'></div>
@@ -161,6 +163,12 @@
                         <a href='${ctx}/news/video/upload'>
                             <i class='icon-caret-right'></i>
                             <span>文件上载</span>
+                        </a>
+                    </li>
+                    <li class='<%=inFileList?"active":""%>'>
+                        <a href='${ctx}/news/video/list/all'>
+                            <i class='icon-caret-right'></i>
+                            <span>文件列表</span>
                         </a>
                     </li>
                 </ul>

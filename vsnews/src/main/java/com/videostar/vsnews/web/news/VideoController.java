@@ -7,6 +7,7 @@ import com.videostar.vsnews.service.news.VideoManager;
 import com.videostar.vsnews.util.ConfigXmlReader;
 import com.videostar.vsnews.util.FileUtil;
 import com.videostar.vsnews.util.UserUtil;
+import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.identity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,16 +22,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * VideoController
@@ -51,6 +51,15 @@ public class VideoController {
 
     @Autowired
     private ColumnService columnService;
+
+    private static final String redirectTimeoutString = "redirect:/login?timeout=true";
+
+    private User getCurrentUser(HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null || StringUtils.isBlank(user.getId()))
+            return null;
+        return user;
+    }
 
     @RequestMapping(value = {"upload"})
     public String upload(Model model, HttpSession session) {
@@ -135,6 +144,8 @@ public class VideoController {
                 video.setColumnId(columnId);
                 video.setUploadUserId(userId);
                 video.setUploadDate(new Date());
+                video.setFileSize(mpf.getSize());
+                video.setFileType(mpf.getContentType());
                 videoManager.saveVideo(video);
 
                 logger.debug("video created: {} {} {}", video.getId(), video.getTitle(), video.getFileName());
@@ -179,4 +190,62 @@ public class VideoController {
         else
             return "success";
     }
+
+//    @RequestMapping(value = "objlist/allvideo")
+//    @ResponseBody
+//    public List<NewsVideo> getAllVideos() {
+//        List<NewsVideo> list = new ArrayList<NewsVideo>();
+//        for(NewsVideo video : videoManager.getAllVideos()) {
+//            list.add(video);
+//        }
+//
+//        return list;
+//    }
+
+    @RequestMapping(value = "list/all")
+    public ModelAndView allList(HttpSession session) {
+        User user = getCurrentUser(session);
+        if (user == null)
+            return new ModelAndView(redirectTimeoutString);
+
+        ModelAndView mav = new ModelAndView("/news/video/videoList");
+        List<VideoDetail> list = new ArrayList<VideoDetail>();
+        for (NewsVideo video : videoManager.getAllVideos()) {
+            VideoDetail detail = new VideoDetail();
+            detail.setUploadUserName(userManager.getUserById(video.getUploadUserId()).getFirstName());
+            detail.setColumnName(columnService.getColumn(video.getColumnId()).getName());
+            detail.setVideo(video);
+            list.add(detail);
+        }
+        mav.addObject("list", list);
+        return mav;
+    }
+
+    @RequestMapping(value = "delete/{id}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String deleteVideo(@PathVariable("id") Long id) {
+        try {
+            NewsVideo video = videoManager.getVideo(id);
+            if (video == null) {
+                logger.error("video {} doesn't exists.", id);
+                return "error";
+            }
+
+            videoManager.deleteVideo(video);
+            File file = new File(ConfigXmlReader.getFileUploadDir() + video.getFileName());
+            if (file.exists()) {
+                Boolean success = file.delete();
+                if (!success) {
+                    logger.error("video {} file can't delete.", id);
+                    return "error";
+                }
+            }
+            logger.debug("video deleted: {}", id);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on delete video: {}", id);
+            return "error";
+        }
+    }
+
 }

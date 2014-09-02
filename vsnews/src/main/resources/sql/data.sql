@@ -157,23 +157,21 @@ SET @gid = CONCAT('grp_col_', CONCAT(@i, ''));
 SET @gname = CONCAT('栏目: ', @t);
 insert into ACT_ID_GROUP values (@gid, 1, @gname, 'assignment');
 
-# CREATE TABLE `news_video` (
-#   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-#   `video_filename` varchar(255) DEFAULT NULL,
-#   `video_title` varchar(255) DEFAULT NULL,
-#   PRIMARY KEY (`id`),
-#   UNIQUE KEY `UK_tqv6c4d3ue9e5efbes1ucpwy7` (`video_filename`),
-#   UNIQUE KEY `UK_4x5k5f5g0vvfowwwhmjjljh20` (`video_title`)
-# ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-# INSERT INTO NEWS_VIDEO VALUES (1, 'Sample1.mp4', '文稿视频1');
-# INSERT INTO NEWS_VIDEO VALUES (2, 'Sample2.mp4', '文稿视频2');
-# INSERT INTO NEWS_VIDEO VALUES (3, 'Sample3.mp4', '文稿视频3');
-# INSERT INTO NEWS_VIDEO VALUES (4, 'Sample4.mp4', '文稿视频4');
-# INSERT INTO NEWS_VIDEO VALUES (5, 'Sample5.mp4', '文稿视频5');
-# INSERT INTO NEWS_VIDEO VALUES (6, 'Sample6.mp4', '文稿视频6');
-# INSERT INTO NEWS_VIDEO VALUES (7, 'Sample7.mp4', '文稿视频7');
-# INSERT INTO NEWS_VIDEO VALUES (8, 'Sample8.mp4', '文稿视频8');
-# INSERT INTO NEWS_VIDEO VALUES (9, 'Sample9.mp4', '文稿视频9');
-
+CREATE TABLE `news_video` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `column_id` bigint(20) DEFAULT NULL,
+  `video_filename` varchar(255) DEFAULT NULL,
+  `file_size` bigint(20) DEFAULT NULL,
+  `file_type` varchar(255) DEFAULT NULL,
+  `original_file_name` varchar(255) DEFAULT NULL,
+  `video_title` varchar(255) DEFAULT NULL,
+  `upload_date` datetime DEFAULT NULL,
+  `upload_user_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_tqv6c4d3ue9e5efbes1ucpwy7` (`video_filename`),
+  UNIQUE KEY `UK_4x5k5f5g0vvfowwwhmjjljh20` (`video_title`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+INSERT INTO NEWS_VIDEO VALUES (1, 1, 'Sample1.mp4', 3817214, 'video/mp4', 'Sample1.mp4', '文稿视频1', '2014-09-02 17:00', 'edta');
+INSERT INTO NEWS_VIDEO VALUES (2, 1, 'Sample2.mp4', 3817214, 'video/mp4', 'Sample2.mp4', '文稿视频2', '2014-09-02 17:00', 'edta');
 
 update ACT_GE_PROPERTY set VALUE_ = '10' where NAME_ = 'next.dbid';
