@@ -10,6 +10,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * ConfigXmlReader
@@ -51,12 +52,15 @@ public class ConfigXmlReader extends DefaultHandler {
 
     public static void parseConfig() {
         if (!initParsed) {
+            String cfgFile = getWebAppsDir() + "/" + configFileName;
             try {
                 SAXParserFactory sf = SAXParserFactory.newInstance();
                 SAXParser sp = sf.newSAXParser();
                 ConfigXmlReader reader = new ConfigXmlReader();
-                sp.parse(new InputSource(getWebAppsDir() + "/" + configFileName), reader);
+                sp.parse(new InputSource(cfgFile), reader);
                 initParsed = true;
+            } catch (FileNotFoundException e) {
+                logger.error("cfg file {} not found!", cfgFile);
             } catch (Exception e) {
                 e.printStackTrace();
             }

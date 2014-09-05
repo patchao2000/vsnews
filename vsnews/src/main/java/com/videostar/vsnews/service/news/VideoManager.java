@@ -14,6 +14,8 @@ import java.util.List;
  * 
  * Created by patchao2000 on 14-8-18.
  */
+@SuppressWarnings("SpringJavaAutowiringInspection")
+
 @Component("VideoManager")
 @Transactional(readOnly = true)
 public class VideoManager {

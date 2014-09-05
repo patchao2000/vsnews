@@ -16,6 +16,8 @@ import java.util.List;
  *
  * Created by patchao2000 on 14-7-25.
  */
+@SuppressWarnings("SpringJavaAutowiringInspection")
+
 @Component("ArticleManager")
 @Transactional(readOnly = true)
 public class ArticleManager {

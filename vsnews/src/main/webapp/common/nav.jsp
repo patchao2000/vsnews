@@ -5,6 +5,7 @@
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
+    boolean inMessage = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -61,6 +62,12 @@
                 <a href='${ctx}/main/welcome'>
                     <i class='icon-dashboard'></i>
                     <span>主页</span>
+                </a>
+            </li>
+            <li class='<%=inMessage?"active":""%>'>
+                <a href='${ctx}/news/message/send'>
+                    <i class='icon-comment'></i>
+                    <span>发送留言</span>
                 </a>
             </li>
             <li class='<%=inTopic?"active":""%>'>
