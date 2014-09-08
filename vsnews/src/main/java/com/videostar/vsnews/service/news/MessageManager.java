@@ -34,14 +34,14 @@ public class MessageManager {
         messageDao.save(entity);
     }
 
-    public void sendMessage(String senderId, String receiverId, String content) {
-        NewsMessage message = new NewsMessage();
-        message.setContent(content);
-        message.setSenderId(senderId);
-        message.setReceiverId(receiverId);
-
-        saveMessage(message);
-    }
+//    public void sendMessage(String senderId, String receiverId, String content) {
+//        NewsMessage message = new NewsMessage();
+//        message.setContent(content);
+//        message.setSenderId(senderId);
+//        message.setReceiverId(receiverId);
+//
+//        saveMessage(message);
+//    }
 
     public List<NewsMessage> getMessages(String receiverId) {
         return messageDao.findByReceiverIdOrderBySentDateDesc(receiverId);

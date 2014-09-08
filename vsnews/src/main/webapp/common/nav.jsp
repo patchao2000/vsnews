@@ -65,7 +65,7 @@
                 </a>
             </li>
             <li class='<%=inMessage?"active":""%>'>
-                <a href='${ctx}/news/message/send'>
+                <a href='${ctx}/news/message/apply'>
                     <i class='icon-comment'></i>
                     <span>发送留言</span>
                 </a>
