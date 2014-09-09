@@ -14,4 +14,5 @@ import java.util.List;
 @Component
 public interface MessageDao extends PagingAndSortingRepository<NewsMessage, Long> {
     List<NewsMessage> findByReceiverIdOrderBySentDateDesc(String receiverId);
+    List<NewsMessage> findBySenderIdOrderBySentDateDesc(String senderId);
 }

@@ -22,7 +22,7 @@ public class NewsMessage extends IdEntity implements Serializable {
     public static final int MESSAGE_TYPE_NORMAL     = 0;
     public static final int MESSAGE_TYPE_BROADCAST  = 1;
 
-    private Long returnMessageId;
+//    private Long returnMessageId;
     private String senderId;
     private String receiverId;
     private String title;
@@ -89,12 +89,12 @@ public class NewsMessage extends IdEntity implements Serializable {
         this.sentDate = sentDate;
     }
 
-    @Column
-    public Long getReturnMessageId() {
-        return returnMessageId;
-    }
-
-    public void setReturnMessageId(Long returnMessageId) {
-        this.returnMessageId = returnMessageId;
-    }
+//    @Column
+//    public Long getReturnMessageId() {
+//        return returnMessageId;
+//    }
+//
+//    public void setReturnMessageId(Long returnMessageId) {
+//        this.returnMessageId = returnMessageId;
+//    }
 }

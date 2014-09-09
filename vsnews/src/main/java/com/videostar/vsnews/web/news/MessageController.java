@@ -7,6 +7,7 @@ import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.MessageManager;
 import com.videostar.vsnews.util.UserUtil;
+import com.videostar.vsnews.util.WebUtil;
 import com.videostar.vsnews.web.identify.UserDetail;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.identity.Group;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -103,4 +105,25 @@ public class MessageController {
         return "redirect:/news/message/apply";
     }
 
+    @RequestMapping(value = "list/sent")
+    public ModelAndView sentList(HttpSession session) {
+        ModelAndView mav = new ModelAndView("/news/message/list");
+        String userId = UserUtil.getUserFromSession(session).getId();
+
+        List<NewsMessage> list = messageManager.getMessagesBySenderId(userId);
+        mav.addObject("list", list);
+        mav.addObject("title", "我发送的留言");
+        return mav;
+    }
+
+    @RequestMapping(value = "list/inbox")
+    public ModelAndView inboxList(HttpSession session) {
+        ModelAndView mav = new ModelAndView("/news/message/list");
+        String userId = UserUtil.getUserFromSession(session).getId();
+
+        List<NewsMessage> list = messageManager.getMessagesByReceiverId(userId);
+        mav.addObject("list", list);
+        mav.addObject("title", "我接收的留言");
+        return mav;
+    }
 }

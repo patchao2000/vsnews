@@ -123,31 +123,38 @@
                                         <div class='box-content box-no-padding'>
                                             <div class='scrollable' data-scrollable-height='300' data-scrollable-start='bottom'>
                                                 <ul class='list-unstyled list-hover list-striped'>
+                                                    <%--@elvariable id="list" type="java.util.List"--%>
+                                                    <%--@elvariable id="msg" type="com.videostar.vsnews.entity.news.NewsMessage"--%>
+                                                    <c:forEach items="${list }" var="msg">
                                                     <li class='message'>
-                                                        <div class='body'>
-                                                            您没有任何留言
-                                                        </div>
-
-                                                        <%--<div class='avatar'>--%>
-                                                            <%--<img alt='Avatar' height='23' src='${ctx}/assets/images/avatar.gif' width='23'>--%>
+                                                        <%--<div class='body'>--%>
+                                                            <%--您没有任何留言--%>
                                                         <%--</div>--%>
-                                                        <%--<div class='name-and-time'>--%>
-                                                            <%--<div class='name pull-left'>--%>
-                                                                <%--<small>--%>
-                                                                    <%--<a class="text-contrast" href="#">张三</a>--%>
-                                                                <%--</small>--%>
-                                                            <%--</div>--%>
+                                                        <div class='avatar'>
+                                                            <img alt='Avatar' height='23' src='${ctx}/assets/images/avatar.gif' width='23'>
+                                                        </div>
+                                                        <div class='name-and-time'>
+                                                            <div class='name pull-left'>
+                                                                <small>
+                                                                    <a class="text-contrast" href="#">${msg.senderId }</a>
+                                                                </small>
+                                                            </div>
                                                             <%--<div class='time pull-right'>--%>
                                                                 <%--<small class='date pull-right text-muted'>--%>
                                                                     <%--<span class='timeago fade has-tooltip' data-placement='top' title='2013-09-15 17:42:37 +0200'>September 15, 2013 - 17:42</span>--%>
                                                                     <%--<i class='icon-time'></i>--%>
                                                                 <%--</small>--%>
                                                             <%--</div>--%>
-                                                        <%--</div>--%>
-                                                        <%--<div class='body'>--%>
-                                                            <%--下班后请来我办公室领奖金--%>
-                                                        <%--</div>--%>
+                                                        </div>
+                                                        <div class='body'>${msg.content }</div>
+                                                        <%--<tr id="${msg.id }">--%>
+                                                            <%--<td><fmt:formatDate value="${msg.sentDate}" pattern="yyyy-MM-dd HH:mm" /></td>--%>
+                                                            <%--<td>${msg.senderId }</td>--%>
+                                                            <%--<td>${msg.receiverId }</td>--%>
+                                                            <%--<td>${msg.content }</td>--%>
+                                                        <%--</tr>--%>
                                                     </li>
+                                                    </c:forEach>
                                                 </ul>
                                             </div>
                                         </div>

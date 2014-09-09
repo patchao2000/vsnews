@@ -43,7 +43,11 @@ public class MessageManager {
 //        saveMessage(message);
 //    }
 
-    public List<NewsMessage> getMessages(String receiverId) {
+    public List<NewsMessage> getMessagesByReceiverId(String receiverId) {
         return messageDao.findByReceiverIdOrderBySentDateDesc(receiverId);
+    }
+
+    public List<NewsMessage> getMessagesBySenderId(String senderId) {
+        return messageDao.findBySenderIdOrderBySentDateDesc(senderId);
     }
 }

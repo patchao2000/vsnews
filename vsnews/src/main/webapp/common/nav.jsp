@@ -5,7 +5,7 @@
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
-    boolean inMessage = false;
+    boolean inMessage = false, inMessageWrite = false, inMessageInbox = false, inMessageSent = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -44,6 +44,12 @@
     if (uri.contains("/video/list"))
         inFileList = true;
 
+    if (uri.contains("/message"))
+        inMessage = true;
+    if (uri.contains("/message/list/sent"))
+        inMessageSent = true;
+    if (uri.contains("/message/list/inbox"))
+        inMessageInbox = true;
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -65,10 +71,34 @@
                 </a>
             </li>
             <li class='<%=inMessage?"active":""%>'>
-                <a href='${ctx}/news/message/apply'>
-                    <i class='icon-comment'></i>
-                    <span>发送留言</span>
+                <%--<a href='${ctx}/news/message/apply'>--%>
+                    <%--<i class='icon-comment'></i>--%>
+                    <%--<span>发送留言</span>--%>
+                <%--</a>--%>
+                <a class="dropdown-collapse" href="#"><i class='icon-comment'></i>
+                    <span>留言</span>
+                    <i class='icon-angle-down angle-down'></i>
                 </a>
+                <ul class='<%=inMessage?"in":""%> nav nav-stacked'>
+                    <li class='<%=inMessageWrite?"active":""%>'>
+                        <a href='${ctx}/news/message/apply'>
+                            <i class='icon-caret-right'></i>
+                            <span>发送留言</span>
+                        </a>
+                    </li>
+                    <li class='<%=inMessageInbox?"active":""%>'>
+                        <a href='${ctx}/news/message/list/inbox'>
+                            <i class='icon-caret-right'></i>
+                            <span>接收到的留言</span>
+                        </a>
+                    </li>
+                    <li class='<%=inMessageSent?"active":""%>'>
+                        <a href='${ctx}/news/message/list/sent'>
+                            <i class='icon-caret-right'></i>
+                            <span>已发送的留言</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class='<%=inTopic?"active":""%>'>
                 <a class="dropdown-collapse" href="#"><i class='icon-edit'></i>
