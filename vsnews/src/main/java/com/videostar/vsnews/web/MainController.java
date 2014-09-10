@@ -34,6 +34,8 @@ public class MainController {
 
         List<NewsMessage> list = messageManager.getMessagesByReceiverId(userId);
         mav.addObject("list", list);
+        if (list.size() == 0)
+            mav.addObject("nomessages", true);
         return mav;
     }
 

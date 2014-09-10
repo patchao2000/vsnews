@@ -125,11 +125,15 @@
                                                 <ul class='list-unstyled list-hover list-striped'>
                                                     <%--@elvariable id="list" type="java.util.List"--%>
                                                     <%--@elvariable id="msg" type="com.videostar.vsnews.entity.news.NewsMessage"--%>
+                                                    <%--@elvariable id="nomessages" type="java.lang.boolean"--%>
+                                                    <c:if test="${nomessages == true}">
+                                                        <li class='message'>
+                                                            <div class='body'>您没有任何留言</div>
+                                                        </li>
+                                                    </c:if>
+                                                    <c:if test="${nomessages != true}">
                                                     <c:forEach items="${list }" var="msg">
                                                     <li class='message'>
-                                                        <%--<div class='body'>--%>
-                                                            <%--您没有任何留言--%>
-                                                        <%--</div>--%>
                                                         <div class='avatar'>
                                                             <img alt='Avatar' height='23' src='${ctx}/assets/images/avatar.gif' width='23'>
                                                         </div>
@@ -155,6 +159,7 @@
                                                         <%--</tr>--%>
                                                     </li>
                                                     </c:forEach>
+                                                    </c:if>
                                                 </ul>
                                             </div>
                                         </div>
