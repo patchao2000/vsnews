@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://localhost/ws/login" elementFormDefault="unqualified" xmlns="http://www.w3.org/2001/XMLSchema">
+    <element name="LoginResponse">
+        <complexType>
+            <all>
+                <element name="result" type="int" />
+            </all>
+        </complexType>
+    </element>
+    <element name="LoginRequest">
+        <complexType>
+            <sequence>
+                <element name="username" type="string" />
+                <element name="password" type="string" />
+            </sequence>
+        </complexType>
+    </element>
+</schema>

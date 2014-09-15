@@ -116,4 +116,25 @@
 		<error-code>500</error-code> <location>/WEB-INF/views/error/500.jsp</location> 
 		</error-page> <error-page> <error-code>404</error-code> <location>/WEB-INF/views/error/404.jsp</location> 
 		</error-page> -->
+
+    <servlet>
+        <servlet-name>spring-ws</servlet-name>
+        <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
+        <!--Spring-WS配置文件的位置，默认寻找[servlet-name]-servlet.xml文件 -->
+        <!--<init-param> <param-name>contextConfigLocation</param-name> <param-value>WEB-INF/spring-ws-config.xml</param-value>
+            </init-param> -->
+        <init-param>
+            <param-name>transformWsdlLocations</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring-ws</servlet-name>
+        <url-pattern>/webservice/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>spring-ws</servlet-name>
+        <url-pattern>*.wsdl</url-pattern>
+    </servlet-mapping>
 </web-app>

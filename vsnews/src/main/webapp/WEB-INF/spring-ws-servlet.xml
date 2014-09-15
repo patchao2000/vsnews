@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sws="http://www.springframework.org/schema/web-services"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/web-services
+    http://www.springframework.org/schema/web-services/web-services-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.videostar.vsnews.web.webservice"/>
+
+
+    <!--<sws:dynamic-wsdl id="demo" portTypeName="UserResource" targetNamespace="http://localhost/ws/demo" locationUri="/webservice">-->
+        <!--<sws:xsd location="classpath:/xsd/demo.xsd" />-->
+    <!--</sws:dynamic-wsdl>-->
+    <sws:dynamic-wsdl id="login" portTypeName="LoginPortType" targetNamespace="http://localhost/ws/login" locationUri="/webservice">
+        <sws:xsd location="classpath:/xsd/login.xsd" />
+    </sws:dynamic-wsdl>
+</beans>
