@@ -13,6 +13,8 @@ import java.util.Date;
  *
  * Created by patchao2000 on 14-6-4.
  */
+@SuppressWarnings("SpringJavaAutowiringInspection")
+
 @Component("TopicManager")
 @Transactional(readOnly = true)
 public class TopicManager {

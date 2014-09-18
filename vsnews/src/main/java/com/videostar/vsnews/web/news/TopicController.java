@@ -1,6 +1,5 @@
 package com.videostar.vsnews.web.news;
 
-import com.videostar.vsnews.dao.ArticleHistoryDao;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.TopicManager;
@@ -168,7 +167,7 @@ public class TopicController {
     }
 
     @RequestMapping(value = "list/task")
-    public ModelAndView taskList(HttpSession session, HttpServletRequest request) {
+    public ModelAndView taskList(HttpSession session) {
         ModelAndView mav = new ModelAndView("/news/topic/taskList");
         String userId = UserUtil.getUserFromSession(session).getId();
 

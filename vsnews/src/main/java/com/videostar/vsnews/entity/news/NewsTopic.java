@@ -7,24 +7,24 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Entity: Topic - 新闻选题
  *
  * Created by patchao2000 on 14-6-3.
  */
+
 @Entity
 @Table(name = "NEWS_TOPIC")
 public class NewsTopic extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-//    //   选题状态: 0 -> 选题撰写中, 1 -> 选题撰写完毕, 2 -> 选题派遣中, 3 -> 选题派遣完毕
-//    public static final int STATUS_WRITING = 0;
-//    public static final int STATUS_WRITTEN = 1;
-//    public static final int STATUS_DISPATCHING = 2;
-//    public static final int STATUS_DISPATCHED = 3;
-//
-//    private int status;
+    private String uuid;
+
+    private List<NewsFileInfo> videoFiles;
+    private List<NewsFileInfo> audioFiles;
+    private List<NewsFileInfo> otherFiles;
 
     //    标题
     @NotBlank(message = "标题不能为空")
@@ -57,10 +57,49 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     private Date endTime;
 
     public NewsTopic() {
-//        this.status = STATUS_WRITING;
+        uuid = UUID.randomUUID().toString();
     }
 
-    @Column
+    @Column(unique = true, nullable = false)
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @ElementCollection
+    @CollectionTable (name = "NEWS_TOPIC_VIDEOFILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
+    public List<NewsFileInfo> getVideoFiles() {
+        return videoFiles;
+    }
+
+    public void setVideoFiles(List<NewsFileInfo> videoFiles) {
+        this.videoFiles = videoFiles;
+    }
+
+    @ElementCollection
+    @CollectionTable (name = "NEWS_TOPIC_AUDIOFILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
+    public List<NewsFileInfo> getAudioFiles() {
+        return audioFiles;
+    }
+
+    public void setAudioFiles(List<NewsFileInfo> audioFiles) {
+        this.audioFiles = audioFiles;
+    }
+
+    @ElementCollection
+    @CollectionTable (name = "NEWS_TOPIC_OTHERFILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
+    public List<NewsFileInfo> getOtherFiles() {
+        return otherFiles;
+    }
+
+    public void setOtherFiles(List<NewsFileInfo> otherFiles) {
+        this.otherFiles = otherFiles;
+    }
+
+    @Column(nullable = false)
     public String getTitle() {
         return title;
     }
@@ -86,30 +125,6 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     public void setDevices(String devices) {
         this.devices = devices;
     }
-
-//    @Column
-//    public int getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(int status) {
-//        this.status = status;
-//    }
-//
-//    @Transient
-//    public final String getStatusString() {
-//        switch(status) {
-//            case STATUS_WRITING:
-//                return "撰写中";
-//            case STATUS_WRITTEN:
-//                return "撰写完毕";
-//            case STATUS_DISPATCHING:
-//                return "派遣中";
-//            case STATUS_DISPATCHED:
-//                return "派遣完毕";
-//        }
-//        return "ERROR";
-//    }
 
     @Column
     @ElementCollection
