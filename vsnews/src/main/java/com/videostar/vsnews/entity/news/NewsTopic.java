@@ -22,9 +22,7 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
 
     private String uuid;
 
-    private List<NewsFileInfo> videoFiles;
-    private List<NewsFileInfo> audioFiles;
-    private List<NewsFileInfo> otherFiles;
+    private List<NewsFileInfo> files;
 
     //    标题
     @NotBlank(message = "标题不能为空")
@@ -70,33 +68,13 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     }
 
     @ElementCollection
-    @CollectionTable (name = "NEWS_TOPIC_VIDEOFILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<NewsFileInfo> getVideoFiles() {
-        return videoFiles;
+    @CollectionTable (name = "NEWS_TOPIC_FILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
+    public List<NewsFileInfo> getFiles() {
+        return files;
     }
 
-    public void setVideoFiles(List<NewsFileInfo> videoFiles) {
-        this.videoFiles = videoFiles;
-    }
-
-    @ElementCollection
-    @CollectionTable (name = "NEWS_TOPIC_AUDIOFILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<NewsFileInfo> getAudioFiles() {
-        return audioFiles;
-    }
-
-    public void setAudioFiles(List<NewsFileInfo> audioFiles) {
-        this.audioFiles = audioFiles;
-    }
-
-    @ElementCollection
-    @CollectionTable (name = "NEWS_TOPIC_OTHERFILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
-    public List<NewsFileInfo> getOtherFiles() {
-        return otherFiles;
-    }
-
-    public void setOtherFiles(List<NewsFileInfo> otherFiles) {
-        this.otherFiles = otherFiles;
+    public void setFiles(List<NewsFileInfo> files) {
+        this.files = files;
     }
 
     @Column(nullable = false)

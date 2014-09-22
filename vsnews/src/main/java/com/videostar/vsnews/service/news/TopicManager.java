@@ -1,6 +1,7 @@
 package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.dao.TopicDao;
+import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,12 @@ public class TopicManager {
             entity.setApplyTime(now);
         entity.setModifyTime(now);
 
+        topicDao.save(entity);
+    }
+
+    @Transactional(readOnly = false)
+    public void addFileToTopic(NewsTopic entity, NewsFileInfo fileInfo) {
+        entity.getFiles().add(fileInfo);
         topicDao.save(entity);
     }
 

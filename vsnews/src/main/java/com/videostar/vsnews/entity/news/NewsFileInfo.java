@@ -13,6 +13,13 @@ import java.util.Date;
  */
 @Embeddable
 public class NewsFileInfo {
+    public static final int TYPE_VIDEO_MATERIAL = 0;
+    public static final int TYPE_AUDIO_MATERIAL = 1;
+    public static final int TYPE_DOCUMENT = 2;
+    public static final int TYPE_OTHER = 3;
+
+    int type;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column
     Date addedTime;
@@ -20,6 +27,8 @@ public class NewsFileInfo {
     String filePath;
 
     String userId;
+
+    String lengthTC;
 
     public Date getAddedTime() {
         return addedTime;
@@ -43,5 +52,21 @@ public class NewsFileInfo {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getLengthTC() {
+        return lengthTC;
+    }
+
+    public void setLengthTC(String lengthTC) {
+        this.lengthTC = lengthTC;
     }
 }
