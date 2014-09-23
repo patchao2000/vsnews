@@ -7,7 +7,6 @@ import com.videostar.vsnews.service.news.VideoManager;
 import com.videostar.vsnews.util.ConfigXmlReader;
 import com.videostar.vsnews.util.FileUtil;
 import com.videostar.vsnews.util.UserUtil;
-import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.identity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -51,15 +49,6 @@ public class VideoController {
 
     @Autowired
     private ColumnService columnService;
-
-    private static final String redirectTimeoutString = "redirect:/login?timeout=true";
-
-    private User getCurrentUser(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId()))
-            return null;
-        return user;
-    }
 
     @RequestMapping(value = {"upload"})
     public String upload(Model model, HttpSession session) {
@@ -204,9 +193,9 @@ public class VideoController {
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return new ModelAndView(redirectTimeoutString);
+            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/video/videoList");
         List<VideoDetail> list = new ArrayList<VideoDetail>();

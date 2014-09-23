@@ -6,6 +6,7 @@
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
     boolean inMessage = false, inMessageWrite = false, inMessageInbox = false, inMessageSent = false;
+    boolean inStoryboard = false, inStoryboardApply = false, inStoryboardAll = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -50,6 +51,13 @@
         inMessageSent = true;
     if (uri.contains("/message/list/inbox"))
         inMessageInbox = true;
+
+    if (uri.contains("/storyboard"))
+        inStoryboard = true;
+    if (uri.contains("/storyboard/apply"))
+        inStoryboardApply = true;
+    if (uri.contains("/storyboard/list/all"))
+        inStoryboardAll = true;
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -160,6 +168,26 @@
                         <a href='${ctx}/news/article/list/all'>
                             <i class='icon-caret-right'></i>
                             <span>所有文稿</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class='<%=inStoryboard?"active":""%>'>
+                <a class="dropdown-collapse" href="#"><i class='icon-folder-open'></i>
+                    <span>新闻串联单</span>
+                    <i class='icon-angle-down angle-down'></i>
+                </a>
+                <ul class='<%=inStoryboard?"in":""%> nav nav-stacked'>
+                    <li class='<%=inStoryboardApply?"active":""%>'>
+                        <a href='${ctx}/news/storyboard/apply'>
+                            <i class='icon-caret-right'></i>
+                            <span>创建串联单</span>
+                        </a>
+                    </li>
+                    <li class='<%=inStoryboardAll?"active":""%>'>
+                        <a href='${ctx}/news/storyboard/list/all'>
+                            <i class='icon-caret-right'></i>
+                            <span>所有串联单</span>
                         </a>
                     </li>
                 </ul>

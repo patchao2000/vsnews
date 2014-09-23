@@ -40,6 +40,9 @@ public class NewsStoryboard extends IdEntity implements Serializable {
     //    时段结束
     private String endTC;
 
+    //    作者用户ID
+    private String authorUserId;
+
     //    编辑
     private List<String> editors;
 
@@ -121,5 +124,14 @@ public class NewsStoryboard extends IdEntity implements Serializable {
 
     public void setTopics(List<NewsTopicInfo> topics) {
         this.topics = topics;
+    }
+
+    @Column
+    public String getAuthorUserId() {
+        return authorUserId;
+    }
+
+    public void setAuthorUserId(String authorUserId) {
+        this.authorUserId = authorUserId;
     }
 }

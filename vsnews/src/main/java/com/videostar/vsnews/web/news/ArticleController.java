@@ -13,21 +13,16 @@ import org.activiti.engine.TaskService;
 //import org.slf4j.LoggerFactory;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-//import javax.servlet.http.HttpServletRequest;
-import javax.persistence.Column;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
@@ -73,15 +68,6 @@ public class ArticleController {
     @Autowired
     protected IdentityService identityService;
 
-    private static final String redirectTimeoutString = "redirect:/login?timeout=true";
-
-    private User getCurrentUser(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId()))
-            return null;
-        return user;
-    }
-
     private void addSelectOptions(Model model, User user) {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
@@ -108,9 +94,9 @@ public class ArticleController {
 
     @RequestMapping(value = {"apply"})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
                 !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
@@ -132,9 +118,9 @@ public class ArticleController {
     @RequestMapping(value = {"apply-topic/{topicId}"}, method = {RequestMethod.POST, RequestMethod.GET})
     public String createFromTopic(@PathVariable("topicId") Long topicId,
                                   Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
                 !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
@@ -163,9 +149,9 @@ public class ArticleController {
     public String startArticleWorkflow(@ModelAttribute("article") @Valid NewsArticle article, BindingResult bindingResult,
                                        Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
-            User user = getCurrentUser(session);
+            User user = UserUtil.getUserFromSession(session);
             if (user == null)
-                return redirectTimeoutString;
+                return UserUtil.redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -259,9 +245,9 @@ public class ArticleController {
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return new ModelAndView(redirectTimeoutString);
+            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/article/allarticles");
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
@@ -281,9 +267,9 @@ public class ArticleController {
     public String auditArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                                Model model, HttpSession session) {
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -302,9 +288,9 @@ public class ArticleController {
     public String reapplyArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                                Model model, HttpSession session) {
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -323,9 +309,9 @@ public class ArticleController {
         NewsArticle article = articleManager.getArticle(id);
         mav.addObject("article", article);
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return new ModelAndView(redirectTimeoutString);
+            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));

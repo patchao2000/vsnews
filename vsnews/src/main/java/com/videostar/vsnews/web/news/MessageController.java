@@ -1,21 +1,12 @@
 package com.videostar.vsnews.web.news;
 
-import com.videostar.vsnews.entity.news.NewsArticle;
-import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.entity.news.NewsMessage;
-import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.MessageManager;
 import com.videostar.vsnews.util.UserUtil;
-import com.videostar.vsnews.util.WebUtil;
 import com.videostar.vsnews.web.identify.UserDetail;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.identity.Group;
-import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
-import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,9 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * MessageController
@@ -54,14 +42,6 @@ public class MessageController {
     @Autowired
     protected UserManager userManager;
 
-    private static final String redirectTimeoutString = "redirect:/login?timeout=true";
-
-    private User getCurrentUser(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId()))
-            return null;
-        return user;
-    }
     private void makeMessageModel(Model model, NewsMessage message) {
         model.addAttribute("msg", message);
 
@@ -94,9 +74,9 @@ public class MessageController {
             return "/news/message/view";
         }
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         message.setSenderId(user.getId());
         messageManager.saveMessage(message);

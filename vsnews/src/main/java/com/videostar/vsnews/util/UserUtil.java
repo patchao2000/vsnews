@@ -1,6 +1,7 @@
 package com.videostar.vsnews.util;
 
 import org.activiti.engine.identity.User;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpSession;
 
@@ -14,25 +15,22 @@ public class UserUtil {
 
     public static final String USER = "user";
 
-    /**
-     * 设置用户到session
-     *
-     * @param session
-     * @param user
-     */
     public static void saveUserToSession(HttpSession session, User user) {
         session.setAttribute(USER, user);
     }
 
-    /**
-     * 从Session获取当前用户信息
-     *
-     * @param session
-     * @return
-     */
+//    public static User getUserFromSession(HttpSession session) {
+//        Object attribute = session.getAttribute(USER);
+//        return attribute == null ? null : (User) attribute;
+//    }
+
+    public static final String redirectTimeoutString = "redirect:/login?timeout=true";
+
     public static User getUserFromSession(HttpSession session) {
         Object attribute = session.getAttribute(USER);
-        return attribute == null ? null : (User) attribute;
+        User user = (attribute == null ? null : (User)attribute);
+        if (user == null || StringUtils.isBlank(user.getId()))
+            return null;
+        return user;
     }
-
 }

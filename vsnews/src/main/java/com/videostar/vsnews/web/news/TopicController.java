@@ -6,13 +6,10 @@ import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.service.news.TopicWorkflowService;
 import com.videostar.vsnews.util.*;
 import org.activiti.engine.ActivitiException;
-//import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
-//import org.activiti.engine.identity.Group;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
-//import java.util.List;
 
 
 /**
@@ -55,15 +50,6 @@ public class TopicController {
 
     @Autowired
     protected UserManager userManager;
-
-    private static final String redirectTimeoutString = "redirect:/login?timeout=true";
-
-    private User getCurrentUser(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null || StringUtils.isBlank(user.getId()))
-            return null;
-        return user;
-    }
 
     @SuppressWarnings("unchecked")
     private List<User> getDispatchersList() {
@@ -102,9 +88,9 @@ public class TopicController {
 
     @RequestMapping(value = {"apply", ""})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_WRITE) &&
            !userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT)) {
@@ -126,9 +112,9 @@ public class TopicController {
     public String startTopicNewWorkflow(@ModelAttribute("topic") @Valid NewsTopic topic, BindingResult bindingResult,
                                           Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
-            User user = getCurrentUser(session);
+            User user = UserUtil.getUserFromSession(session);
             if (user == null)
-                return redirectTimeoutString;
+                return UserUtil.redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -203,9 +189,9 @@ public class TopicController {
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return new ModelAndView(redirectTimeoutString);
+            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/alltopics");
         List<TopicDetail> list = new ArrayList<TopicDetail>();
@@ -228,9 +214,9 @@ public class TopicController {
     public String auditTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                              Model model, HttpSession session) {
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model);
 
@@ -250,9 +236,9 @@ public class TopicController {
     public String auditDeviceTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                              Model model, HttpSession session) {
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model);
 
@@ -273,9 +259,9 @@ public class TopicController {
     public String reapplyTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                                Model model, HttpSession session) {
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model);
 
@@ -296,9 +282,9 @@ public class TopicController {
     public String reapplyDeviceTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                                Model model, HttpSession session) {
 
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return redirectTimeoutString;
+            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model);
 
@@ -316,9 +302,9 @@ public class TopicController {
 
     @RequestMapping(value = "view/{id}")
     public ModelAndView viewTopic(@PathVariable("id") Long id, HttpSession session) {
-        User user = getCurrentUser(session);
+        User user = UserUtil.getUserFromSession(session);
         if (user == null)
-            return new ModelAndView(redirectTimeoutString);
+            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/view");
         NewsTopic topic = topicManager.getTopic(id);
