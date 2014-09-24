@@ -60,7 +60,7 @@
                                                 <td>${detail.storyboard.startTC }</td>
                                                 <td>${detail.storyboard.endTC }</td>
                                                 <td>
-                                                    <a class="viewstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                                                    <%--<a class="viewstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>--%>
                                                     <a class="editstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
                                                 </td>
                                             </tr>
@@ -79,10 +79,10 @@
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.viewstoryboard').click(function () {
-            var sbId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/storyboard/view/' + sbId;
-        });
+//        $('.viewstoryboard').click(function () {
+//            var sbId = $(this).parents('tr').attr('id');
+//            location.href = ctx + '/news/storyboard/view/' + sbId;
+//        });
         $('.editstoryboard').click(function () {
             var sbId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/storyboard/edit/' + sbId;

@@ -1,5 +1,6 @@
 package com.videostar.vsnews.web.news;
 
+import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.TopicManager;
@@ -373,4 +374,72 @@ public class TopicController {
             return "error";
         }
     }
+
+    @RequestMapping(value = "addfile/{id}/{type}/{filepath}")
+    @ResponseBody
+    public String addFile(@PathVariable("id") Long id, @PathVariable("type") int type, @PathVariable("filepath") String filepath,
+                          HttpSession session) {
+        try {
+            NewsTopic topic = topicManager.getTopic(id);
+            NewsFileInfo info = new NewsFileInfo();
+            info.setFilePath(filepath);
+            info.setType(type);
+            String userId = UserUtil.getUserFromSession(session).getId();
+            info.setUserId(userId);
+            info.setAddedTime(new Date());
+            info.setLengthTC("00:00:00:00");
+            topicManager.addFileToTopic(topic, info);
+
+            logger.debug("file added to topic {}", filepath);
+            return "success";
+        } catch (Exception e) {
+            logger.debug("error on file added to topic {}", filepath);
+            return "error";
+        }
+    }
+
+
+    @RequestMapping(value = "removefile/{id}/{fileId}")
+    @ResponseBody
+    public String removeFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId,
+                          HttpSession session) {
+        try {
+            NewsTopic topic = topicManager.getTopic(id);
+            topicManager.removeFileFromTopic(topic, fileId);
+
+            logger.debug("file removed from topic {}", fileId);
+            return "success";
+        } catch (Exception e) {
+            logger.debug("error on file remove from topic {}", fileId);
+            return "error";
+        }
+    }
+    @RequestMapping(value = "view/files/{id}")
+    public ModelAndView viewFiles(@PathVariable("id") Long id, HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return new ModelAndView(UserUtil.redirectTimeoutString);
+
+        ModelAndView mav = new ModelAndView("/news/topic/fileList");
+        NewsTopic topic = topicManager.getTopic(id);
+        mav.addObject("topic", topic);
+
+        List<FileInfoDetail> list = new ArrayList<FileInfoDetail>();
+        for (NewsFileInfo info : topic.getFiles()) {
+            FileInfoDetail detail = new FileInfoDetail();
+            detail.setNewsFileInfo(info);
+            detail.setUserName(userManager.getUserById(info.getUserId()).getFirstName());
+            if (info.getType() == 0) {
+                detail.setFileTypeName("视频素材");
+            }
+            else if (info.getType() == 1) {
+                detail.setFileTypeName("音频素材");
+            }
+            list.add(detail);
+        }
+        mav.addObject("list", list);
+
+        return mav;
+    }
+
 }

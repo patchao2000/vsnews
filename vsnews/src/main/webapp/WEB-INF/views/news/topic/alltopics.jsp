@@ -68,6 +68,7 @@
                                                 <%--<td>${detail.topic.statusString }</td>--%>
                                                 <td>
                                                     <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                                                    <a class="topicfiles btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>素材文件</a>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -88,6 +89,11 @@
         $('.viewtopic').click(function () {
             var topicId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/topic/view/' + topicId;
+        });
+
+        $('.topicfiles').click(function () {
+            var topicId = $(this).parents('tr').attr('id');
+            location.href = ctx + '/news/topic/view/files/' + topicId;
         });
     });
 </script>

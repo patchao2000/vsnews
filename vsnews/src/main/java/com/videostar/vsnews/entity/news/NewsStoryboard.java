@@ -43,6 +43,9 @@ public class NewsStoryboard extends IdEntity implements Serializable {
     //    作者用户ID
     private String authorUserId;
 
+    //    锁定用户ID
+    private String lockerUserId;
+
     //    编辑
     private List<String> editors;
 
@@ -133,5 +136,14 @@ public class NewsStoryboard extends IdEntity implements Serializable {
 
     public void setAuthorUserId(String authorUserId) {
         this.authorUserId = authorUserId;
+    }
+
+    @Column
+    public String getLockerUserId() {
+        return lockerUserId;
+    }
+
+    public void setLockerUserId(String lockerUserId) {
+        this.lockerUserId = lockerUserId;
     }
 }

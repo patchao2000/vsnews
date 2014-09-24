@@ -100,20 +100,27 @@
                             </div>
                         </div>
                         <div class='box-content'>
-                            <form class="form form-horizontal"
-                                   style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                            <form class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
                                 <div class='form-group'>
-                                    <%--@elvariable id="topics" type="java.util.List"--%>
-                                    <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
-                                    <label class='col-md-2 control-label' for='storyboard_topic'>新闻选题：</label>
-                                    <div class='col-md-4'>
-                                        <select class='select2 form-control' id="storyboard_topic">
-                                            <c:forEach items="${topics }" var="topic">
-                                                <option value="${topic.uuid}">${topic.title}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                    <a id="addtopic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
+                                    <c:if test="${storyboard.lockerUserId == null}">
+                                        <div class='col-md-4'>
+                                            <a id="lock" class="btn btn-success" title='锁定' href="#"><i class="icon-edit icon-white"></i> 进入编辑模式</a>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${storyboard.lockerUserId != null}">
+                                        <%--@elvariable id="alltopics" type="java.util.List"--%>
+                                        <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
+                                        <label class='col-md-2 control-label' for='storyboard_topic'>新闻选题：</label>
+                                        <div class='col-md-4'>
+                                            <select class='select2 form-control' id="storyboard_topic">
+                                                <c:forEach items="${alltopics }" var="topic">
+                                                    <option value="${topic.uuid}">${topic.title}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <a id="addtopic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
+                                        <a id="unlock" class="btn btn-success" title='解锁' href="#"><i class="icon-edit icon-white"></i> 退出编辑模式</a>
+                                    </c:if>
                                 </div>
                                 <div class='responsive-table'>
                                     <div class='scrollable-area'>
@@ -126,39 +133,39 @@
                                                 <th>音频文件</th>
                                                 <th>文稿</th>
                                                 <th>总长度</th>
+                                                <c:if test="${storyboard.lockerUserId != null}">
                                                 <th>操作</th>
+                                                </c:if>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Sample</td>
-                                                <td><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></td>
-                                                <td><a class='btn btn-danger btn-xs' href='#'><i class='icon-remove'></i></a></td>
-                                                <td><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></td>
-                                                <td>00:00:00:00</td>
-                                                <td>
-                                                    <a class="uptopic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
-                                                    <a class="downtopic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
-                                                    <a class="removetopic btn btn-danger btn-xs" href="#"><i class="icon-remove"></i>删除</a>
-                                                </td>
-                                            </tr>
-                                            <%--@elvariable id="list" type="java.util.List"--%>
-                                            <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardDetail"--%>
-                                            <%--<c:forEach items="${list }" var="detail">--%>
-                                                <%--<tr id="${detail.storyboard.id }">--%>
-                                                    <%--<td>${detail.userName }</td>--%>
-                                                    <%--<td>${detail.columnName }</td>--%>
-                                                    <%--<td><fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd HH:mm" /></td>--%>
-                                                    <%--<td>${detail.storyboard.title }</td>--%>
-                                                    <%--<td>${detail.storyboard.startTC }</td>--%>
-                                                    <%--<td>${detail.storyboard.endTC }</td>--%>
-                                                    <%--<td>--%>
-                                                        <%--<a class="viewstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>--%>
-                                                        <%--<a class="editstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>--%>
-                                                    <%--</td>--%>
-                                                <%--</tr>--%>
-                                            <%--</c:forEach>--%>
+
+                                            <%--@elvariable id="topics" type="java.util.list"--%>
+                                            <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicInfoDetail"--%>
+                                            <c:forEach items="${topics }" var="detail">
+                                                <tr data-index="${detail.orderValue }">
+                                                    <td>${detail.orderValue + 1}</td>
+                                                    <td>${detail.topic.title }</td>
+                                                    <td>
+                                                        <c:if test="${detail.videoFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                    </td>
+                                                    <td>
+                                                        <c:if test="${detail.audioFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                    </td>
+                                                    <td>
+                                                        <c:if test="${detail.articleReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                    </td>
+                                                    <td>${detail.adjustTC}</td>
+
+                                                    <c:if test="${storyboard.lockerUserId != null}">
+                                                    <td>
+                                                        <a class="uptopic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
+                                                        <a class="downtopic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
+                                                        <a class="removetopic btn btn-danger btn-xs" href="#"><i class="icon-remove"></i>删除</a>
+                                                    </td>
+                                                    </c:if>
+                                                </tr>
+                                            </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
@@ -174,6 +181,127 @@
 <%@ include file="/common/alljs.jsp" %>
 
 <script type="text/javascript">
+
+    $("#lock").live("click",function(){
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/lock/' + ${storyboard.id},
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+//                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    });
+
+    $("#unlock").live("click",function(){
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/unlock/' + ${storyboard.id},
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+//                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    });
+
+    $(".uptopic").live("click",function(){
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/topicup/' + ${storyboard.id} + '/' + $(this).parents('tr').attr('data-index'),
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+//                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    });
+
+    $(".downtopic").live("click",function(){
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/topicdown/' + ${storyboard.id} + '/' + $(this).parents('tr').attr('data-index'),
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+//                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    });
+
+    $(".removetopic").live("click",function(){
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/topicremove/' + ${storyboard.id} + '/' + $(this).parents('tr').attr('data-index'),
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+//                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    });
+
+    $("#addtopic").live("click",function(){
+//        alert($('#storyboard_topic' + ' :selected').val());
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/addtopic/' + ${storyboard.id} + '/' + $('#storyboard_topic' + ' :selected').val(),
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+    });
 
     $(function () {
         $("#storyboard_columnId").select2("readonly", true);

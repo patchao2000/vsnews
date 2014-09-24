@@ -1,9 +1,9 @@
 package com.videostar.vsnews.entity.news;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import com.videostar.vsnews.entity.IdEntity;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,8 +11,9 @@ import java.util.Date;
  *
  * Created by patchao2000 on 14-9-19.
  */
-@Embeddable
-public class NewsFileInfo {
+@Entity
+@Table(name = "NEWS_TOPIC_FILES")
+public class NewsFileInfo extends IdEntity implements Serializable {
     public static final int TYPE_VIDEO_MATERIAL = 0;
     public static final int TYPE_AUDIO_MATERIAL = 1;
     public static final int TYPE_DOCUMENT = 2;
@@ -20,8 +21,6 @@ public class NewsFileInfo {
 
     int type;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column
     Date addedTime;
 
     String filePath;
@@ -30,6 +29,8 @@ public class NewsFileInfo {
 
     String lengthTC;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
     public Date getAddedTime() {
         return addedTime;
     }
@@ -38,6 +39,7 @@ public class NewsFileInfo {
         this.addedTime = addedTime;
     }
 
+    @Column
     public String getFilePath() {
         return filePath;
     }
@@ -46,6 +48,7 @@ public class NewsFileInfo {
         this.filePath = filePath;
     }
 
+    @Column
     public String getUserId() {
         return userId;
     }
@@ -54,6 +57,7 @@ public class NewsFileInfo {
         this.userId = userId;
     }
 
+    @Column
     public int getType() {
         return type;
     }
@@ -62,6 +66,7 @@ public class NewsFileInfo {
         this.type = type;
     }
 
+    @Column
     public String getLengthTC() {
         return lengthTC;
     }

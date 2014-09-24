@@ -67,8 +67,8 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    @ElementCollection
-    @CollectionTable (name = "NEWS_TOPIC_FILES", joinColumns = @JoinColumn(name = "TOPIC_ID"))
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TOPIC_ID")
     public List<NewsFileInfo> getFiles() {
         return files;
     }

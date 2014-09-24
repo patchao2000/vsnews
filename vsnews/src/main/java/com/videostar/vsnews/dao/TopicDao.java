@@ -11,4 +11,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public interface TopicDao extends PagingAndSortingRepository<NewsTopic, Long> {
+    NewsTopic findByUuid(String uuid);
 }
