@@ -24,7 +24,7 @@
     </style>
     <c:set var="action" value="#" />
     <c:if test="${createMode == true}">
-        <c:set var="action" value="${ctx}/news/storyboard/save"/>
+        <c:set var="action" value="${ctx}/news/storyboard/start"/>
     </c:if>
 </head>
 

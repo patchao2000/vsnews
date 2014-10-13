@@ -40,6 +40,8 @@ public class UserManager {
     public static final int RIGHTS_REPORTER         = 9;
     public static final int RIGHTS_CAMERAMAN        = 10;
     public static final int RIGHTS_DEVICE_AUDIT     = 11;
+    public static final int RIGHTS_STORYBOARD_WRITE = 12;
+    public static final int RIGHTS_STORYBOARD_AUDIT = 13;
     public static final int RIGHTS_ADMIN            = 99;
 
     public static final String INFO_USER_ROLES      = "roles";
@@ -69,6 +71,8 @@ public class UserManager {
         userRights.put(RIGHTS_REPORTER, "reporter");
         userRights.put(RIGHTS_CAMERAMAN, "cameraman");
         userRights.put(RIGHTS_DEVICE_AUDIT, "deviceAudit");
+        userRights.put(RIGHTS_STORYBOARD_WRITE, "storyboardWrite");
+        userRights.put(RIGHTS_STORYBOARD_AUDIT, "storyboardAudit");
         userRights.put(RIGHTS_ADMIN, "admin");
     }
 

@@ -4,6 +4,7 @@ import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.service.news.StoryboardManager;
+import com.videostar.vsnews.service.news.StoryboardWorkflowService;
 import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.WebUtil;
@@ -48,6 +49,9 @@ public class StoryboardController {
     protected StoryboardManager storyboardManager;
 
     @Autowired
+    protected StoryboardWorkflowService workflowService;
+
+    @Autowired
     protected TopicManager topicManager;
 
     private void addSelectOptions(Model model, User user) {
@@ -70,13 +74,12 @@ public class StoryboardController {
         if (user == null)
             return UserUtil.redirectTimeoutString;
 
-//        if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
-//                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
-//                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
-//                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
-//            redirectAttributes.addFlashAttribute("error", "您没有撰写文稿权限！");
-//            return "redirect:/main/welcome";
-//        }
+        if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT)) {
+            redirectAttributes.addFlashAttribute("error", "您没有创建串联单权限！");
+            return "redirect:/main/welcome";
+        }
+
         if (columnService.getUserColumns(user).size() == 0) {
             redirectAttributes.addFlashAttribute("error", "您没有任何栏目权限！");
             return "redirect:/main/welcome";
@@ -87,9 +90,34 @@ public class StoryboardController {
         return "/news/storyboard/view";
     }
 
-    @RequestMapping(value = "save", method = RequestMethod.POST)
-    public String saveStoryboard(@ModelAttribute("storyboard") @Valid NewsStoryboard entity, BindingResult bindingResult,
-                                   Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+//    @RequestMapping(value = "save", method = RequestMethod.POST)
+//    public String saveStoryboard(@ModelAttribute("storyboard") @Valid NewsStoryboard entity, BindingResult bindingResult,
+//                                   Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+//        try {
+//            User user = UserUtil.getUserFromSession(session);
+//            if (user == null)
+//                return UserUtil.redirectTimeoutString;
+//
+//            if (bindingResult.hasErrors()) {
+//                logger.debug("has bindingResult errors!");
+//
+//                makeCreateStoryboardModel(model, user, entity);
+//                return "/news/storyboard/view";
+//            }
+//
+//            entity.setAuthorUserId(user.getId());
+//            storyboardManager.saveStoryboard(entity);
+//            redirectAttributes.addFlashAttribute("message", "串联单已保存");
+//        } catch (Exception e) {
+//            logger.error("保存串联单失败：", e);
+//            redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+//        }
+//        return "redirect:/news/storyboard/apply";
+//    }
+
+    @RequestMapping(value = "start", method = RequestMethod.POST)
+    public String startStoryboardWorkflow(@ModelAttribute("storyboard") @Valid NewsStoryboard entity, BindingResult bindingResult,
+                                          Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
             if (user == null)
@@ -103,14 +131,26 @@ public class StoryboardController {
             }
 
             entity.setAuthorUserId(user.getId());
-            storyboardManager.saveStoryboard(entity);
-            redirectAttributes.addFlashAttribute("message", "串联单已保存");
+
+            Map<String, Object> variables = new HashMap<String, Object>();
+            logger.debug("start storyboard Workflow: title {}", entity.getTitle());
+
+            ProcessInstance processInstance = workflowService.startStoryboardWorkflow(entity, variables);
+            redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+        } catch (ActivitiException e) {
+            if (e.getMessage().contains("no processes deployed with key")) {
+                logger.warn("没有部署流程!", e);
+            } else {
+                logger.error("启动选题流程失败：", e);
+                redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+            }
         } catch (Exception e) {
-            logger.error("保存串联单失败：", e);
+            logger.error("启动选题流程失败：", e);
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
         return "redirect:/news/storyboard/apply";
     }
+
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {

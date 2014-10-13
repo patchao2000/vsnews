@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "NEWS_STORYBOARD")
-public class NewsStoryboard extends IdEntity implements Serializable {
+public class NewsStoryboard extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int status;

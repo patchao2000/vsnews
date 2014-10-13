@@ -11,4 +11,5 @@ public class WorkflowNames {
 //    public static final String topicDispatch = "topicdispatch";
     public static final String topicNew = "topicnew";
     public static final String article123 = "article123";   //  三步审批文稿流程
+    public static final String storyboard = "storyboard";   //  创建串联单流程
 }
