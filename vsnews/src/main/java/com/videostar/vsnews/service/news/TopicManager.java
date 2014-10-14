@@ -77,14 +77,14 @@ public class TopicManager {
         return false;
     }
 
-    public Boolean haveArticles(NewsTopic entity) {
-//        for (NewsFileInfo info : entity.getFiles()) {
-//            if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
-//                return true;
-//        }
-
-        return false;
-    }
+//    public Boolean haveArticles(NewsTopic entity) {
+////        for (NewsFileInfo info : entity.getFiles()) {
+////            if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
+////                return true;
+////        }
+//
+//        return false;
+//    }
 
     public Iterable<NewsTopic> getAllTopics() {
         return topicDao.findAll();

@@ -95,6 +95,11 @@
                                                         <%--</a>--%>
                                                         <%--</div>--%>
                                                     </li>
+                                                    <li class='important item'>
+                                                        <label class='pull-left todo'>
+                                                            <span id="storyboardTodo">您没有任何待办任务</span>
+                                                        </label>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -274,7 +279,23 @@
                     $('#topicTodo').html("您<a class='text-contrast' href='${ctx}/news/topic/list/task'>有 " + resp + " 条</a>待办新闻选题任务。");
             },
             error: function () {
-                alert('articleTodo error!!');
+                alert('topicTodo error!!');
+            }
+        });
+
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/storyboard/count/task',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == "0")
+                    $('#storyboardTodo').html("您没有任何待办新闻串联单任务。");
+                else
+                    $('#storyboardTodo').html("您<a class='text-contrast' href='${ctx}/news/storyboard/list/task'>有 " + resp + " 条</a>待办新闻串联单任务。");
+            },
+            error: function () {
+                alert('storyboardTodo error!!');
             }
         });
 

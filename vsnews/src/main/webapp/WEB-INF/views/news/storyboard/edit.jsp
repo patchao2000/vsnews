@@ -283,11 +283,14 @@
     });
 
     $("#addtopic").live("click",function(){
-//        alert($('#storyboard_topic' + ' :selected').val());
+        var selected = $('#storyboard_topic' + ' :selected');
+        if (selected.size() == 0) {
+            return;
+        }
         $.ajax({
             type: 'post',
             async: false,
-            url: ctx + '/news/storyboard/addtopic/' + ${storyboard.id} + '/' + $('#storyboard_topic' + ' :selected').val(),
+            url: ctx + '/news/storyboard/addtopic/' + ${storyboard.id} + '/' + selected.val(),
             contentType: "application/json; charset=utf-8",
             success: function (resp) {
                 if (resp == 'success') {

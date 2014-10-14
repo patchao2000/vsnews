@@ -176,7 +176,7 @@ public class TopicController {
 
     @RequestMapping(value = "count/task", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String complete(HttpSession session) {
+    public String todoCount(HttpSession session) {
         try {
             String userId = UserUtil.getUserFromSession(session).getId();
             Integer count = workflowService.getTodoTasksCount(userId);
@@ -375,9 +375,10 @@ public class TopicController {
         }
     }
 
-    @RequestMapping(value = "addfile/{id}/{type}/{filepath}")
+    @RequestMapping(value = "addfile/{id}/{type}/{filepath}/{length}")
     @ResponseBody
-    public String addFile(@PathVariable("id") Long id, @PathVariable("type") int type, @PathVariable("filepath") String filepath,
+    public String addFile(@PathVariable("id") Long id, @PathVariable("type") int type,
+                          @PathVariable("filepath") String filepath, @PathVariable("length") String length,
                           HttpSession session) {
         try {
             NewsTopic topic = topicManager.getTopic(id);
@@ -387,7 +388,7 @@ public class TopicController {
             String userId = UserUtil.getUserFromSession(session).getId();
             info.setUserId(userId);
             info.setAddedTime(new Date());
-            info.setLengthTC("00:00:00:00");
+            info.setLengthTC(length);
             topicManager.addFileToTopic(topic, info);
 
             logger.debug("file added to topic {}", filepath);

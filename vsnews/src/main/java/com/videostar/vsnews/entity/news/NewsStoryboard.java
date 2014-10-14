@@ -40,8 +40,8 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
     //    时段结束
     private String endTC;
 
-    //    作者用户ID
-    private String authorUserId;
+//    //    作者用户ID
+//    private String authorUserId;
 
     //    锁定用户ID
     private String lockerUserId;
@@ -129,14 +129,14 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
         this.topics = topics;
     }
 
-    @Column
-    public String getAuthorUserId() {
-        return authorUserId;
-    }
-
-    public void setAuthorUserId(String authorUserId) {
-        this.authorUserId = authorUserId;
-    }
+//    @Column
+//    public String getAuthorUserId() {
+//        return authorUserId;
+//    }
+//
+//    public void setAuthorUserId(String authorUserId) {
+//        this.authorUserId = authorUserId;
+//    }
 
     @Column
     public String getLockerUserId() {

@@ -6,7 +6,7 @@
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
     boolean inMessage = false, inMessageWrite = false, inMessageInbox = false, inMessageSent = false;
-    boolean inStoryboard = false, inStoryboardApply = false, inStoryboardAll = false;
+    boolean inStoryboard = false, inStoryboardApply = false, inStoryboardAll = false, inStoryboardList = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -56,6 +56,8 @@
         inStoryboard = true;
     if (uri.contains("/storyboard/apply"))
         inStoryboardApply = true;
+    if (uri.contains("/storyboard/taskList"))
+        inStoryboardList = true;
     if (uri.contains("/storyboard/list/all"))
         inStoryboardAll = true;
 %>
@@ -173,7 +175,7 @@
                 </ul>
             </li>
             <li class='<%=inStoryboard?"active":""%>'>
-                <a class="dropdown-collapse" href="#"><i class='icon-folder-open'></i>
+                <a class="dropdown-collapse" href="#"><i class='icon-list'></i>
                     <span>新闻串联单</span>
                     <i class='icon-angle-down angle-down'></i>
                 </a>
@@ -182,6 +184,12 @@
                         <a href='${ctx}/news/storyboard/apply'>
                             <i class='icon-caret-right'></i>
                             <span>创建串联单</span>
+                        </a>
+                    </li>
+                    <li class='<%=inStoryboardList?"active":""%>'>
+                        <a href='${ctx}/news/storyboard/list/task'>
+                            <i class='icon-caret-right'></i>
+                            <span>待办任务</span>
                         </a>
                     </li>
                     <li class='<%=inStoryboardAll?"active":""%>'>
@@ -219,7 +227,7 @@
                 </ul>
             </li>
             <li class='<%=inFileMan?"active":""%>'>
-                <a class="dropdown-collapse" href="#"><i class='icon-user'></i>
+                <a class="dropdown-collapse" href="#"><i class='icon-file'></i>
                     <span>文件管理</span>
                     <i class='icon-angle-down angle-down'></i>
                 </a>

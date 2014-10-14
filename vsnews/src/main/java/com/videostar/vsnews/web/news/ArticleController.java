@@ -9,8 +9,6 @@ import org.activiti.engine.ActivitiException;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
@@ -48,7 +46,10 @@ public class ArticleController {
     protected UserManager userManager;
 
     @Autowired
-    protected ArticleWorkflowService workflowService;
+    protected ArticleWorkflowService articleWorkflowService;
+
+    @Autowired
+    protected TopicWorkflowService topicWorkflowService;
 
     @Autowired
     protected ColumnService columnService;
@@ -99,9 +100,9 @@ public class ArticleController {
             return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
-                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
-                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
-                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
             redirectAttributes.addFlashAttribute("error", "您没有撰写文稿权限！");
             return "redirect:/main/welcome";
         }
@@ -123,9 +124,9 @@ public class ArticleController {
             return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
-                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
-                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
-                !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_2) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_3)) {
             redirectAttributes.addFlashAttribute("error", "您没有撰写文稿权限！");
             return "redirect:/main/welcome";
         }
@@ -137,6 +138,7 @@ public class ArticleController {
         NewsTopic topic = topicManager.getTopic(topicId);
         NewsArticle article = new NewsArticle();
         makeCreateArticleModel(model, user, article);
+        article.setTopicUuid(topic.getUuid());
         article.setMainTitle(topic.getTitle());
         article.setContent("<p>" + topic.getContent() + "</p>");
         article.setCameramen(topic.getCameramen());
@@ -160,6 +162,47 @@ public class ArticleController {
                 return "/news/article/view";
             }
 
+            //  start topic workflow if don't have topic
+            if (article.getTopicUuid() == null || article.getTopicUuid().isEmpty()) {
+                try {
+                    NewsTopic topic = new NewsTopic();
+                    topic.setDispatcher(user.getId());
+                    topic.setUserId(user.getId());
+                    topic.setTitle(article.getMainTitle());
+                    topic.setContent(article.getContent());
+                    topic.setCameramen(article.getCameramen());
+                    topic.setReporters(article.getReporters());
+
+                    //  check user is in leader(topicAudit) group
+                    Boolean isLeader = userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT);
+
+                    Map<String, Object> variables = new HashMap<String, Object>();
+                    logger.debug("auto start topic Workflow from article: title {}", topic.getTitle());
+                    variables.put("needDevices", false);
+                    variables.put("leaderStart", isLeader);
+                    if (isLeader) {
+                        variables.put("dispatcher", topic.getDispatcher());
+                    }
+
+                    ProcessInstance processInstance = topicWorkflowService.startTopicNewWorkflow(topic, variables);
+//                    redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+                    article.setTopicUuid(topic.getUuid());
+
+                } catch (ActivitiException e) {
+                    if (e.getMessage().contains("no processes deployed with key")) {
+                        logger.warn("没有部署流程!", e);
+                    } else {
+                        logger.error("启动选题流程失败：", e);
+                        redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+                    }
+                } catch (Exception e) {
+                    logger.error("启动选题流程失败：", e);
+                    redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+                }
+
+            }
+
             article.setUserId(user.getId());
 
             Map<String, Object> variables = new HashMap<String, Object>();
@@ -171,17 +214,17 @@ public class ArticleController {
             variables.put("needAudit2", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_2) != 0));
             variables.put("needAudit3", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_3) != 0));
 
-            ProcessInstance processInstance = workflowService.startArticleWorkflow(article, variables);
+            ProcessInstance processInstance = articleWorkflowService.startArticleWorkflow(article, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {
                 logger.warn("没有部署流程!", e);
             } else {
-                logger.error("启动选题流程失败：", e);
+                logger.error("启动文稿流程失败：", e);
                 redirectAttributes.addFlashAttribute("error", "系统内部错误！");
             }
         } catch (Exception e) {
-            logger.error("启动选题流程失败：", e);
+            logger.error("启动文稿流程失败：", e);
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
         return "redirect:/news/article/apply";
@@ -209,7 +252,7 @@ public class ArticleController {
         String userId = UserUtil.getUserFromSession(session).getId();
 
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
-        for (NewsArticle article : workflowService.findTodoTasks(userId)) {
+        for (NewsArticle article : articleWorkflowService.findTodoTasks(userId)) {
             ArticleDetail detail = new ArticleDetail();
             detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
             detail.setArticle(article);
@@ -223,10 +266,10 @@ public class ArticleController {
 
     @RequestMapping(value = "count/task", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String complete(HttpSession session) {
+    public String todoCount(HttpSession session) {
         try {
             String userId = UserUtil.getUserFromSession(session).getId();
-            Integer count = workflowService.getTodoTasksCount(userId);
+            Integer count = articleWorkflowService.getTodoTasksCount(userId);
             logger.debug("todo task count: {}", count);
             return count.toString();
         } catch (Exception e) {
@@ -238,7 +281,7 @@ public class ArticleController {
 //    @RequestMapping(value = "list/running")
 //    public ModelAndView runningList() {
 //        ModelAndView mav = new ModelAndView("/news/article/running");
-//        List<NewsArticle> list = workflowService.findRunningProcessInstances();
+//        List<NewsArticle> list = articleWorkflowService.findRunningProcessInstances();
 //        mav.addObject("list", list);
 //        return mav;
 //    }
@@ -251,7 +294,7 @@ public class ArticleController {
 
         ModelAndView mav = new ModelAndView("/news/article/allarticles");
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
-        for (NewsArticle article : workflowService.getAllArticles()) {
+        for (NewsArticle article : articleWorkflowService.getAllArticles()) {
             ArticleDetail detail = new ArticleDetail();
             detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
             detail.setArticle(article);

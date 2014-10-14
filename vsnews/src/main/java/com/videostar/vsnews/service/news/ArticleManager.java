@@ -67,6 +67,9 @@ public class ArticleManager {
         return articleHistoryDao.findOne(historyId);
     }
 
+    public NewsArticle findByTopicUuid(String uuid) {
+        return articleDao.findByTopicUuid(uuid);
+    }
 //    @Autowired
 //    public void setArticleDao(ArticleDao dao) {
 //        this.articleDao = dao;

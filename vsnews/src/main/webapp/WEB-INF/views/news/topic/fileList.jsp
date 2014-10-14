@@ -95,6 +95,8 @@
             <div class="modal-body">
                 <label for='fileLocation'>素材位置：</label>
                 <input class='form-control' name="fileLocation" id="fileLocation">
+                <label for='length'>素材长度：</label>
+                <input class='form-control' name="length" id="length">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -135,12 +137,17 @@
     });
 
     $('#savefile').click(function () {
+//        alert('savefile');
         var name = $('#fileLocation').val();
         if (name.length == 0) {
             name = "null";
         }
+        var length = $('#length').val();
+        if (name.length == 0) {
+            name = "00:00:00:00";
+        }
 
-        $.post(ctx + '/news/topic/addfile/' + ${topic.id} + '/' + file_sign + '/' + name,
+        $.post(ctx + '/news/topic/addfile/' + ${topic.id} + '/' + file_sign + '/' + name + '/' + length,
                 function(resp) {
                     if (resp == 'success') {
                         alert('任务完成');

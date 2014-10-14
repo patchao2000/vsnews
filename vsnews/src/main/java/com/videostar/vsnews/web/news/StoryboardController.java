@@ -2,13 +2,11 @@ package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
-import com.videostar.vsnews.service.news.ColumnService;
-import com.videostar.vsnews.service.news.StoryboardManager;
-import com.videostar.vsnews.service.news.StoryboardWorkflowService;
-import com.videostar.vsnews.service.news.TopicManager;
+import com.videostar.vsnews.service.news.*;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.ActivitiException;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +42,12 @@ public class StoryboardController {
 
     @Autowired
     protected ColumnService columnService;
+
+    @Autowired
+    protected TaskService taskService;
+
+    @Autowired
+    protected ArticleManager articleManager;
 
     @Autowired
     protected StoryboardManager storyboardManager;
@@ -130,7 +134,7 @@ public class StoryboardController {
                 return "/news/storyboard/view";
             }
 
-            entity.setAuthorUserId(user.getId());
+            entity.setUserId(user.getId());
 
             Map<String, Object> variables = new HashMap<String, Object>();
             logger.debug("start storyboard Workflow: title {}", entity.getTitle());
@@ -151,6 +155,36 @@ public class StoryboardController {
         return "redirect:/news/storyboard/apply";
     }
 
+    @RequestMapping(value = "list/task")
+    public ModelAndView taskList(HttpSession session) {
+        ModelAndView mav = new ModelAndView("/news/storyboard/taskList");
+        String userId = UserUtil.getUserFromSession(session).getId();
+
+        List<StoryboardDetail> list = new ArrayList<StoryboardDetail>();
+        for (NewsStoryboard entity : workflowService.findTodoTasks(userId)) {
+            StoryboardDetail detail = new StoryboardDetail();
+            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setStoryboard(entity);
+            list.add(detail);
+        }
+
+        mav.addObject("list", list);
+        return mav;
+    }
+
+    @RequestMapping(value = "count/task", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String todoCount(HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            Integer count = workflowService.getTodoTasksCount(userId);
+            logger.debug("todo task count: {}", count);
+            return count.toString();
+        } catch (Exception e) {
+            logger.error("error on get todo task count!");
+            return "error";
+        }
+    }
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
@@ -160,9 +194,9 @@ public class StoryboardController {
 
         ModelAndView mav = new ModelAndView("/news/storyboard/allstoryboards");
         List<StoryboardDetail> list = new ArrayList<StoryboardDetail>();
-        for (NewsStoryboard entity : storyboardManager.getAllStoryboards()) {
+        for (NewsStoryboard entity : workflowService.getAllTopics()) {
             StoryboardDetail detail = new StoryboardDetail();
-            detail.setUserName(userManager.getUserById(entity.getAuthorUserId()).getFirstName());
+            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
             detail.setStoryboard(entity);
             detail.setColumnName(columnService.getColumn(entity.getColumnId()).getName());
             list.add(detail);
@@ -191,6 +225,83 @@ public class StoryboardController {
 //        return mav;
 //    }
 
+    @RequestMapping(value = "audit/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String auditStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
+                             Model model, HttpSession session) {
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return UserUtil.redirectTimeoutString;
+
+        addSelectOptions(model, user);
+
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        model.addAttribute("storyboard", entity);
+        model.addAttribute("title", "审核串联单");
+        model.addAttribute("readonly", true);
+        model.addAttribute("auditMode", true);
+        model.addAttribute("taskId", taskId);
+//        model.addAttribute("taskKey", taskKey);
+
+        return "/news/storyboard/view";
+    }
+
+    @RequestMapping(value = "reapply/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String reapplyStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
+                               Model model, HttpSession session) {
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return UserUtil.redirectTimeoutString;
+
+        addSelectOptions(model, user);
+
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        model.addAttribute("storyboard", entity);
+        model.addAttribute("title", "修改串联单内容");
+        model.addAttribute("reapplyMode", true);
+        model.addAttribute("taskId", taskId);
+
+        return "/news/storyboard/view";
+    }
+
+    @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap) {
+        try {
+            taskService.complete(taskId, topicMap);
+            logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, topicMap, e});
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "detail-with-vars/{id}/{taskId}")
+    @ResponseBody
+    public NewsStoryboard getStoryboardWithVars(@PathVariable("id") Long id, @PathVariable("taskId") String taskId) {
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        Map<String, Object> variables = taskService.getVariables(taskId);
+        entity.setVariables(variables);
+        logger.debug("detail-with-vars variables={}", variables);
+        return entity;
+    }
+
+    @RequestMapping(value = "task/claim/{id}")
+    @ResponseBody
+    public String claim(@PathVariable("id") String taskId, HttpSession session, RedirectAttributes redirectAttributes) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            taskService.claim(taskId, userId);
+            logger.debug("claim task {}", taskId);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on claim task {}, {}", taskId, e.getMessage());
+            return "error";
+        }
+    }
+
     @RequestMapping(value = "edit/{id}")
     public ModelAndView editStoryboard(@PathVariable("id") Long id, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
@@ -217,7 +328,7 @@ public class StoryboardController {
 
             detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
             detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
-            detail.setArticleReady(topicManager.haveArticles(topic));
+            detail.setArticleReady(articleManager.findByTopicUuid(topic.getUuid()) != null);
 
             topics.add(detail);
         }

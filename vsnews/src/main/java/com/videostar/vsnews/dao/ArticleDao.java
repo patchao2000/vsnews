@@ -1,6 +1,7 @@
 package com.videostar.vsnews.dao;
 
 import com.videostar.vsnews.entity.news.NewsArticle;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
@@ -11,4 +12,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public interface ArticleDao extends PagingAndSortingRepository<NewsArticle, Long> {
+    NewsArticle findByTopicUuid(String uuid);
 }

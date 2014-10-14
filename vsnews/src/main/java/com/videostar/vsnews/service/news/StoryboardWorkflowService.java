@@ -67,12 +67,12 @@ public class StoryboardWorkflowService {
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
-        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicNew).taskAssignee(userId).active().orderByTaskId().desc()
+        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.storyboard).taskAssignee(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
         List<Task> todoList = todoQuery.list();
 
         // 根据当前人未签收的任务
-        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicNew).taskCandidateUser(userId).active().orderByTaskId().desc()
+        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.storyboard).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
         List<Task> unsignedTasks = claimQuery.list();
 
@@ -121,7 +121,7 @@ public class StoryboardWorkflowService {
         //  填充running task
         List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
         listRunning.addAll(runtimeService.createProcessInstanceQuery().
-                processDefinitionKey(WorkflowNames.topicNew).active().orderByProcessInstanceId().desc().list());
+                processDefinitionKey(WorkflowNames.storyboard).active().orderByProcessInstanceId().desc().list());
         for (ProcessInstance processInstance : listRunning) {
             String businessKey = processInstance.getBusinessKey();
             if (businessKey == null) {
@@ -148,7 +148,7 @@ public class StoryboardWorkflowService {
     public Boolean isFinished(NewsStoryboard entity) {
         List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
         listRunning.addAll(runtimeService.createProcessInstanceQuery().
-                processDefinitionKey(WorkflowNames.topicNew).active().orderByProcessInstanceId().desc().list());
+                processDefinitionKey(WorkflowNames.storyboard).active().orderByProcessInstanceId().desc().list());
         for (ProcessInstance processInstance : listRunning) {
             String businessKey = processInstance.getBusinessKey();
             if (businessKey == null) {

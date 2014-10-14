@@ -45,6 +45,7 @@
                                             <th>标题</th>
                                             <th>开始时段</th>
                                             <th>结束时段</th>
+                                            <th>当前节点</th>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -52,6 +53,7 @@
                                         <%--@elvariable id="list" type="java.util.List"--%>
                                         <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardDetail"--%>
                                         <c:forEach items="${list }" var="detail">
+                                            <c:set var="task" value="${detail.storyboard.task }"/>
                                             <tr id="${detail.storyboard.id }">
                                                 <td>${detail.userName }</td>
                                                 <td>${detail.columnName }</td>
@@ -59,9 +61,12 @@
                                                 <td>${detail.storyboard.title }</td>
                                                 <td>${detail.storyboard.startTC }</td>
                                                 <td>${detail.storyboard.endTC }</td>
+                                                <td>${task.name }</td>
                                                 <td>
                                                     <%--<a class="viewstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>--%>
+                                                    <c:if test="${task == null}">
                                                     <a class="editstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>

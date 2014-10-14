@@ -77,6 +77,9 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     //    央台采用
     private Boolean adoptedByCCTV;
 
+    //    选题UUID
+    private String topicUuid;
+
     @Column
     public Long getColumnId() {
         return columnId;
@@ -273,5 +276,14 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
 
     public void setVideo(String video) {
         this.video = video;
+    }
+
+    @Column(unique = true)
+    public String getTopicUuid() {
+        return topicUuid;
+    }
+
+    public void setTopicUuid(String topicUuid) {
+        this.topicUuid = topicUuid;
     }
 }
