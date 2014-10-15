@@ -93,7 +93,7 @@
             location.href = ctx + '/news/storyboard/reapply/'+storyboardId+'/'+taskId;
         }
         else if (tkey == 'leaderAudit') {
-            location.href = ctx + '/news/storyboard/audit/'+storyboardId+'/'+taskId+'/'+tkey;
+            location.href = ctx + '/news/storyboard/audit/'+storyboardId+'/'+taskId;
         }
         else
             alert("ERROR!");

@@ -143,8 +143,8 @@
             name = "null";
         }
         var length = $('#length').val();
-        if (name.length == 0) {
-            name = "00:00:00:00";
+        if (length.length == 0) {
+            length = "00:00:00:00";
         }
 
         $.post(ctx + '/news/topic/addfile/' + ${topic.id} + '/' + file_sign + '/' + name + '/' + length,

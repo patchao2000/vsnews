@@ -225,8 +225,8 @@ public class StoryboardController {
 //        return mav;
 //    }
 
-    @RequestMapping(value = "audit/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
-    public String auditStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
+    @RequestMapping(value = "audit/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String auditStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                              Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
@@ -241,7 +241,6 @@ public class StoryboardController {
         model.addAttribute("readonly", true);
         model.addAttribute("auditMode", true);
         model.addAttribute("taskId", taskId);
-//        model.addAttribute("taskKey", taskKey);
 
         return "/news/storyboard/view";
     }
