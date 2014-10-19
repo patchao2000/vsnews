@@ -16,6 +16,8 @@ import java.util.List;
  * Created by patchao2000 on 14-9-23.
  */
 
+@SuppressWarnings("SpringJavaAutowiringInspection")
+
 @Component("StoryboardManager")
 @Transactional(readOnly = true)
 public class StoryboardManager {

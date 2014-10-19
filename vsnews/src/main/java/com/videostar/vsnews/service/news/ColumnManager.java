@@ -17,6 +17,8 @@ import java.util.List;
  *
  * Created by patchao2000 on 14-7-23.
  */
+@SuppressWarnings("SpringJavaAutowiringInspection")
+
 @Component("ColumnManager")
 @Transactional(readOnly = true)
 public class ColumnManager {
