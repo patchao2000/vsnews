@@ -55,6 +55,18 @@ public class StoryboardAfterAuthorModifyProcessor implements TaskListener {
         entity.setTopics((List<NewsTopicInfo>) delegateTask.getVariable("topics"));
 //        entity.setAuthorUserId((String) delegateTask.getVariable("authorUserId"));
 //        entity.setLockerUserId((String) delegateTask.getVariable("lockerUserId"));
+        entity.setNotes((String) delegateTask.getVariable("notes"));
+        entity.setStudio((String) delegateTask.getVariable("studio"));
+        entity.setEditorsInCharge((List<String>) delegateTask.getVariable("editorsInCharge"));
+        entity.setInstructors((List<String>) delegateTask.getVariable("instructors"));
+        entity.setProducers((List<String>) delegateTask.getVariable("producers"));
+        entity.setDirectors((List<String>) delegateTask.getVariable("directors"));
+        entity.setAnnouncers((List<String>) delegateTask.getVariable("announcers"));
+        entity.setVoiceActors((List<String>) delegateTask.getVariable("voiceActors"));
+        entity.setSubtitlers((List<String>) delegateTask.getVariable("subtitlers"));
+        entity.setCameramen((List<String>) delegateTask.getVariable("cameramen"));
+        entity.setLightingEngineers((List<String>) delegateTask.getVariable("lightingEngineers"));
+        entity.setTechnicians((List<String>) delegateTask.getVariable("technicians"));
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {

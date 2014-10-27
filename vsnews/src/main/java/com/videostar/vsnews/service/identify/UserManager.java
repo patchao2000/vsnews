@@ -38,7 +38,7 @@ public class UserManager {
     public static final int RIGHTS_ARTICLE_AUDIT_3  = 7;
     public static final int RIGHTS_EDITOR           = 8;
     public static final int RIGHTS_REPORTER         = 9;
-    public static final int RIGHTS_CAMERAMAN        = 10;
+    public static final int RIGHTS_TECHNICIAN       = 10;
     public static final int RIGHTS_DEVICE_AUDIT     = 11;
     public static final int RIGHTS_STORYBOARD_WRITE = 12;
     public static final int RIGHTS_STORYBOARD_AUDIT = 13;
@@ -69,7 +69,7 @@ public class UserManager {
         userRights.put(RIGHTS_ARTICLE_AUDIT_3, "articleAudit3");
         userRights.put(RIGHTS_EDITOR, "editor");
         userRights.put(RIGHTS_REPORTER, "reporter");
-        userRights.put(RIGHTS_CAMERAMAN, "cameraman");
+        userRights.put(RIGHTS_TECHNICIAN, "technician");
         userRights.put(RIGHTS_DEVICE_AUDIT, "deviceAudit");
         userRights.put(RIGHTS_STORYBOARD_WRITE, "storyboardWrite");
         userRights.put(RIGHTS_STORYBOARD_AUDIT, "storyboardAudit");

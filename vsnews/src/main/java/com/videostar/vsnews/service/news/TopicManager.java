@@ -3,6 +3,7 @@ package com.videostar.vsnews.service.news;
 import com.videostar.vsnews.dao.TopicDao;
 import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
+import com.videostar.vsnews.util.TimeCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +67,15 @@ public class TopicManager {
         }
 
         return false;
+    }
+
+    public TimeCode getVideoFileLength(NewsTopic entity) {
+        for (NewsFileInfo info : entity.getFiles()) {
+            if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
+                return new TimeCode(info.getLengthTC());
+        }
+
+        return new TimeCode(0);
     }
 
     public Boolean haveAudioFiles(NewsTopic entity) {

@@ -9,7 +9,7 @@ insert into ACT_ID_GROUP values ('articleAudit2', 1, '文稿二审', 'assignment
 insert into ACT_ID_GROUP values ('articleAudit3', 1, '文稿三审', 'assignment');
 insert into ACT_ID_GROUP values ('editor', 1, '编辑', 'assignment');
 insert into ACT_ID_GROUP values ('reporter', 1, '记者', 'assignment');
-insert into ACT_ID_GROUP values ('cameraman', 1, '摄像员', 'assignment');
+insert into ACT_ID_GROUP values ('technician', 1, '技术员', 'assignment');
 insert into ACT_ID_GROUP values ('deviceAudit', 1, '设备管理', 'assignment');
 insert into ACT_ID_GROUP values ('storyboardWrite', 1, '串联单撰写', 'assignment');
 insert into ACT_ID_GROUP values ('storyboardAudit', 1, '串联单审核', 'assignment');
@@ -22,6 +22,9 @@ insert into ACT_ID_USER values ('repc', 1, '记者C', '', 'repc@videostar.com', 
 insert into ACT_ID_USER values ('cama', 1, '摄像员A', '', 'cama@videostar.com', '000000', '');
 insert into ACT_ID_USER values ('camb', 1, '摄像员B', '', 'camb@videostar.com', '000000', '');
 insert into ACT_ID_USER values ('camc', 1, '摄像员C', '', 'camc@videostar.com', '000000', '');
+insert into ACT_ID_USER values ('teca', 1, '技术员A', '', 'teca@videostar.com', '000000', '');
+insert into ACT_ID_USER values ('tecb', 1, '技术员B', '', 'tecb@videostar.com', '000000', '');
+insert into ACT_ID_USER values ('tecc', 1, '技术员C', '', 'tecc@videostar.com', '000000', '');
 insert into ACT_ID_USER values ('edta', 1, '编辑A', '', 'edta@videostar.com', '000000', '');
 insert into ACT_ID_USER values ('edtb', 1, '编辑B', '', 'edtb@videostar.com', '000000', '');
 insert into ACT_ID_USER values ('chfa', 1, '主编A', '', 'chfa@videostar.com', '000000', '');
@@ -38,7 +41,7 @@ INSERT INTO ROLE VALUES (2, '主编');
 INSERT INTO ROLE VALUES (3, '普通编辑');
 INSERT INTO ROLE VALUES (4, '高级主编');
 INSERT INTO ROLE VALUES (5, '设备主管');
-INSERT INTO ROLE VALUES (6, '摄像');
+INSERT INTO ROLE VALUES (6, '技术');
 INSERT INTO ROLE VALUES (7, '管理员');
 INSERT INTO ROLE VALUES (8, '记者');
 
@@ -72,7 +75,7 @@ INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'user');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (5,'user');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (5,'deviceAudit');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'reporter');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'cameraman');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'technician');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'user');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (7,'admin');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (8,'reporter');
@@ -87,9 +90,12 @@ INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','article
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','articleWrite');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','articleWrite');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','articleWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('cama','cameraman');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camb','cameraman');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camc','cameraman');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('cama','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camb','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camc','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('teca','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecb','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecc','technician');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('deva','deviceAudit');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','editor');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','editor');
@@ -128,19 +134,22 @@ INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('deva','user');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','user');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','user');
 
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('23',1,'cama','userinfo','roles','6',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('27',1,'camb','userinfo','roles','6',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('31',1,'camc','userinfo','roles','6',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('35',1,'chfa','userinfo','roles','2',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('44',1,'chfb','userinfo','roles','2',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('53',1,'chfc','userinfo','roles','4',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('61',1,'deva','userinfo','roles','5',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('64',1,'edta','userinfo','roles','3',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('70',1,'edtb','userinfo','roles','3',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('75',1,'admin','userinfo','roles','7',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('77',1,'repa','userinfo','roles','8',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('79',1,'repb','userinfo','roles','8',NULL,NULL);
-INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('81',1,'repc','userinfo','roles','8',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('1',1,'chfa','userinfo','roles','2',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('2',1,'chfb','userinfo','roles','2',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('3',1,'edta','userinfo','roles','3',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('4',1,'edtb','userinfo','roles','3',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('5',1,'chfc','userinfo','roles','4',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('6',1,'deva','userinfo','roles','5',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('7',1,'cama','userinfo','roles','6',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('8',1,'camb','userinfo','roles','6',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('9',1,'camc','userinfo','roles','6',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('10',1,'teca','userinfo','roles','6',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('11',1,'tecb','userinfo','roles','6',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('12',1,'tecc','userinfo','roles','6',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('13',1,'admin','userinfo','roles','7',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('14',1,'repa','userinfo','roles','8',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('15',1,'repb','userinfo','roles','8',NULL,NULL);
+INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('16',1,'repc','userinfo','roles','8',NULL,NULL);
 
 CREATE TABLE `news_column` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

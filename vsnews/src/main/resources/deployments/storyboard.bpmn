@@ -6,7 +6,11 @@
     </extensionElements>
     <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
-    <userTask id="leaderAudit" name="内容审核" activiti:candidateGroups="storyboardAudit"></userTask>
+    <userTask id="leaderAudit" name="内容审核" activiti:candidateGroups="storyboardAudit">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${storyboardAfterAuditProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <userTask id="modifyContent" name="调整内容" activiti:assignee="${applyUserId}">
       <extensionElements>
         <activiti:taskListener event="complete" delegateExpression="${storyboardAfterAuthorModifyProcessor}"></activiti:taskListener>

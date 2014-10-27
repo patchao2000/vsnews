@@ -13,11 +13,15 @@ public class TopicInfoDetail implements java.io.Serializable {
 
     private int orderValue;
     private String topicUuid;
-    private String adjustTC;
+//    private String adjustTC;
     private NewsTopic Topic;
     private Boolean videoFileReady;
     private Boolean audioFileReady;
     private Boolean articleReady;
+
+    private String videoLength;
+    private String articleLength;
+    private String totalLength;
 
     public int getOrderValue() {
         return orderValue;
@@ -43,13 +47,13 @@ public class TopicInfoDetail implements java.io.Serializable {
         Topic = topic;
     }
 
-    public String getAdjustTC() {
-        return adjustTC;
-    }
-
-    public void setAdjustTC(String adjustTC) {
-        this.adjustTC = adjustTC;
-    }
+//    public String getAdjustTC() {
+//        return adjustTC;
+//    }
+//
+//    public void setAdjustTC(String adjustTC) {
+//        this.adjustTC = adjustTC;
+//    }
 
     public Boolean getVideoFileReady() {
         return videoFileReady;
@@ -73,5 +77,29 @@ public class TopicInfoDetail implements java.io.Serializable {
 
     public void setArticleReady(Boolean articleReady) {
         this.articleReady = articleReady;
+    }
+
+    public String getVideoLength() {
+        return videoLength;
+    }
+
+    public void setVideoLength(String videoLength) {
+        this.videoLength = videoLength;
+    }
+
+    public String getArticleLength() {
+        return articleLength;
+    }
+
+    public void setArticleLength(String articleLength) {
+        this.articleLength = articleLength;
+    }
+
+    public String getTotalLength() {
+        return totalLength;
+    }
+
+    public void setTotalLength(String totalLength) {
+        this.totalLength = totalLength;
     }
 }

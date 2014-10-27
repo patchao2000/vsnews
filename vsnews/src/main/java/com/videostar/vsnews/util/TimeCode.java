@@ -96,17 +96,29 @@ public class TimeCode extends ImageSequenceTracking
     private void parseNotation(String pNotation)
     {
         double tmpFrame;
-        int hourFrames, minuteFrames, secondFrames;
+//        int hourFrames, minuteFrames, secondFrames;
 
         /*
         System.out.println("the original string : " + pNotation);
         System.out.println("supposed to be images : " +  pNotation.substring(9, 10));
         */
 
-        int hours 	= Integer.parseInt(pNotation.substring(0, 2));
-        int minutes 	= Integer.parseInt(pNotation.substring(3, 5));
-        int seconds 	= Integer.parseInt(pNotation.substring(6, 8));
-        int images 	= Integer.parseInt(pNotation.substring(9, 11));
+        int hours = 0;
+        if (pNotation.length() >= 2) {
+            hours = Integer.parseInt(pNotation.substring(0, 2));
+        }
+        int minutes = 0;
+        if (pNotation.length() >= 5) {
+            minutes = Integer.parseInt(pNotation.substring(3, 5));
+        }
+        int seconds = 0;
+        if (pNotation.length() >= 8) {
+            seconds = Integer.parseInt(pNotation.substring(6, 8));
+        }
+        int images = 0;
+        if (pNotation.length() >= 11) {
+            images = Integer.parseInt(pNotation.substring(9, 11));
+        }
 
         // hours
         frame  = (int)((double)hours * 3600 * fps);

@@ -71,7 +71,7 @@ public class ArticleController {
 
     private void addSelectOptions(Model model, User user) {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
-        model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         model.addAttribute("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
         List<NewsColumn> userColumns = columnService.getUserColumns(user);
         model.addAttribute("columns", userColumns);
@@ -357,7 +357,7 @@ public class ArticleController {
             return new ModelAndView(UserUtil.redirectTimeoutString);
 
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
-        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
 //        mav.addObject("columns", columnService.getUserColumns(user));
 
@@ -375,6 +375,8 @@ public class ArticleController {
         mav.addObject("title", "查看文稿");
         mav.addObject("readonly", true);
         mav.addObject("contentReadonly", true);
+        //  阅读语速
+        mav.addObject("secondsPerChar", articleManager.getArticleSecondsPerChar());
 
         return mav;
     }

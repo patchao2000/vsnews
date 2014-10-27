@@ -11,6 +11,7 @@
 <%--@elvariable id="title" type="java.lang.String"--%>
 <%--@elvariable id="editors" type="java.util.List"--%>
 <%--@elvariable id="columns" type="java.util.map"--%>
+<%--@elvariable id="technicians" type="java.util.List"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -58,11 +59,9 @@
                                             <form:options items="${columns}" itemValue="id" itemLabel="name" />
                                         </form:select>
                                     </div>
-                                    <label class='col-md-2 control-label' for='storyboard_editors'>记者：</label>
+                                    <label class='col-md-2 control-label' for='storyboard_studio'>演播室：</label>
                                     <div class='col-md-4'>
-                                        <form:select class='select2 form-control' id="storyboard_editors" multiple="true" path="editors">
-                                            <form:options items="${editors}" itemValue="id" itemLabel="firstName" />
-                                        </form:select>
+                                        <form:input class='form-control' id='storyboard_studio' path='studio' type='text' readonly="true" />
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -84,6 +83,88 @@
                                     <label class='col-md-2 control-label' for='storyboard_endTC'>结束时段：</label>
                                     <div class='col-md-4'>
                                         <form:input class='form-control' id='storyboard_endTC' path='endTC' type='text' readonly="true" />
+                                    </div>
+                                </div>
+                                <hr class='hr-normal'>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='storyboard_eic'>责编：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_eic" multiple="true" path="editorsInCharge">
+                                            <form:options items="${editors}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_instructors'>导播：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_instructors" multiple="true" path="instructors">
+                                            <form:options items="${editors}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_editors'>记者：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_editors" multiple="true" path="editors">
+                                            <form:options items="${editors}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='storyboard_producers'>监制：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_producers" multiple="true" path="producers">
+                                            <form:options items="${editors}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_directors'>主任：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_directors" multiple="true" path="directors">
+                                            <form:options items="${editors}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='storyboard_announcers'>播音员：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_announcers" multiple="true" path="announcers">
+                                            <form:options items="${technicians}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_voiceActors'>配音员：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_voiceActors" multiple="true" path="voiceActors">
+                                            <form:options items="${technicians}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_subtitlers'>字幕员：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_subtitlers" multiple="true" path="subtitlers">
+                                            <form:options items="${technicians}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                </div>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='storyboard_cameramen'>摄影师：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_cameramen" multiple="true" path="cameramen">
+                                            <form:options items="${technicians}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_lightingEngineers'>灯光：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_lightingEngineers" multiple="true" path="lightingEngineers">
+                                            <form:options items="${technicians}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                    <label class='col-md-2 control-label' for='storyboard_technicians'>技术：</label>
+                                    <div class='col-md-2'>
+                                        <form:select class='select2 form-control' id="storyboard_technicians" multiple="true" path="technicians">
+                                            <form:options items="${technicians}" itemValue="id" itemLabel="firstName" />
+                                        </form:select>
+                                    </div>
+                                </div>
+                                <hr class='hr-normal'>
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='storyboard_notes'>备注：</label>
+                                    <div class='col-md-10'>
+                                        <form:textarea class='form-control' id='storyboard_notes' path='notes' readonly="true" rows='3' />
                                     </div>
                                 </div>
                             </form:form>
@@ -132,6 +213,8 @@
                                                 <th>视频文件</th>
                                                 <th>音频文件</th>
                                                 <th>文稿</th>
+                                                <th>文字长度</th>
+                                                <th>视频长度</th>
                                                 <th>总长度</th>
                                                 <c:if test="${storyboard.lockerUserId != null}">
                                                 <th>操作</th>
@@ -155,7 +238,9 @@
                                                     <td>
                                                         <c:if test="${detail.articleReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
                                                     </td>
-                                                    <td>${detail.adjustTC}</td>
+                                                    <td>${detail.articleLength}</td>
+                                                    <td>${detail.videoLength}</td>
+                                                    <td>${detail.totalLength}</td>
 
                                                     <c:if test="${storyboard.lockerUserId != null}">
                                                     <td>
@@ -308,7 +393,17 @@
 
     $(function () {
         $("#storyboard_columnId").select2("readonly", true);
-        $("#article_editors").select2("readonly", true);
+        $("#storyboard_editors").select2("readonly", true);
+        $("#storyboard_eic").select2("readonly", true);
+        $("#storyboard_instructors").select2("readonly", true);
+        $("#storyboard_producers").select2("readonly", true);
+        $("#storyboard_directors").select2("readonly", true);
+        $("#storyboard_announcers").select2("readonly", true);
+        $("#storyboard_voiceActors").select2("readonly", true);
+        $("#storyboard_subtitlers").select2("readonly", true);
+        $("#storyboard_cameramen").select2("readonly", true);
+        $("#storyboard_lightingEngineers").select2("readonly", true);
+        $("#storyboard_technicians").select2("readonly", true);
     });
 
 </script>

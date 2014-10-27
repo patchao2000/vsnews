@@ -17,7 +17,7 @@ public class NewsTopicInfo {
     String topicUuid;
 
     //  调节长度时码
-    String adjustTC;
+//    String adjustTC;
 
     public int getOrderValue() {
         return orderValue;
@@ -35,11 +35,11 @@ public class NewsTopicInfo {
         this.topicUuid = topicUuid;
     }
 
-    public String getAdjustTC() {
-        return adjustTC;
-    }
-
-    public void setAdjustTC(String adjustTC) {
-        this.adjustTC = adjustTC;
-    }
+//    public String getAdjustTC() {
+//        return adjustTC;
+//    }
+//
+//    public void setAdjustTC(String adjustTC) {
+//        this.adjustTC = adjustTC;
+//    }
 }

@@ -19,6 +19,7 @@
 <%--@elvariable id="taskKey" type="java.lang.String"--%>
 <%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="videos" type="java.util.List"--%>
+<%--@elvariable id="secondsPerChar" type="java.lang.Double"--%>
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
@@ -396,7 +397,7 @@
         var c = $('#article_content').val();
         c = removeHTMLTag(c);
         var chars = c.length;
-        var seconds = chars * 60 / 200;
+        var seconds = chars * ${secondsPerChar};
         $("#content_time").val("总字数："+chars+",   总时长："+seconds+"秒");
     }
 

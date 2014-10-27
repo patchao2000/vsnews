@@ -3,6 +3,7 @@ package com.videostar.vsnews.web.news;
 import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.*;
+import com.videostar.vsnews.util.TimeCode;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.ActivitiException;
@@ -60,6 +61,7 @@ public class StoryboardController {
 
     private void addSelectOptions(Model model, User user) {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        model.addAttribute("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         List<NewsColumn> userColumns = columnService.getUserColumns(user);
         model.addAttribute("columns", userColumns);
     }
@@ -311,23 +313,31 @@ public class StoryboardController {
         NewsStoryboard entity = storyboardManager.getStoryboard(id);
         mav.addObject("storyboard", entity);
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         List<NewsColumn> userColumns = columnService.getUserColumns(user);
         mav.addObject("columns", userColumns);
         mav.addObject("title", "编辑串联单");
         mav.addObject("alltopics", topicManager.getAllTopics());
 
         List<TopicInfoDetail> topics = new ArrayList<TopicInfoDetail>();
+        TimeCode total = new TimeCode(0);
         for (NewsTopicInfo info : entity.getTopics()) {
             TopicInfoDetail detail = new TopicInfoDetail();
             detail.setOrderValue(info.getOrderValue());
             detail.setTopicUuid(info.getTopicUuid());
             NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
             detail.setTopic(topic);
-            detail.setAdjustTC(info.getAdjustTC());
 
             detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
             detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
-            detail.setArticleReady(articleManager.findByTopicUuid(topic.getUuid()) != null);
+            NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
+            detail.setArticleReady(article != null);
+
+            TimeCode videoLength = topicManager.getVideoFileLength(topic);
+            detail.setVideoLength(videoLength.toString());
+            total.add(videoLength);
+            detail.setTotalLength(total.toString());
+            detail.setArticleLength(articleManager.getArticleLength(article).toString());
 
             topics.add(detail);
         }

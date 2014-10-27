@@ -73,7 +73,7 @@ public class TopicController {
     }
     private void addSelectOptions(Model model) {
         model.addAttribute("others", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_USER)));
-        model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        model.addAttribute("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         model.addAttribute("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
         //  有选题撰写和审核权限者都可进行派遣
         model.addAttribute("dispatchers", getDispatchersList());
@@ -312,7 +312,7 @@ public class TopicController {
         mav.addObject("topic", topic);
 
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
-        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_CAMERAMAN)));
+        mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         mav.addObject("reporters", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_REPORTER)));
         //  有选题撰写和审核权限者都可进行派遣
         mav.addObject("dispatchers", getDispatchersList());
