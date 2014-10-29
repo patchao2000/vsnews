@@ -137,12 +137,15 @@ public class ArticleController {
 
         NewsTopic topic = topicManager.getTopic(topicId);
         NewsArticle article = new NewsArticle();
-        makeCreateArticleModel(model, user, article);
         article.setTopicUuid(topic.getUuid());
+        logger.debug("create article from topic uuid: {}", topic.getUuid());
+
         article.setMainTitle(topic.getTitle());
         article.setContent("<p>" + topic.getContent() + "</p>");
         article.setCameramen(topic.getCameramen());
         article.setReporters(topic.getReporters());
+
+        makeCreateArticleModel(model, user, article);
 
         return "/news/article/view";
     }

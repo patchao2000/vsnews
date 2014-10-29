@@ -5,12 +5,10 @@ import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.*;
 import com.videostar.vsnews.util.TimeCode;
 import com.videostar.vsnews.util.UserUtil;
-import com.videostar.vsnews.util.WebUtil;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +47,9 @@ public class StoryboardController {
 
     @Autowired
     protected ArticleManager articleManager;
+
+    @Autowired
+    protected ArticleWorkflowService articleWorkflowService;
 
     @Autowired
     protected StoryboardManager storyboardManager;
@@ -274,7 +275,7 @@ public class StoryboardController {
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
             return "success";
         } catch (Exception e) {
-            logger.error("error on complete task {}, variables={}", new Object[]{taskId, topicMap, e});
+            logger.error("error on complete task {}, variables={}", taskId, topicMap);
             return "error";
         }
     }
@@ -291,7 +292,7 @@ public class StoryboardController {
 
     @RequestMapping(value = "task/claim/{id}")
     @ResponseBody
-    public String claim(@PathVariable("id") String taskId, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String claim(@PathVariable("id") String taskId, HttpSession session) {
         try {
             String userId = UserUtil.getUserFromSession(session).getId();
             taskService.claim(taskId, userId);
@@ -331,7 +332,10 @@ public class StoryboardController {
             detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
             detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
             NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
-            detail.setArticleReady(article != null);
+            detail.setArticle(article);
+            if (article != null) {
+                articleWorkflowService.fillRunningTask(article);
+            }
 
             TimeCode videoLength = topicManager.getVideoFileLength(topic);
             detail.setVideoLength(videoLength.toString());

@@ -65,7 +65,8 @@ public class TopicWorkflowService {
         }
         return processInstance;
     }
-    
+
+    @Transactional(readOnly = true)
     private List<Task> getTodoTasks(String userId) {
         List<Task> tasks = new ArrayList<Task>();
 
@@ -109,6 +110,27 @@ public class TopicWorkflowService {
     }
 
     @Transactional(readOnly = true)
+    public void fillRunningTask(NewsTopic topic) {
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+            processDefinitionKey(WorkflowNames.topicNew).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            if (topic.getId().equals(new Long(businessKey))) {
+                List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
+                        orderByTaskCreateTime().desc().list();
+                topic.setTask(tasks.get(0));
+                topic.setProcessInstance(processInstance);
+                topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+                break;
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
     public int getTodoTasksCount(String userId) {
         return getTodoTasks(userId).size();
     }
@@ -144,10 +166,12 @@ public class TopicWorkflowService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
         return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
     }
 
+    @Transactional(readOnly = true)
     public Boolean isFinished(NewsTopic topic) {
         List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
         listRunning.addAll(runtimeService.createProcessInstanceQuery().

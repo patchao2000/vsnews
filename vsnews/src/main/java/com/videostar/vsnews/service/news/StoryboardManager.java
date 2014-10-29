@@ -2,12 +2,15 @@ package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.dao.StoryboardDao;
 import com.videostar.vsnews.entity.news.NewsStoryboard;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.entity.news.NewsTopicInfo;
+import org.activiti.engine.identity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -23,6 +26,12 @@ import java.util.List;
 public class StoryboardManager {
     
     private StoryboardDao storyboardDao;
+
+    @Autowired
+    protected TopicManager topicManager;
+
+    @Autowired
+    protected ArticleManager articleManager;
 
     public NewsStoryboard getStoryboard(Long id) {
         return storyboardDao.findOne(id);
@@ -148,6 +157,27 @@ public class StoryboardManager {
         }
         entity.setTopics(newList);
         storyboardDao.save(entity);
+    }
+
+    //  返回用户创建的所有已加入串联单并缺少视频文件或文稿的选题
+    public List<NewsTopic> getTopicsNeedJob(String userId) {
+        List<NewsTopic> list = new ArrayList<NewsTopic>();
+        HashSet<NewsTopic> hs = new HashSet<NewsTopic>();
+        for (NewsStoryboard sb : getAllStoryboards()) {
+            for (NewsTopicInfo info : sb.getTopics()) {
+                NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
+                if (topic.getUserId().equals(userId)) {
+                    if (!topicManager.haveVideoFiles(topic) ||
+                        articleManager.findByTopicUuid(info.getTopicUuid()) == null) {
+                        hs.add(topic);
+                    }
+                }
+            }
+        }
+        for (NewsTopic topic : hs) {
+            list.add(topic);
+        }
+        return list;
     }
 
     @Autowired

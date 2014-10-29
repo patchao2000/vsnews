@@ -21,6 +21,13 @@ public class NewsFileInfo extends IdEntity implements Serializable {
 
     int type;
 
+    public static final int STATUS_BEGIN_EDIT = 0;
+    public static final int STATUS_END_EDIT = 1;
+
+    int status;
+
+    String title;
+
     Date addedTime;
 
     String filePath;
@@ -28,6 +35,35 @@ public class NewsFileInfo extends IdEntity implements Serializable {
     String userId;
 
     String lengthTC;
+
+    @Transient
+    public final String getStatusString() {
+        switch(status) {
+            case STATUS_BEGIN_EDIT:
+                return "剪辑开始";
+            case STATUS_END_EDIT:
+                return "剪辑结束";
+        }
+        return "ERROR";
+    }
+
+    @Column
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Column
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column

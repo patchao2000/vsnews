@@ -1,5 +1,6 @@
 package com.videostar.vsnews.web.news;
 
+import com.videostar.vsnews.entity.news.NewsArticle;
 import com.videostar.vsnews.entity.news.NewsTopic;
 
 /**
@@ -13,11 +14,13 @@ public class TopicInfoDetail implements java.io.Serializable {
 
     private int orderValue;
     private String topicUuid;
-//    private String adjustTC;
-    private NewsTopic Topic;
+
+    private NewsTopic topic;
+    private NewsArticle article;
+
     private Boolean videoFileReady;
     private Boolean audioFileReady;
-    private Boolean articleReady;
+//    private Boolean articleReady;
 
     private String videoLength;
     private String articleLength;
@@ -40,20 +43,20 @@ public class TopicInfoDetail implements java.io.Serializable {
     }
 
     public NewsTopic getTopic() {
-        return Topic;
+        return this.topic;
     }
 
     public void setTopic(NewsTopic topic) {
-        Topic = topic;
+        this.topic = topic;
     }
 
-//    public String getAdjustTC() {
-//        return adjustTC;
-//    }
-//
-//    public void setAdjustTC(String adjustTC) {
-//        this.adjustTC = adjustTC;
-//    }
+    public NewsArticle getArticle() {
+        return article;
+    }
+
+    public void setArticle(NewsArticle article) {
+        this.article = article;
+    }
 
     public Boolean getVideoFileReady() {
         return videoFileReady;
@@ -71,13 +74,13 @@ public class TopicInfoDetail implements java.io.Serializable {
         this.audioFileReady = audioFileReady;
     }
 
-    public Boolean getArticleReady() {
-        return articleReady;
-    }
-
-    public void setArticleReady(Boolean articleReady) {
-        this.articleReady = articleReady;
-    }
+//    public Boolean getArticleReady() {
+//        return articleReady;
+//    }
+//
+//    public void setArticleReady(Boolean articleReady) {
+//        this.articleReady = articleReady;
+//    }
 
     public String getVideoLength() {
         return videoLength;

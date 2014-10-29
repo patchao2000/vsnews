@@ -40,8 +40,8 @@
                             <form class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
                                 <div class='form-group'>
                                     <div class='col-md-6'>
-                                        <a id="addvideo" class="btn btn-success" href="#"><i class="icon-add icon-white"></i> 添加视频素材</a>
-                                        <a id="addaudio" class="btn btn-success" href="#"><i class="icon-add icon-white"></i> 添加音频素材</a>
+                                        <a id="add-video" class="btn btn-success" href="#"><i class="icon-add icon-white"></i> 添加视频素材</a>
+                                        <a id="add-audio" class="btn btn-success" href="#"><i class="icon-add icon-white"></i> 添加音频素材</a>
                                     </div>
                                 </div>
                                 <div class='responsive-table'>
@@ -51,9 +51,11 @@
                                             <tr>
                                                 <th>添加人</th>
                                                 <th>申请时间</th>
+                                                <th>素材名称</th>
                                                 <th>素材类别</th>
+                                                <th>状态</th>
                                                 <th>长度</th>
-                                                <th>文件路径</th>
+                                                <%--<th>文件路径</th>--%>
                                                 <th>操作</th>
                                             </tr>
                                             </thead>
@@ -64,11 +66,13 @@
                                                 <tr id="${detail.newsFileInfo.id }">
                                                     <td>${detail.userName }</td>
                                                     <td><fmt:formatDate value="${detail.newsFileInfo.addedTime}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                                    <td>${detail.newsFileInfo.title }</td>
                                                     <td>${detail.fileTypeName }</td>
+                                                    <td>${detail.newsFileInfo.statusString }</td>
                                                     <td>${detail.newsFileInfo.lengthTC }</td>
-                                                    <td>${detail.newsFileInfo.filePath }</td>
+                                                    <%--<td>${detail.newsFileInfo.filePath }</td>--%>
                                                     <td>
-                                                        <a class="removefile btn btn-primary btn-xs" href="#"><i class="icon-remove"></i>删除</a>
+                                                        <a class="remove-file btn btn-primary btn-xs" href="#"><i class="icon-remove"></i>删除</a>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -93,10 +97,20 @@
                 <h4 class="modal-title" id="fileModalLabel">添加素材位置</h4>
             </div>
             <div class="modal-body">
-                <label for='fileLocation'>素材位置：</label>
-                <input class='form-control' name="fileLocation" id="fileLocation">
-                <label for='length'>素材长度：</label>
-                <input class='form-control' name="length" id="length">
+                <label for='file_title'>素材名称：</label>
+                <input class='form-control' name="title" id="file_title">
+                <label for='file_path'>素材位置：</label>
+                <input class='form-control' name="file_path" id="file_path">
+                <label for='file_length'>素材长度：</label>
+                <input class='form-control' name="length" id="file_length">
+                <hr class='hr-normal'>
+                <label>状态： </label>
+                <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="edit_begin" value="edit_begin"> 剪辑开始
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="edit_end" value="edit_end"> 剪辑结束
+                </label>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -112,20 +126,22 @@
 
     var file_sign = '';
 
-    $("#addvideo").live("click",function(){
+    $("#add-video").live("click",function(){
         file_sign = '0';
+        $('#edit_begin').prop('checked', true);
         $('#fileModal').modal('toggle');
     });
 
-    $("#addaudio").live("click",function(){
+    $("#add-audio").live("click",function(){
         file_sign = '1';
+        $('#edit_begin').prop('checked', true);
         $('#fileModal').modal('toggle');
     });
 
-    $(".removefile").live("click",function(){
+    $(".remove-file").live("click",function(){
         var fileId = $(this).parents('tr').attr('id');
 
-        $.post(ctx + '/news/topic/removefile/' + ${topic.id} + '/' + fileId,
+        $.post(ctx + '/news/topic/remove-file/' + ${topic.id} + '/' + fileId,
                 function(resp) {
                     if (resp == 'success') {
                         alert('任务完成');
@@ -137,17 +153,27 @@
     });
 
     $('#savefile').click(function () {
-//        alert('savefile');
-        var name = $('#fileLocation').val();
-        if (name.length == 0) {
-            name = "null";
+        var file_title = $('#file_title').val();
+        if (file_title.length == 0) {
+            alert('必须输入标题！');
+            return;
         }
-        var length = $('#length').val();
-        if (length.length == 0) {
-            length = "00:00:00:00";
+        var file_path = $('#file_path').val();
+        if (file_path.length == 0) {
+            file_path = "null";
+        }
+        var file_length = $('#file_length').val();
+        if (file_length.length == 0) {
+            file_length = "00:00:00:00";
         }
 
-        $.post(ctx + '/news/topic/addfile/' + ${topic.id} + '/' + file_sign + '/' + name + '/' + length,
+        var checked = $("input[type='radio']:checked").val();
+        var file_status = 0;
+        if (checked == 'edit_end') {
+            file_status = 1;
+        }
+
+        $.post(ctx + '/news/topic/add-file/' + ${topic.id} + '/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
                 function(resp) {
                     if (resp == 'success') {
                         alert('任务完成');

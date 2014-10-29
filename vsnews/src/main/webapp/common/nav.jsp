@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     String uri = request.getRequestURI();
-    boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false;
+    boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false, inTopicNeedJob = false;
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
@@ -16,6 +16,8 @@
         inTopicList = true;
     if (uri.contains("/topic/alltopics"))
         inTopicFinished = true;
+    if (uri.contains("/topic/need-job"))
+        inTopicNeedJob = true;
 
     if (uri.contains("/news/article"))
         inArticle = true;
@@ -128,16 +130,16 @@
                             <span>待办任务</span>
                         </a>
                     </li>
-                    <%--<li class='<%=inTopicRunning?"active":""%>'>--%>
-                        <%--<a href='${ctx}/news/topic/list/running'>--%>
-                            <%--<i class='icon-caret-right'></i>--%>
-                            <%--<span>运行中任务</span>--%>
-                        <%--</a>--%>
-                    <%--</li>--%>
                     <li class='<%=inTopicFinished?"active":""%>'>
                         <a href='${ctx}/news/topic/list/all'>
                             <i class='icon-caret-right'></i>
                             <span>所有选题</span>
+                        </a>
+                    </li>
+                    <li class='<%=inTopicNeedJob?"active":""%>'>
+                        <a href='${ctx}/news/topic/list/need-job'>
+                            <i class='icon-caret-right'></i>
+                            <span>待完善选题</span>
                         </a>
                     </li>
                 </ul>

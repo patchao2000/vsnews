@@ -16,6 +16,8 @@ public class TopicDetail implements java.io.Serializable {
     private String dispatcherName;
 //    private String columnName;
 //    private String plainTitle;
+    private Boolean avFileReady;
+    private Boolean articleReady;
 
     public NewsTopic getTopic() {
         return Topic;
@@ -55,6 +57,22 @@ public class TopicDetail implements java.io.Serializable {
 
     public void setDispatcherName(String dispatcherName) {
         this.dispatcherName = dispatcherName;
+    }
+
+    public Boolean getAvFileReady() {
+        return avFileReady;
+    }
+
+    public void setAvFileReady(Boolean avFileReady) {
+        this.avFileReady = avFileReady;
+    }
+
+    public Boolean getArticleReady() {
+        return articleReady;
+    }
+
+    public void setArticleReady(Boolean articleReady) {
+        this.articleReady = articleReady;
     }
 }
 

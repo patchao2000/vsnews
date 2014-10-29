@@ -199,7 +199,7 @@
                                                 </c:forEach>
                                             </select>
                                         </div>
-                                        <a id="addtopic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
+                                        <a id="add_topic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
                                         <a id="unlock" class="btn btn-success" title='解锁' href="#"><i class="icon-edit icon-white"></i> 退出编辑模式</a>
                                     </c:if>
                                 </div>
@@ -212,7 +212,7 @@
                                                 <th>标题</th>
                                                 <th>视频文件</th>
                                                 <th>音频文件</th>
-                                                <th>文稿</th>
+                                                <th>文稿状态</th>
                                                 <th>文字长度</th>
                                                 <th>视频长度</th>
                                                 <th>总长度</th>
@@ -226,7 +226,7 @@
                                             <%--@elvariable id="topics" type="java.util.list"--%>
                                             <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicInfoDetail"--%>
                                             <c:forEach items="${topics }" var="detail">
-                                                <tr data-index="${detail.orderValue }">
+                                                <tr data-index="${detail.orderValue }" data-article-id='<c:if test="${detail.article != null}">${detail.article.id}</c:if>'>
                                                     <td>${detail.orderValue + 1}</td>
                                                     <td>${detail.topic.title }</td>
                                                     <td>
@@ -236,7 +236,13 @@
                                                         <c:if test="${detail.audioFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
                                                     </td>
                                                     <td>
-                                                        <c:if test="${detail.articleReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                        <%--<c:if test="${detail.article != null}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>--%>
+                                                        <c:if test="${detail.article != null}">
+                                                            <c:choose>
+                                                                <c:when test="${detail.article.task != null}">${detail.article.task.name }</c:when>
+                                                                <c:otherwise>已完成</c:otherwise>
+                                                            </c:choose>
+                                                        </c:if>
                                                     </td>
                                                     <td>${detail.articleLength}</td>
                                                     <td>${detail.videoLength}</td>
@@ -244,9 +250,12 @@
 
                                                     <c:if test="${storyboard.lockerUserId != null}">
                                                     <td>
-                                                        <a class="uptopic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
-                                                        <a class="downtopic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
-                                                        <a class="removetopic btn btn-danger btn-xs" href="#"><i class="icon-remove"></i>删除</a>
+                                                        <c:if test="${detail.article != null}">
+                                                            <a class='view_article btn btn-success btn-xs' href='#'>查看文稿</a>
+                                                        </c:if>
+                                                        <a class="up_topic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
+                                                        <a class="down_topic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
+                                                        <a class="remove_topic btn btn-danger btn-xs" href="#"><i class="icon-remove"></i>删除</a>
                                                     </td>
                                                     </c:if>
                                                 </tr>
@@ -307,7 +316,7 @@
         });
     });
 
-    $(".uptopic").live("click",function(){
+    $(".up_topic").live("click",function(){
         $.ajax({
             type: 'post',
             async: false,
@@ -327,7 +336,7 @@
         });
     });
 
-    $(".downtopic").live("click",function(){
+    $(".down_topic").live("click",function(){
         $.ajax({
             type: 'post',
             async: false,
@@ -347,7 +356,7 @@
         });
     });
 
-    $(".removetopic").live("click",function(){
+    $(".remove_topic").live("click",function(){
         $.ajax({
             type: 'post',
             async: false,
@@ -367,7 +376,7 @@
         });
     });
 
-    $("#addtopic").live("click",function(){
+    $("#add_topic").live("click",function(){
         var selected = $('#storyboard_topic' + ' :selected');
         if (selected.size() == 0) {
             return;
@@ -389,6 +398,13 @@
                 alert('操作失败!!');
             }
         });
+    });
+
+    $(".view_article").live("click",function(){
+        var id = $(this).parents('tr').attr('data-article-id');
+        if (id.length > 0) {
+            location.href = ctx + '/news/article/view/' + id;
+        }
     });
 
     $(function () {

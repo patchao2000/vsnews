@@ -100,6 +100,11 @@
                                                             <span id="storyboardTodo">您没有任何待办任务</span>
                                                         </label>
                                                     </li>
+                                                    <li class='important item'>
+                                                        <label class='pull-left todo'>
+                                                            <span id="topicsNeedJob">您没有任何待办任务</span>
+                                                        </label>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -296,6 +301,22 @@
             },
             error: function () {
                 alert('storyboardTodo error!!');
+            }
+        });
+
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/topic/count/need-job',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == "0")
+                    $('#topicsNeedJob').html("您没有需要完善的新闻选题。");
+                else
+                    $('#topicsNeedJob').html("您<a class='text-contrast' href='${ctx}/news/topic/list/need-job'>有 " + resp + " 条</a>新闻选题需要完善。");
+            },
+            error: function () {
+                alert('topicsNeedJob error!!');
             }
         });
 

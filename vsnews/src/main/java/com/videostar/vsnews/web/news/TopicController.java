@@ -1,8 +1,11 @@
 package com.videostar.vsnews.web.news;
 
+import com.videostar.vsnews.entity.news.NewsArticle;
 import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
+import com.videostar.vsnews.service.news.ArticleManager;
+import com.videostar.vsnews.service.news.StoryboardManager;
 import com.videostar.vsnews.service.news.TopicManager;
 import com.videostar.vsnews.service.news.TopicWorkflowService;
 import com.videostar.vsnews.util.*;
@@ -51,6 +54,12 @@ public class TopicController {
 
     @Autowired
     protected UserManager userManager;
+
+    @Autowired
+    protected StoryboardManager storyboardManager;
+
+    @Autowired
+    protected ArticleManager articleManager;
 
     @SuppressWarnings("unchecked")
     private List<User> getDispatchersList() {
@@ -211,6 +220,50 @@ public class TopicController {
         return mav;
     }
 
+    @RequestMapping(value = "count/need-job", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String needJobCount(HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            Integer count = storyboardManager.getTopicsNeedJob(userId).size();
+            logger.debug("need job count: {}", count);
+            return count.toString();
+        } catch (Exception e) {
+            logger.error("error on get need job count!");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "list/need-job")
+    public ModelAndView needJobList(HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return new ModelAndView(UserUtil.redirectTimeoutString);
+
+        ModelAndView mav = new ModelAndView("/news/topic/need-job");
+        List<TopicDetail> list = new ArrayList<TopicDetail>();
+        for (NewsTopic topic : storyboardManager.getTopicsNeedJob(user.getId())) {
+
+            workflowService.fillRunningTask(topic);
+
+            TopicDetail detail = new TopicDetail();
+            detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
+            detail.setTopic(topic);
+            String dispatcher = topic.getDispatcher();
+            if (dispatcher != null) {
+                detail.setDispatcherName(userManager.getUserById(dispatcher).getFirstName());
+            }
+            detail.setAvFileReady(topicManager.haveVideoFiles(topic) || topicManager.haveAudioFiles(topic));
+            NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
+            detail.setArticleReady(article != null);
+
+            list.add(detail);
+        }
+
+        mav.addObject("list", list);
+        return mav;
+    }
+
     @RequestMapping(value = "audit/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
     public String auditTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                              Model model, HttpSession session) {
@@ -332,7 +385,7 @@ public class TopicController {
 
     @RequestMapping(value = "task/claim/{id}")
     @ResponseBody
-    public String claim(@PathVariable("id") String taskId, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String claim(@PathVariable("id") String taskId, HttpSession session) {
         try {
             String userId = UserUtil.getUserFromSession(session).getId();
             taskService.claim(taskId, userId);
@@ -370,14 +423,15 @@ public class TopicController {
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
             return "success";
         } catch (Exception e) {
-            logger.error("error on complete task {}, variables={}", new Object[]{taskId, topicMap, e});
+            logger.error("error on complete task {}, variables={}", taskId, topicMap);
             return "error";
         }
     }
 
-    @RequestMapping(value = "addfile/{id}/{type}/{filepath}/{length}")
+    @RequestMapping(value = "add-file/{id}/{type}/{title}/{status}/{filepath}/{length}")
     @ResponseBody
     public String addFile(@PathVariable("id") Long id, @PathVariable("type") int type,
+                          @PathVariable("title") String title, @PathVariable("status") int status,
                           @PathVariable("filepath") String filepath, @PathVariable("length") String length,
                           HttpSession session) {
         try {
@@ -385,6 +439,8 @@ public class TopicController {
             NewsFileInfo info = new NewsFileInfo();
             info.setFilePath(filepath);
             info.setType(type);
+            info.setTitle(title);
+            info.setStatus(status);
             String userId = UserUtil.getUserFromSession(session).getId();
             info.setUserId(userId);
             info.setAddedTime(new Date());
@@ -400,10 +456,9 @@ public class TopicController {
     }
 
 
-    @RequestMapping(value = "removefile/{id}/{fileId}")
+    @RequestMapping(value = "remove-file/{id}/{fileId}")
     @ResponseBody
-    public String removeFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId,
-                          HttpSession session) {
+    public String removeFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId) {
         try {
             NewsTopic topic = topicManager.getTopic(id);
             topicManager.removeFileFromTopic(topic, fileId);

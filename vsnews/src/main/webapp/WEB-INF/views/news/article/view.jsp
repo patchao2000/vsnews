@@ -73,6 +73,12 @@
                                         <form:errors path="mainTitle" cssClass="help-block" />
                                     </div>
                                 </div>
+                                <div class='form-group' style="display: none;">
+                                    <label class='col-md-2 control-label' for='article_topicUuid'>UUID：</label>
+                                    <div class='col-md-10'>
+                                        <form:input class='form-control' id='article_topicUuid' path='topicUuid' type='text' readonly="${readonly}" />
+                                    </div>
+                                </div>
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='article_columnId'>栏目：</label>
                                     <div class='col-md-4'>

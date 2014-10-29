@@ -200,6 +200,26 @@ public class ArticleWorkflowService {
         return result;
     }
 
+    //  填充running task
+    public void fillRunningTask(NewsArticle article) {
+        List<ProcessInstance> listRunning = runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.article123).active().orderByProcessInstanceId().desc().list();
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            if (article.getId().equals(new Long(businessKey))) {
+                List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
+                        orderByTaskCreateTime().desc().list();
+                article.setTask(tasks.get(0));
+                article.setProcessInstance(processInstance);
+                article.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+                break;
+            }
+        }
+    }
+
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
         return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
     }
