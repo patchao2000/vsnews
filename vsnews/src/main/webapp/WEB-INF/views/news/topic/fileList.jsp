@@ -63,7 +63,12 @@
                                             <%--@elvariable id="list" type="java.util.List"--%>
                                             <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.FileInfoDetail"--%>
                                             <c:forEach items="${list }" var="detail">
-                                                <tr id="${detail.newsFileInfo.id }">
+                                                <tr id="${detail.newsFileInfo.id }"
+                                                    data-file-sign="${detail.newsFileInfo.type }"
+                                                    data-file-status="${detail.newsFileInfo.status }"
+                                                    data-file-title="${detail.newsFileInfo.title}"
+                                                    data-file-path="${detail.newsFileInfo.filePath}"
+                                                    data-file-length="${detail.newsFileInfo.lengthTC}">
                                                     <td>${detail.userName }</td>
                                                     <td><fmt:formatDate value="${detail.newsFileInfo.addedTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                     <td>${detail.newsFileInfo.title }</td>
@@ -72,6 +77,7 @@
                                                     <td>${detail.newsFileInfo.lengthTC }</td>
                                                     <%--<td>${detail.newsFileInfo.filePath }</td>--%>
                                                     <td>
+                                                        <a class="edit-file btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
                                                         <a class="remove-file btn btn-primary btn-xs" href="#"><i class="icon-remove"></i>删除</a>
                                                     </td>
                                                 </tr>
@@ -124,22 +130,25 @@
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
 
-    var file_sign = '';
+    var file_sign = '', add_mode = true;
+    var fileId = '';
 
     $("#add-video").live("click",function(){
         file_sign = '0';
+        add_mode = true;
         $('#edit_begin').prop('checked', true);
         $('#fileModal').modal('toggle');
     });
 
     $("#add-audio").live("click",function(){
         file_sign = '1';
+        add_mode = true;
         $('#edit_begin').prop('checked', true);
         $('#fileModal').modal('toggle');
     });
 
     $(".remove-file").live("click",function(){
-        var fileId = $(this).parents('tr').attr('id');
+        fileId = $(this).parents('tr').attr('id');
 
         $.post(ctx + '/news/topic/remove-file/' + ${topic.id} + '/' + fileId,
                 function(resp) {
@@ -150,6 +159,20 @@
                         alert('操作失败!');
                     }
                 });
+    });
+
+    $(".edit-file").live("click",function(){
+        fileId = $(this).parents('tr').attr('id');
+        file_sign = $(this).parents('tr').attr('data-file-sign');
+        add_mode = false;
+
+        $('#edit_begin').prop('checked', $(this).parents('tr').attr('data-file-status') == "0");
+        $('#edit_end').prop('checked', $(this).parents('tr').attr('data-file-status') == "1");
+        $('#file_title').val($(this).parents('tr').attr('data-file-title'));
+        $('#file_path').val($(this).parents('tr').attr('data-file-path'));
+        $('#file_length').val($(this).parents('tr').attr('data-file-length'));
+
+        $('#fileModal').modal('toggle');
     });
 
     $('#savefile').click(function () {
@@ -173,15 +196,28 @@
             file_status = 1;
         }
 
-        $.post(ctx + '/news/topic/add-file/' + ${topic.id} + '/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
-                function(resp) {
-                    if (resp == 'success') {
-                        alert('任务完成');
-                        location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                    } else {
-                        alert('操作失败!');
-                    }
-                });
+        if (add_mode == true) {
+            $.post(ctx + '/news/topic/add-file/' + ${topic.id} +'/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
+                    function (resp) {
+                        if (resp == 'success') {
+                            alert('任务完成');
+                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                        } else {
+                            alert('操作失败!');
+                        }
+                    });
+        }
+        else {
+            $.post(ctx + '/news/topic/edit-file/' + ${topic.id} +'/' + fileId + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
+                    function (resp) {
+                        if (resp == 'success') {
+                            alert('任务完成');
+                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                        } else {
+                            alert('操作失败!');
+                        }
+                    });
+        }
     });
 
     $(document).ready(function () {

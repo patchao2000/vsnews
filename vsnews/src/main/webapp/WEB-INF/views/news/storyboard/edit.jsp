@@ -230,10 +230,12 @@
                                                     <td>${detail.orderValue + 1}</td>
                                                     <td>${detail.topic.title }</td>
                                                     <td>
-                                                        <c:if test="${detail.videoFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                        ${detail.videoStatus }
+                                                        <%--<c:if test="${detail.videoFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>--%>
                                                     </td>
                                                     <td>
-                                                        <c:if test="${detail.audioFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                        ${detail.audioStatus }
+                                                        <%--<c:if test="${detail.audioFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>--%>
                                                     </td>
                                                     <td>
                                                         <%--<c:if test="${detail.article != null}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>--%>

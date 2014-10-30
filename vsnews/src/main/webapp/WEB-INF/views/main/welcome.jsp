@@ -181,6 +181,8 @@
                 </div>
             </div>
 
+            <%--<input type="button" id="openNotepad" value="openNotepad" onclick="openNotepad();"/>--%>
+
             <%--<div class="col-md-6">--%>
                 <%--<div id="video">Loading the player...</div>--%>
             <%--</div>--%>
@@ -230,6 +232,17 @@
 <%--<script src="${ctx}/js/ckplayer/ckplayer.js" ></script>--%>
 
 <script type="text/javascript">
+
+    function openNotepad()
+    {
+//        Only worked in IE!!
+
+//        alert('123');
+        var wsh=new ActiveXObject("wscript.shell");
+//        wsh.run("notepad");//如果在“运行”可以运行就可以在此直接写，否则要写上绝对路径
+        wsh.run("E:\\Temp\\1.txt");//如果在“运行”可以运行就可以在此直接写，否则要写上绝对路径
+    }
+
     $(function () {
 //        jwplayer("video").setup({
 //            file: "http://192.168.1.119/Sample2.mp4",

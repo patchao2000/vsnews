@@ -455,6 +455,23 @@ public class TopicController {
         }
     }
 
+    @RequestMapping(value = "edit-file/{id}/{fileId}/{title}/{status}/{filepath}/{length}")
+    @ResponseBody
+    public String editFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId,
+                          @PathVariable("title") String title, @PathVariable("status") int status,
+                          @PathVariable("filepath") String filepath, @PathVariable("length") String length,
+                          HttpSession session) {
+        try {
+            NewsTopic topic = topicManager.getTopic(id);
+            topicManager.editTopicFile(topic, fileId, title, filepath, status, length);
+
+            logger.debug("topic file edited {}", fileId);
+            return "success";
+        } catch (Exception e) {
+            logger.debug("error on edit topic file{}", fileId);
+            return "error";
+        }
+    }
 
     @RequestMapping(value = "remove-file/{id}/{fileId}")
     @ResponseBody

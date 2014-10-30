@@ -60,6 +60,23 @@ public class TopicManager {
         topicDao.save(entity);
     }
 
+    @Transactional(readOnly = false)
+    public void editTopicFile(NewsTopic entity, Long fileInfoId,
+                              String title, String filePath, int status, String lengthTC) {
+        List<NewsFileInfo> list = entity.getFiles();
+        for (NewsFileInfo info : list) {
+            if (info.getId().equals(fileInfoId)) {
+                info.setTitle(title);
+                info.setFilePath(filePath);
+                info.setStatus(status);
+                info.setLengthTC(lengthTC);
+                break;
+            }
+        }
+        topicDao.save(entity);
+    }
+
+    @Transactional(readOnly = true)
     public Boolean haveVideoFiles(NewsTopic entity) {
         for (NewsFileInfo info : entity.getFiles()) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
@@ -69,6 +86,17 @@ public class TopicManager {
         return false;
     }
 
+    @Transactional(readOnly = true)
+    public String getVideoFileStatus(NewsTopic entity) {
+        for (NewsFileInfo info : entity.getFiles()) {
+            if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
+                return info.getStatusString();
+        }
+
+        return "";
+    }
+
+    @Transactional(readOnly = true)
     public TimeCode getVideoFileLength(NewsTopic entity) {
         for (NewsFileInfo info : entity.getFiles()) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
@@ -78,6 +106,7 @@ public class TopicManager {
         return new TimeCode(0);
     }
 
+    @Transactional(readOnly = true)
     public Boolean haveAudioFiles(NewsTopic entity) {
         for (NewsFileInfo info : entity.getFiles()) {
             if (info.getType() == NewsFileInfo.TYPE_AUDIO_MATERIAL)
@@ -85,6 +114,16 @@ public class TopicManager {
         }
 
         return false;
+    }
+
+    @Transactional(readOnly = true)
+    public String getAudioFileStatus(NewsTopic entity) {
+        for (NewsFileInfo info : entity.getFiles()) {
+            if (info.getType() == NewsFileInfo.TYPE_AUDIO_MATERIAL)
+                return info.getStatusString();
+        }
+
+        return "";
     }
 
 //    public Boolean haveArticles(NewsTopic entity) {
@@ -96,6 +135,7 @@ public class TopicManager {
 //        return false;
 //    }
 
+    @Transactional(readOnly = true)
     public Iterable<NewsTopic> getAllTopics() {
         return topicDao.findAll();
     }

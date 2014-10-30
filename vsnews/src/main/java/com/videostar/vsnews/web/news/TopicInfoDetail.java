@@ -18,8 +18,11 @@ public class TopicInfoDetail implements java.io.Serializable {
     private NewsTopic topic;
     private NewsArticle article;
 
-    private Boolean videoFileReady;
-    private Boolean audioFileReady;
+//    private Boolean videoFileReady;
+//    private Boolean audioFileReady;
+
+    private String videoStatus;
+    private String audioStatus;
 //    private Boolean articleReady;
 
     private String videoLength;
@@ -58,21 +61,21 @@ public class TopicInfoDetail implements java.io.Serializable {
         this.article = article;
     }
 
-    public Boolean getVideoFileReady() {
-        return videoFileReady;
-    }
-
-    public void setVideoFileReady(Boolean videoFileReady) {
-        this.videoFileReady = videoFileReady;
-    }
-
-    public Boolean getAudioFileReady() {
-        return audioFileReady;
-    }
-
-    public void setAudioFileReady(Boolean audioFileReady) {
-        this.audioFileReady = audioFileReady;
-    }
+//    public Boolean getVideoFileReady() {
+//        return videoFileReady;
+//    }
+//
+//    public void setVideoFileReady(Boolean videoFileReady) {
+//        this.videoFileReady = videoFileReady;
+//    }
+//
+//    public Boolean getAudioFileReady() {
+//        return audioFileReady;
+//    }
+//
+//    public void setAudioFileReady(Boolean audioFileReady) {
+//        this.audioFileReady = audioFileReady;
+//    }
 
 //    public Boolean getArticleReady() {
 //        return articleReady;
@@ -104,5 +107,21 @@ public class TopicInfoDetail implements java.io.Serializable {
 
     public void setTotalLength(String totalLength) {
         this.totalLength = totalLength;
+    }
+
+    public String getVideoStatus() {
+        return videoStatus;
+    }
+
+    public void setVideoStatus(String videoStatus) {
+        this.videoStatus = videoStatus;
+    }
+
+    public String getAudioStatus() {
+        return audioStatus;
+    }
+
+    public void setAudioStatus(String audioStatus) {
+        this.audioStatus = audioStatus;
     }
 }

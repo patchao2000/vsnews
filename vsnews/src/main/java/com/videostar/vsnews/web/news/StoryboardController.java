@@ -329,8 +329,10 @@ public class StoryboardController {
             NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
             detail.setTopic(topic);
 
-            detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
-            detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
+//            detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
+            detail.setVideoStatus(topicManager.getVideoFileStatus(topic));
+//            detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
+            detail.setAudioStatus(topicManager.getAudioFileStatus(topic));
             NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
             detail.setArticle(article);
             if (article != null) {
