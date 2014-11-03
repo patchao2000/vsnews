@@ -29,6 +29,11 @@ public class ConfigXmlReader extends DefaultHandler {
     private static String fileUploadDir = "/Temp/";
     private static Integer maxUploadSize = 1024 * 1024;
 
+    private static String sambaPath = "smb://127.0.0.1/Samba/";
+    private static String sambaUserName = "test";
+    private static String sambaPassword = "test";
+
+
     private static Boolean initParsed = false;
 
     public ConfigXmlReader() {
@@ -78,15 +83,27 @@ public class ConfigXmlReader extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.toUpperCase().equals("NGINXURL")) {
             nginxUrl = currentValue.toString().trim();
-            logger.debug("nginxUrl set: {}", nginxUrl);
+//            logger.debug("nginxUrl set: {}", nginxUrl);
         }
         else if (qName.toUpperCase().equals("FILEUPLOADDIR")) {
             fileUploadDir = currentValue.toString().trim();
-            logger.debug("fileUploadDir set: {}", fileUploadDir);
+//            logger.debug("fileUploadDir set: {}", fileUploadDir);
         }
         else if (qName.toUpperCase().equals("MAXUPLOADSIZE")) {
             maxUploadSize = Integer.parseInt(currentValue.toString().trim());
-            logger.debug("maxUploadSize set: {}", maxUploadSize);
+//            logger.debug("maxUploadSize set: {}", maxUploadSize);
+        }
+        else if (qName.toUpperCase().equals("SAMBAPATH")) {
+            sambaPath = currentValue.toString().trim();
+//            logger.debug("sambaPath set: {}", sambaPath);
+        }
+        else if (qName.toUpperCase().equals("SAMBAUSERNAME")) {
+            sambaUserName = currentValue.toString().trim();
+//            logger.debug("sambaUserName set: {}", sambaUserName);
+        }
+        else if (qName.toUpperCase().equals("SAMBAPASSWORD")) {
+            sambaPassword = currentValue.toString().trim();
+//            logger.debug("sambaPassword set: {}", sambaPassword);
         }
     }
 
@@ -100,5 +117,17 @@ public class ConfigXmlReader extends DefaultHandler {
 
     public static Integer getMaxUploadSize() {
         return maxUploadSize;
+    }
+
+    public static String getSambaPath() {
+        return sambaPath;
+    }
+
+    public static String getSambaUserName() {
+        return sambaUserName;
+    }
+
+    public static String getSambaPassword() {
+        return sambaPassword;
     }
 }

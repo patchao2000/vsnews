@@ -95,6 +95,7 @@
     </section>
 </div>
 
+<%--@elvariable id="materialFiles" type="java.util.List"--%>
 <div class="modal fade group-dialog" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -105,8 +106,13 @@
             <div class="modal-body">
                 <label for='file_title'>素材名称：</label>
                 <input class='form-control' name="title" id="file_title">
-                <label for='file_path'>素材位置：</label>
-                <input class='form-control' name="file_path" id="file_path">
+                <label for='file_path'>素材文件：</label>
+                <%--<input class='form-control' name="file_path" id="file_path">--%>
+                <select class='form-control' id="file_path">
+                    <%--<c:forEach items="${materialFiles }" var="file">--%>
+                        <%--<option value="${file }">${file }</option>--%>
+                    <%--</c:forEach>--%>
+                </select>
                 <label for='file_length'>素材长度：</label>
                 <input class='form-control' name="length" id="file_length">
                 <hr class='hr-normal'>
@@ -133,9 +139,48 @@
     var file_sign = '', add_mode = true;
     var fileId = '';
 
+    function fillMaterialFiles(exist) {
+        var files = [], i = 0;
+        <c:forEach items="${materialFiles }" var="file">
+        files[i++] = '${file }';
+        </c:forEach>
+
+        var control = $('#file_path');
+        control.empty();
+        var content = '', found = false;
+        for (var j = 0; j < files.length; j++)
+        {
+            var add_content = '<option value="'+files[j]+'">'+files[j]+'</option>';
+            var add_selected_content = '<option value="'+files[j]+'" selected="selected">'+files[j]+'</option>';
+            if (typeof exist == 'undefined' && j == 0) {
+                content = content + add_selected_content;
+            }
+            else {
+                if (typeof exist != 'undefined') {
+                    if (exist == files[j]) {
+                        content = content + add_selected_content;
+                        found = true;
+                    }
+                    else {
+                        content = content + add_content;
+                    }
+                }
+                else {
+                    content = content + add_content;
+                }
+            }
+        }
+        if (typeof exist != 'undefined' && found == false) {
+            content = content + '<option value="'+exist+'" selected="selected">'+exist+'</option>';
+        }
+        control.html(content);
+        control.select2();
+    }
+
     $("#add-video").live("click",function(){
         file_sign = '0';
         add_mode = true;
+        fillMaterialFiles();
         $('#edit_begin').prop('checked', true);
         $('#fileModal').modal('toggle');
     });
@@ -143,6 +188,7 @@
     $("#add-audio").live("click",function(){
         file_sign = '1';
         add_mode = true;
+        fillMaterialFiles();
         $('#edit_begin').prop('checked', true);
         $('#fileModal').modal('toggle');
     });
@@ -165,11 +211,11 @@
         fileId = $(this).parents('tr').attr('id');
         file_sign = $(this).parents('tr').attr('data-file-sign');
         add_mode = false;
-
+        fillMaterialFiles($(this).parents('tr').attr('data-file-path'));
         $('#edit_begin').prop('checked', $(this).parents('tr').attr('data-file-status') == "0");
         $('#edit_end').prop('checked', $(this).parents('tr').attr('data-file-status') == "1");
         $('#file_title').val($(this).parents('tr').attr('data-file-title'));
-        $('#file_path').val($(this).parents('tr').attr('data-file-path'));
+//        $('#file_path').val($(this).parents('tr').attr('data-file-path'));
         $('#file_length').val($(this).parents('tr').attr('data-file-length'));
 
         $('#fileModal').modal('toggle');

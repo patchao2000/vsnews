@@ -497,6 +497,9 @@ public class TopicController {
         NewsTopic topic = topicManager.getTopic(id);
         mav.addObject("topic", topic);
 
+        List<String> materialFiles = SambaUtil.getFiles();
+        mav.addObject("materialFiles", materialFiles);
+
         List<FileInfoDetail> list = new ArrayList<FileInfoDetail>();
         for (NewsFileInfo info : topic.getFiles()) {
             FileInfoDetail detail = new FileInfoDetail();

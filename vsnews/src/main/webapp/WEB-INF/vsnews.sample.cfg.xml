@@ -3,4 +3,7 @@
     <nginxUrl>http://192.168.11.99:5080/</nginxUrl>
     <fileUploadDir>/Users/patchao2000/Documents/apache-tomcat-6.0.39/temp/</fileUploadDir>
     <maxUploadSize>314572800</maxUploadSize>
+    <sambaPath>smb://172.16.222.128/Temp/</sambaPath>
+    <sambaUserName>test</sambaUserName>
+    <sambaPassword>test</sambaPassword>
 </config>

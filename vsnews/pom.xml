@@ -359,7 +359,13 @@
             <artifactId>java-uuid-generator</artifactId>
             <version>3.1.3</version>
         </dependency>
-		<!-- GENERAL UTILS end -->
+        <!-- GENERAL UTILS end -->
+
+        <dependency>
+            <groupId>jcifs</groupId>
+            <artifactId>jcifs</artifactId>
+            <version>1.3.17</version>
+        </dependency>
 
 		<!-- TEST begin -->
 		<dependency>
