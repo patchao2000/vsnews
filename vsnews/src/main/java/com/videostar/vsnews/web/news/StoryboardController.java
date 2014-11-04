@@ -3,6 +3,8 @@ package com.videostar.vsnews.web.news;
 import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.*;
+import com.videostar.vsnews.util.ConfigXmlReader;
+import com.videostar.vsnews.util.SambaUtil;
 import com.videostar.vsnews.util.TimeCode;
 import com.videostar.vsnews.util.UserUtil;
 import org.activiti.engine.ActivitiException;
@@ -319,6 +321,7 @@ public class StoryboardController {
         mav.addObject("columns", userColumns);
         mav.addObject("title", "编辑串联单");
         mav.addObject("alltopics", topicManager.getAllTopics());
+        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
 
         List<TopicInfoDetail> topics = new ArrayList<TopicInfoDetail>();
         TimeCode total = new TimeCode(0);
@@ -331,6 +334,7 @@ public class StoryboardController {
 
 //            detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
             detail.setVideoStatus(topicManager.getVideoFileStatus(topic));
+            detail.setVideoFilePath(topicManager.getVideoFilePath(topic));
 //            detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
             detail.setAudioStatus(topicManager.getAudioFileStatus(topic));
             NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());

@@ -42,4 +42,14 @@ public class SambaUtil {
 
         return files;
     }
+
+    public static String getWindowsSambaPath() {
+        String sambaPath = ConfigXmlReader.getSambaPath();
+        if (sambaPath.startsWith("smb:")) {
+            sambaPath = sambaPath.substring(4);
+        }
+        sambaPath = sambaPath.replaceAll("/", "\\\\\\\\");
+        logger.debug("sambaPath: {}", sambaPath);
+        return sambaPath;
+    }
 }

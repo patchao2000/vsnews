@@ -12,6 +12,7 @@
 <%--@elvariable id="editors" type="java.util.List"--%>
 <%--@elvariable id="columns" type="java.util.map"--%>
 <%--@elvariable id="technicians" type="java.util.List"--%>
+<%--@elvariable id="sambaPath" type="java.lang.String"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -226,7 +227,8 @@
                                             <%--@elvariable id="topics" type="java.util.list"--%>
                                             <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicInfoDetail"--%>
                                             <c:forEach items="${topics }" var="detail">
-                                                <tr data-index="${detail.orderValue }" data-article-id='<c:if test="${detail.article != null}">${detail.article.id}</c:if>'>
+                                                <tr data-index="${detail.orderValue }" data-article-id='<c:if test="${detail.article != null}">${detail.article.id}</c:if>'
+                                                    data-material-file="${detail.videoFilePath }">
                                                     <td>${detail.orderValue + 1}</td>
                                                     <td>${detail.topic.title }</td>
                                                     <td>
@@ -254,6 +256,9 @@
                                                     <td>
                                                         <c:if test="${detail.article != null}">
                                                             <a class='view_article btn btn-success btn-xs' href='#'>查看文稿</a>
+                                                        </c:if>
+                                                        <c:if test="${detail.videoStatus == '剪辑结束'}">
+                                                            <a class='view_material_file btn btn-success btn-xs' href='#'>素材文件</a>
                                                         </c:if>
                                                         <a class="up_topic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
                                                         <a class="down_topic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
@@ -406,6 +411,30 @@
         var id = $(this).parents('tr').attr('data-article-id');
         if (id.length > 0) {
             location.href = ctx + '/news/article/view/' + id;
+        }
+    });
+
+    $(".view_material_file").live("click",function(){
+//        var isIE = function(ver){
+//            var b = document.createElement('b');
+//            b.innerHTML = '<!--[if IE ' + ver + ']><i></i><![endif]-->';
+//            return b.getElementsByTagName('i').length === 1;
+//        };
+        var file = $(this).parents('tr').attr('data-material-file');
+//        alert(file);
+        if (file.length > 0) {
+//            alert(file);
+//            if (isIE()) {
+                var wsh = new ActiveXObject("wscript.shell");
+                var path = '${sambaPath }' + file;
+//            alert(path);
+                wsh.run(path);
+//                wsh.run('C:\\Temp\\1.txt');
+//            }
+//            else {
+//                alert('此功能仅支持IE浏览器！');
+//            }
+
         }
     });
 

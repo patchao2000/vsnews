@@ -97,6 +97,17 @@ public class TopicManager {
     }
 
     @Transactional(readOnly = true)
+    public String getVideoFilePath(NewsTopic entity) {
+        for (NewsFileInfo info : entity.getFiles()) {
+            if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL &&
+                info.getStatus() == NewsFileInfo.STATUS_END_EDIT)
+                return info.getFilePath();
+        }
+
+        return "";
+    }
+
+    @Transactional(readOnly = true)
     public TimeCode getVideoFileLength(NewsTopic entity) {
         for (NewsFileInfo info : entity.getFiles()) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)

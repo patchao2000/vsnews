@@ -240,7 +240,7 @@
 //        alert('123');
         var wsh=new ActiveXObject("wscript.shell");
 //        wsh.run("notepad");//如果在“运行”可以运行就可以在此直接写，否则要写上绝对路径
-        wsh.run("E:\\Temp\\1.txt");//如果在“运行”可以运行就可以在此直接写，否则要写上绝对路径
+        wsh.run("C:\\Temp\\1.txt");//如果在“运行”可以运行就可以在此直接写，否则要写上绝对路径
     }
 
     $(function () {

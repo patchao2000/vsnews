@@ -24,6 +24,7 @@ public class TopicInfoDetail implements java.io.Serializable {
     private String videoStatus;
     private String audioStatus;
 //    private Boolean articleReady;
+    private String videoFilePath;
 
     private String videoLength;
     private String articleLength;
@@ -123,5 +124,13 @@ public class TopicInfoDetail implements java.io.Serializable {
 
     public void setAudioStatus(String audioStatus) {
         this.audioStatus = audioStatus;
+    }
+
+    public String getVideoFilePath() {
+        return videoFilePath;
+    }
+
+    public void setVideoFilePath(String videoFilePath) {
+        this.videoFilePath = videoFilePath;
     }
 }
