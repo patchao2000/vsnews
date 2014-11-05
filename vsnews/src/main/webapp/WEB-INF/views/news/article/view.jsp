@@ -19,7 +19,7 @@
 <%--@elvariable id="taskKey" type="java.lang.String"--%>
 <%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="videos" type="java.util.List"--%>
-<%--@elvariable id="secondsPerChar" type="java.lang.Double"--%>
+<%--@elvariable id="secondsPerChar" type="java.lang.String"--%>
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
@@ -408,6 +408,9 @@
     }
 
     $(function () {
+        //  set readonly states of ckeditor
+        CKEDITOR.replace('article_content', {readOnly: (${contentReadonly == true})} );
+
         setInterval(checkContentLength, 500);   // 检查ckeditor定时器
 
         var column_sel = $("#article_columnId");
@@ -423,10 +426,6 @@
             $("#article_cameramen").select2("readonly", true);
             $("#article_editors").select2("readonly", true);
             video_sel.select2("readonly", true);
-        </c:if>
-        //  set readonly states of ckeditor
-        <c:if test="${contentReadonly eq true}">
-        CKEDITOR.instances['article_content'].setReadOnly(true);
         </c:if>
 
         <c:if test="${reapplyMode == true}">

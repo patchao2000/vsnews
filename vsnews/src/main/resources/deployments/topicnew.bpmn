@@ -31,7 +31,11 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${leaderPass}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow6" sourceRef="modifyContent" targetRef="leaderAudit"></sequenceFlow>
-    <userTask id="adjustDevices" name="调整设备申请" activiti:assignee="${dispatcher}"></userTask>
+    <userTask id="adjustDevices" name="调整设备申请" activiti:assignee="${dispatcher}">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${topicAfterAuthorModifyProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <userTask id="deviceAudit" name="设备审核" activiti:candidateGroups="deviceAudit"></userTask>
     <sequenceFlow id="flow7" sourceRef="adjustDevices" targetRef="deviceAudit"></sequenceFlow>
     <sequenceFlow id="flow8" name="不同意" sourceRef="deviceAudit" targetRef="adjustDevices">

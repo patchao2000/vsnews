@@ -83,6 +83,9 @@ public class ArticleController {
             }
         }
         model.addAttribute("videos", videoList);
+
+        //  阅读语速
+        model.addAttribute("secondsPerChar", String.valueOf(articleManager.getArticleSecondsPerChar()));
     }
 
     private void makeCreateArticleModel(Model model, User user, NewsArticle article) {
@@ -175,6 +178,8 @@ public class ArticleController {
                     topic.setContent(article.getContent());
                     topic.setCameramen(article.getCameramen());
                     topic.setReporters(article.getReporters());
+                    topic.setInterviewTime(article.getInterviewTime());
+                    topic.setLocation(article.getLocation());
 
                     //  check user is in leader(topicAudit) group
                     Boolean isLeader = userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT);
@@ -379,7 +384,7 @@ public class ArticleController {
         mav.addObject("readonly", true);
         mav.addObject("contentReadonly", true);
         //  阅读语速
-        mav.addObject("secondsPerChar", articleManager.getArticleSecondsPerChar());
+        mav.addObject("secondsPerChar", String.valueOf(articleManager.getArticleSecondsPerChar()));
 
         return mav;
     }

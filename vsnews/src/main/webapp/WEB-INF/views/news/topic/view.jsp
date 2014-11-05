@@ -159,6 +159,8 @@
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='topic_content'>内容：</label>
                                     <div class='col-md-10'>
+                                        <%--<form:textarea class='form-control' id='topic_content' path='content' readonly="${readonly}" rows='5' />--%>
+                                        <%--<form:errors path="content" cssClass="help-block" />--%>
                                         <form:textarea class='form-control' id='topic_content' path='content' readonly="${readonly}" rows='5' />
                                         <form:errors path="content" cssClass="help-block" />
                                     </div>
@@ -207,6 +209,7 @@
     </section>
 </div>
 <%@ include file="/common/alljs.jsp" %>
+<script src="${ctx}/assets/javascripts/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 
@@ -220,7 +223,14 @@
     });
     </c:if>
 
+    //  ckeditor采取异步方式setData, 以下函数可以在提交时正确得到ckeditor数据
+    function ckupdate() {
+        CKEDITOR.instances['topic_content'].updateElement();
+    }
+
     $(function () {
+        CKEDITOR.replace('topic_content', {readOnly: (${readonly == true})} );
+
         //  set readonly states of select2 controls
         <c:if test="${readonly == true}">
         $("#topic_reporters").select2("readonly", true);
@@ -241,6 +251,8 @@
         </c:if>
 
         $("#inputForm").submit(function (event) {
+            ckupdate();
+
             var map = {};
 
             <c:if test="${createArticle == true}">
