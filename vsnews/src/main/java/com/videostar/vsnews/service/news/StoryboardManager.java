@@ -1,7 +1,9 @@
 package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.dao.StoryboardDao;
+import com.videostar.vsnews.dao.StoryboardTemplateDao;
 import com.videostar.vsnews.entity.news.NewsStoryboard;
+import com.videostar.vsnews.entity.news.NewsStoryboardTemplate;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.entity.news.NewsTopicInfo;
 import org.activiti.engine.identity.User;
@@ -24,8 +26,10 @@ import java.util.List;
 @Component("StoryboardManager")
 @Transactional(readOnly = true)
 public class StoryboardManager {
-    
+
     private StoryboardDao storyboardDao;
+
+    private StoryboardTemplateDao storyboardTemplateDao;
 
     @Autowired
     protected TopicManager topicManager;
@@ -37,18 +41,36 @@ public class StoryboardManager {
         return storyboardDao.findOne(id);
     }
 
+    public NewsStoryboardTemplate getStoryboardTemplate(Long id) {
+        return storyboardTemplateDao.findOne(id);
+    }
+
     @Transactional(readOnly = false)
     public void saveStoryboard(NewsStoryboard entity) {
         storyboardDao.save(entity);
+    }
+
+    @Transactional(readOnly = false)
+    public void saveStoryboardTemplate(NewsStoryboardTemplate entity) {
+        storyboardTemplateDao.save(entity);
     }
 
     public Iterable<NewsStoryboard> getAllStoryboards() {
         return storyboardDao.findAll();
     }
 
+    public Iterable<NewsStoryboardTemplate> getAllStoryboardTemplates() {
+        return storyboardTemplateDao.findAll();
+    }
+
     @Transactional(readOnly = false)
     public void deleteStoryboard(NewsStoryboard entity) {
         storyboardDao.delete(entity);
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteStoryboardTemplate(NewsStoryboardTemplate entity) {
+        storyboardTemplateDao.delete(entity);
     }
 
     @Transactional(readOnly = false)
@@ -183,5 +205,10 @@ public class StoryboardManager {
     @Autowired
     public void setStoryboardDao(StoryboardDao dao) {
         this.storyboardDao = dao;
+    }
+
+    @Autowired
+    public void setStoryboardTemplateDao(StoryboardTemplateDao dao) {
+        this.storyboardTemplateDao = dao;
     }
 }

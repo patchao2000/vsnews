@@ -183,9 +183,9 @@
                 </a>
                 <ul class='<%=inStoryboard?"in":""%> nav nav-stacked'>
                     <li class='<%=inStoryboardApply?"active":""%>'>
-                        <a href='${ctx}/news/storyboard/apply'>
+                        <a href='${ctx}/news/storyboard/apply-template'>
                             <i class='icon-caret-right'></i>
-                            <span>创建串联单</span>
+                            <span>创建串联单模板</span>
                         </a>
                     </li>
                     <li class='<%=inStoryboardList?"active":""%>'>

@@ -46,27 +46,7 @@ public class StoryboardAfterAuthorModifyProcessor implements TaskListener {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsStoryboard entity = storyboardManager.getStoryboard(new Long(processInstance.getBusinessKey()));
 
-        entity.setTitle((String) delegateTask.getVariable("title"));
-//        entity.setStatus((Integer) delegateTask.getVariable("status"));
-//        entity.setColumnId((Long) delegateTask.getVariable("columnId"));
-        entity.setStartTC((String) delegateTask.getVariable("startTC"));
-        entity.setEndTC((String) delegateTask.getVariable("endTC"));
-        entity.setEditors((List<String>) delegateTask.getVariable("editors"));
         entity.setTopics((List<NewsTopicInfo>) delegateTask.getVariable("topics"));
-//        entity.setAuthorUserId((String) delegateTask.getVariable("authorUserId"));
-//        entity.setLockerUserId((String) delegateTask.getVariable("lockerUserId"));
-        entity.setNotes((String) delegateTask.getVariable("notes"));
-        entity.setStudio((String) delegateTask.getVariable("studio"));
-        entity.setEditorsInCharge((List<String>) delegateTask.getVariable("editorsInCharge"));
-        entity.setInstructors((List<String>) delegateTask.getVariable("instructors"));
-        entity.setProducers((List<String>) delegateTask.getVariable("producers"));
-        entity.setDirectors((List<String>) delegateTask.getVariable("directors"));
-        entity.setAnnouncers((List<String>) delegateTask.getVariable("announcers"));
-        entity.setVoiceActors((List<String>) delegateTask.getVariable("voiceActors"));
-        entity.setSubtitlers((List<String>) delegateTask.getVariable("subtitlers"));
-        entity.setCameramen((List<String>) delegateTask.getVariable("cameramen"));
-        entity.setLightingEngineers((List<String>) delegateTask.getVariable("lightingEngineers"));
-        entity.setTechnicians((List<String>) delegateTask.getVariable("technicians"));
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
@@ -75,7 +55,7 @@ public class StoryboardAfterAuthorModifyProcessor implements TaskListener {
             logger.error("airDate wrong!");
         }
 
-        logger.debug("StoryboardAfterAuthorModifyProcessor: {} {}", entity.getId(), entity.getTitle());
+        logger.debug("StoryboardAfterAuthorModifyProcessor: {}", entity.getId());
 
         storyboardManager.saveStoryboard(entity);
     }

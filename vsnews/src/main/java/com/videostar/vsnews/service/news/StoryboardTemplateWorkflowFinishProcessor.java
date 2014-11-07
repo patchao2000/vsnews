@@ -1,6 +1,6 @@
 package com.videostar.vsnews.service.news;
 
-import com.videostar.vsnews.entity.news.NewsStoryboard;
+import com.videostar.vsnews.entity.news.NewsStoryboardTemplate;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * StoryboardWorkflowFinishProcessor
+ * StoryboardTemplateWorkflowFinishProcessor
  *
- * Created by patchao2000 on 14-10-13.
+ * Created by patchao2000 on 14/11/7.
  */
 @Component
 @Transactional
-public class StoryboardWorkflowFinishProcessor implements ExecutionListener {
+public class StoryboardTemplateWorkflowFinishProcessor implements ExecutionListener {
     private static final long serialVersionUID = 1L;
 
-    private static Logger logger = LoggerFactory.getLogger(StoryboardWorkflowFinishProcessor.class);
+    private static Logger logger = LoggerFactory.getLogger(StoryboardTemplateWorkflowFinishProcessor.class);
 
     @Autowired
     StoryboardManager storyboardManager;
@@ -36,11 +36,11 @@ public class StoryboardWorkflowFinishProcessor implements ExecutionListener {
         String processInstanceId = execution.getProcessInstanceId();
 
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        NewsStoryboard entity = storyboardManager.getStoryboard(new Long(processInstance.getBusinessKey()));
+        NewsStoryboardTemplate entity = storyboardManager.getStoryboardTemplate(new Long(processInstance.getBusinessKey()));
 
 //        entity.setStatus(1);
 
-        logger.debug("StoryboardWorkflowFinishProcessor: {}", entity.getId());
+        logger.debug("StoryboardTemplateWorkflowFinishProcessor: {}", entity.getId());
 
 //        storyboardManager.saveStoryboard(entity);
     }

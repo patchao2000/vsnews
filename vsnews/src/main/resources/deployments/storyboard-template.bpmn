@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
-  <process id="storyboard" name="新闻串联单流程" isExecutable="true">
+  <process id="storyboard-template" name="新闻串联单流程" isExecutable="true">
     <extensionElements>
-      <activiti:executionListener event="end" delegateExpression="${storyboardWorkflowFinishProcessor}"></activiti:executionListener>
+      <activiti:executionListener event="end" delegateExpression="${storyboardTemplateWorkflowFinishProcessor}"></activiti:executionListener>
     </extensionElements>
     <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
     <userTask id="leaderAudit" name="内容审核" activiti:candidateGroups="storyboardAudit">
       <extensionElements>
-        <activiti:taskListener event="complete" delegateExpression="${storyboardAfterAuditProcessor}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${storyboardTemplateAfterAuditProcessor}"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <userTask id="modifyContent" name="调整内容" activiti:assignee="${applyUserId}">
       <extensionElements>
-        <activiti:taskListener event="complete" delegateExpression="${storyboardAfterAuthorModifyProcessor}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${storyboardTemplateAfterAuthorModifyProcessor}"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow4" name="不同意" sourceRef="leaderAudit" targetRef="modifyContent">
@@ -26,7 +26,7 @@
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_storyboard">
-    <bpmndi:BPMNPlane bpmnElement="storyboard" id="BPMNPlane_storyboard">
+    <bpmndi:BPMNPlane bpmnElement="storyboard-template" id="BPMNPlane_storyboard">
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="150.0" y="120.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
