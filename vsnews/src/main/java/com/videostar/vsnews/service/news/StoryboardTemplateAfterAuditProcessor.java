@@ -3,17 +3,22 @@ package com.videostar.vsnews.service.news;
 import com.videostar.vsnews.entity.news.NewsStoryboardTemplate;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateTask;
+import org.activiti.engine.delegate.TaskListener;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * StoryboardTemplateAfterAuditProcessor
  *
  * Created by patchao2000 on 14/11/7.
  */
-public class StoryboardTemplateAfterAuditProcessor {
+@Component
+@Transactional
+public class StoryboardTemplateAfterAuditProcessor implements TaskListener {
     private static final long serialVersionUID = 1L;
 
     private static Logger logger = LoggerFactory.getLogger(StoryboardTemplateAfterAuditProcessor.class);

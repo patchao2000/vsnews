@@ -44,6 +44,7 @@
                                         <tr>
                                             <th>申请人</th>
                                             <th>申请时间</th>
+                                            <th>类别</th>
                                             <th>标题</th>
                                             <th>当前节点</th>
                                             <th>操作</th>
@@ -51,25 +52,26 @@
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardDetail"--%>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
-                                            <c:set var="task" value="${detail.storyboard.task }"/>
-                                            <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
-                                            <c:set var="pi" value="${detail.storyboard.processInstance }"/>
-                                            <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
-
-                                            <tr id="${detail.storyboard.id }" data-tid="${task.id }">
+                                            <tr id="${detail.entityId }" data-tid="${detail.task.id }" data-temp-task="${detail.isTemplateTask }">
                                                 <td>${detail.userName }</td>
                                                 <td><fmt:formatDate value="${detail.storyboard.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                <td>${detail.storyboard.title }</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${detail.isTemplateTask == true}">模板</c:when>
+                                                        <c:otherwise>串联单</c:otherwise>
+                                                    </c:choose>
+                                                <td>${detail.title }</td>
                                                 <td>
                                                     <%--<a href='${ctx }/diagram-viewer/index.html?processDefinitionId=${pi.processDefinitionId}&processInstanceId=${pi.id }' title="点击查看流程图">${task.name }</a>--%>
-                                                    <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
-                                                    <%--${task.name }--%>
+                                                    <a class="trace" href='#' data-pid="${detail.processInstance.id }"
+                                                       data-pdid="${detail.processInstance.processDefinitionId}" title="点击查看流程图">${detail.task.name }</a>
                                                 </td>
                                                 <td>
-                                                    <a class="handle btn btn-primary btn-xs" data-tkey='${task.taskDefinitionKey }' data-tname='${task.name }'
-                                                       data-assignee="${task.assignee }" href="#"><i class="icon-edit"></i>办理</a>
+                                                    <a class="handle btn btn-primary btn-xs" data-tkey='${detail.task.taskDefinitionKey }'
+                                                       data-tname='${detail.task.name }'
+                                                       data-assignee="${detail.task.assignee }" href="#"><i class="icon-edit"></i>办理</a>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -88,22 +90,24 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
-    function handle(tkey, storyboardId, taskId) {
-        if (tkey == 'modifyContent') {
-            location.href = ctx + '/news/storyboard/reapply/'+storyboardId+'/'+taskId;
+    function handle(tkey, entityId, taskId, isTempTask) {
+        if (isTempTask) {
+            if (tkey == 'modifyContent') {
+                location.href = ctx + '/news/storyboard/reapply/template/' + entityId + '/' + taskId;
+            }
+            else if (tkey == 'leaderAudit') {
+                location.href = ctx + '/news/storyboard/audit/template/' + entityId + '/' + taskId;
+            }
+            else
+                alert("ERROR!");
         }
-        else if (tkey == 'leaderAudit') {
-            location.href = ctx + '/news/storyboard/audit/'+storyboardId+'/'+taskId;
-        }
-        else
-            alert("ERROR!");
     }
 
     $(document).ready(function () {
         $('.trace').click(function() {
             var dialog = new BootstrapDialog({
                 title: '123',
-                message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('pid') + "' />",
+                message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('data-pid') + "' />",
                 buttons: [{
                     id: 'btn-close',
                     label: 'Close',
@@ -122,9 +126,10 @@
             // 当前节点的英文名称
             var tkey = $(this).attr('data-tkey');
             // 记录ID
-            var storyboardId = $(this).parents('tr').attr('id');
+            var entityId = $(this).parents('tr').attr('id');
             // 任务ID
             var taskId = $(this).parents('tr').attr('data-tid');
+            var isTempTask = ($(this).parents('tr').attr('data-temp-task') == "true");
 
             if (assignee.length == 0) {
                 $.ajax({
@@ -134,7 +139,7 @@
                     contentType: "application/json; charset=utf-8",
                     success: function (resp) {
                         if (resp == 'success') {
-                            handle(tkey, storyboardId, taskId);
+                            handle(tkey, entityId, taskId, isTempTask);
                         } else {
                             alert('任务签收失败!');
                         }
@@ -146,7 +151,7 @@
 
             }
             else {
-                handle(tkey, storyboardId, taskId);
+                handle(tkey, entityId, taskId, isTempTask);
             }
         });
     });

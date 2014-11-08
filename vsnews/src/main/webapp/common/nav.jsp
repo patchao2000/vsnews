@@ -195,9 +195,9 @@
                         </a>
                     </li>
                     <li class='<%=inStoryboardAll?"active":""%>'>
-                        <a href='${ctx}/news/storyboard/list/all'>
+                        <a href='${ctx}/news/storyboard/list/template/all'>
                             <i class='icon-caret-right'></i>
-                            <span>所有串联单</span>
+                            <span>所有串联单模板</span>
                         </a>
                     </li>
                 </ul>

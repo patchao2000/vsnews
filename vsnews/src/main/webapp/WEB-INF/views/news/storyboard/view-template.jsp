@@ -212,13 +212,13 @@
 
 <script type="text/javascript">
     <c:if test="${auditMode == true}">
-            $("#auditPass").live("click",function(){
-                $("#submit-type").val("pass");
-            });
+        $("#auditPass").live("click",function(){
+            $("#submit-type").val("pass");
+        });
 
-    $("#auditReject").live("click",function(){
-        $("#submit-type").val("reject");
-    });
+        $("#auditReject").live("click",function(){
+            $("#submit-type").val("reject");
+        });
     </c:if>
 
     function setMultiSelectToMap(id, map_index, map) {
@@ -249,11 +249,11 @@
         </c:if>
 
         <c:if test="${reapplyMode == true}">
-                $.getJSON(ctx + '/news/storyboard/detail-with-vars/${storyboard.id}/${taskId}', function(data) {
-                    $("#leaderbackreason").val(data.variables.leaderbackreason);
-                    if (data.variables.devicebackreason == undefined)
-                        $("#devicebackblock").hide();
-                });
+            $.getJSON(ctx + '/news/storyboard/detail-with-vars/template/${storyboardTemplate.id}/${taskId}', function(data) {
+                $("#leaderbackreason").val(data.variables.leaderbackreason);
+                if (data.variables.devicebackreason == undefined)
+                    $("#devicebackblock").hide();
+            });
         </c:if>
 
         $("#inputForm").submit(function (event) {
@@ -276,24 +276,24 @@
 
             //  reapply mode, all changes must send as variable map
             <c:if test="${reapplyMode == true}">
-                    map["title"] = $('#storyboard_title').val();
-            map["startTC"] = $('#storyboard_startTC').val();
-            map["endTC"] = $('#storyboard_endTC').val();
-            map["columnId"] = $('#storyboard_columnId' + ' :selected').val();
-            map["notes"] = $('#storyboard_notes').val();
-            map["studio"] = $('#storyboard_studio').val();
+                map["title"] = $('#storyboard_title').val();
+                map["startTC"] = $('#storyboard_startTC').val();
+                map["endTC"] = $('#storyboard_endTC').val();
+                map["columnId"] = $('#storyboard_columnId' + ' :selected').val();
+                map["notes"] = $('#storyboard_notes').val();
+                map["studio"] = $('#storyboard_studio').val();
 
-            setMultiSelectToMap('#storyboard_editors', 'editors', map);
-            setMultiSelectToMap('#storyboard_eic', 'editorsInCharge', map);
-            setMultiSelectToMap('#storyboard_instructors', 'instructors', map);
-            setMultiSelectToMap('#storyboard_producers', 'producers', map);
-            setMultiSelectToMap('#storyboard_directors', 'directors', map);
-            setMultiSelectToMap('#storyboard_announcers', 'announcers', map);
-            setMultiSelectToMap('#storyboard_voiceActors', 'voiceActors', map);
-            setMultiSelectToMap('#storyboard_subtitlers', 'subtitlers', map);
-            setMultiSelectToMap('#storyboard_cameramen', 'cameramen', map);
-            setMultiSelectToMap('#storyboard_lightingEngineers', 'lightingEngineers', map);
-            setMultiSelectToMap('#storyboard_technicians', 'technicians', map);
+                setMultiSelectToMap('#storyboard_editors', 'editors', map);
+                setMultiSelectToMap('#storyboard_eic', 'editorsInCharge', map);
+                setMultiSelectToMap('#storyboard_instructors', 'instructors', map);
+                setMultiSelectToMap('#storyboard_producers', 'producers', map);
+                setMultiSelectToMap('#storyboard_directors', 'directors', map);
+                setMultiSelectToMap('#storyboard_announcers', 'announcers', map);
+                setMultiSelectToMap('#storyboard_voiceActors', 'voiceActors', map);
+                setMultiSelectToMap('#storyboard_subtitlers', 'subtitlers', map);
+                setMultiSelectToMap('#storyboard_cameramen', 'cameramen', map);
+                setMultiSelectToMap('#storyboard_lightingEngineers', 'lightingEngineers', map);
+                setMultiSelectToMap('#storyboard_technicians', 'technicians', map);
             </c:if>
 
             <c:if test="${auditMode == true || reapplyMode == true}">

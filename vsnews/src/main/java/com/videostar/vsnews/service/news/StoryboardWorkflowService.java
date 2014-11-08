@@ -80,88 +80,88 @@ public class StoryboardWorkflowService {
 //        return processInstance;
 //    }
 
-//    private List<Task> getTodoTasks(String userId) {
-//        List<Task> tasks = new ArrayList<Task>();
-//
-//        // 根据当前人的ID查询
-//        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.storyboard).taskAssignee(userId).active().orderByTaskId().desc()
-//                .orderByTaskCreateTime().desc();
-//        List<Task> todoList = todoQuery.list();
-//
-//        // 根据当前人未签收的任务
-//        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.storyboard).taskCandidateUser(userId).active().orderByTaskId().desc()
-//                .orderByTaskCreateTime().desc();
-//        List<Task> unsignedTasks = claimQuery.list();
-//
-//        // 合并
-//        tasks.addAll(todoList);
-//        tasks.addAll(unsignedTasks);
-//
-//        return tasks;
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<NewsStoryboard> findTodoTasks(String userId) {
-//        List<NewsStoryboard> results = new ArrayList<NewsStoryboard>();
-//
-//        // 根据流程的业务ID查询实体并关联
-//        for (Task task : getTodoTasks(userId)) {
-//            String processInstanceId = task.getProcessInstanceId();
-//            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
-//            String businessKey = processInstance.getBusinessKey();
-//            if (businessKey == null) {
-//                continue;
-//            }
-//            NewsStoryboard entity = storyboardManager.getStoryboard(new Long(businessKey));
-//            entity.setTask(task);
-//            entity.setProcessInstance(processInstance);
-//            entity.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-//            results.add(entity);
-//        }
-//
-//        return results;
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public int getTodoTasksCount(String userId) {
-//        return getTodoTasks(userId).size();
-//    }
-//
-//    //    @SuppressWarnings("unchecked")
-//    @Transactional(readOnly = true)
-//    public List<NewsStoryboard> getAllTopics() {
-//        ArrayList<NewsStoryboard> result = new ArrayList<NewsStoryboard>();
-//        for (NewsStoryboard entity : storyboardManager.getAllStoryboards()) {
-//            result.add(entity);
-//        }
-//
-//        //  填充running task
-//        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
-//        listRunning.addAll(runtimeService.createProcessInstanceQuery().
-//                processDefinitionKey(WorkflowNames.storyboard).active().orderByProcessInstanceId().desc().list());
-//        for (ProcessInstance processInstance : listRunning) {
-//            String businessKey = processInstance.getBusinessKey();
-//            if (businessKey == null) {
-//                continue;
-//            }
-//            for (NewsStoryboard topic : result) {
-//                if (topic.getId().equals(new Long(businessKey))) {
-//                    List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
-//                            orderByTaskCreateTime().desc().list();
-//                    topic.setTask(tasks.get(0));
-//                    topic.setProcessInstance(processInstance);
-//                    topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
-//                    break;
-//                }
-//            }
-//        }
-//        return result;
-//    }
-//
-//    protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
-//        return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
-//    }
-//
+    private List<Task> getTodoTasks(String userId, String workflowName) {
+        List<Task> tasks = new ArrayList<Task>();
+
+        // 根据当前人的ID查询
+        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(workflowName).
+                taskAssignee(userId).active().orderByTaskId().desc().orderByTaskCreateTime().desc();
+        List<Task> todoList = todoQuery.list();
+
+        // 根据当前人未签收的任务
+        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(workflowName).
+                taskCandidateUser(userId).active().orderByTaskId().desc().orderByTaskCreateTime().desc();
+        List<Task> unsignedTasks = claimQuery.list();
+
+        // 合并
+        tasks.addAll(todoList);
+        tasks.addAll(unsignedTasks);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsStoryboardTemplate> findTemplateTodoTasks(String userId) {
+        List<NewsStoryboardTemplate> results = new ArrayList<NewsStoryboardTemplate>();
+
+        // 根据流程的业务ID查询实体并关联
+        for (Task task : getTodoTasks(userId, WorkflowNames.storyboardTemplate)) {
+            String processInstanceId = task.getProcessInstanceId();
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
+                    processInstanceId(processInstanceId).active().singleResult();
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsStoryboardTemplate entity = storyboardManager.getStoryboardTemplate(new Long(businessKey));
+            entity.setTask(task);
+            entity.setProcessInstance(processInstance);
+            entity.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            results.add(entity);
+        }
+
+        return results;
+    }
+
+    @Transactional(readOnly = true)
+    public int getTodoTasksCount(String userId) {
+        return getTodoTasks(userId, WorkflowNames.storyboardTemplate).size();
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsStoryboardTemplate> getAllTemplates() {
+        ArrayList<NewsStoryboardTemplate> result = new ArrayList<NewsStoryboardTemplate>();
+        for (NewsStoryboardTemplate entity : storyboardManager.getAllStoryboardTemplates()) {
+            result.add(entity);
+        }
+
+        //  填充running task
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.storyboardTemplate).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            for (NewsStoryboardTemplate entity : result) {
+                if (entity.getId().equals(new Long(businessKey))) {
+                    List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
+                            orderByTaskCreateTime().desc().list();
+                    entity.setTask(tasks.get(0));
+                    entity.setProcessInstance(processInstance);
+                    entity.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
+        return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+    }
+
 //    public Boolean isFinished(NewsStoryboard entity) {
 //        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
 //        listRunning.addAll(runtimeService.createProcessInstanceQuery().
