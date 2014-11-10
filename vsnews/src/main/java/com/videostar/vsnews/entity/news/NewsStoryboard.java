@@ -36,6 +36,24 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
     //    新闻
     private List<NewsTopicInfo> topics;
 
+    private int status;
+
+    public static final int STATUS_EDITING = 0;
+    public static final int STATUS_AUDITED = 1;
+
+    public NewsStoryboard() {
+        this.status = STATUS_EDITING;
+    }
+
+    @Column
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column
     public Date getAirDate() {

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -60,25 +61,25 @@ public class StoryboardWorkflowService {
         return processInstance;
     }
 
-//    public ProcessInstance startStoryboardWorkflow(NewsStoryboard entity, Map<String, Object> variables) {
-//        storyboardManager.saveStoryboard(entity);
+    public ProcessInstance startStoryboardListWorkflow(NewsStoryboard entity, Map<String, Object> variables) {
+        storyboardManager.saveStoryboard(entity);
 //        logger.debug("save entity: {}", entity);
-//        String businessKey = entity.getId().toString();
-//
-//        ProcessInstance processInstance = null;
-//        try {
-//            // 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
-//            identityService.setAuthenticatedUserId(entity.getUserId());
-//
-//            processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.storyboard, businessKey, variables);
-//            String processInstanceId = processInstance.getId();
-//            entity.setProcessInstanceId(processInstanceId);
-//            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", WorkflowNames.storyboard, businessKey, processInstanceId, variables);
-//        } finally {
-//            identityService.setAuthenticatedUserId(null);
-//        }
-//        return processInstance;
-//    }
+        String businessKey = entity.getId().toString();
+
+        ProcessInstance processInstance = null;
+        try {
+            // 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
+            identityService.setAuthenticatedUserId(entity.getUserId());
+
+            processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.storyboardList, businessKey, variables);
+            String processInstanceId = processInstance.getId();
+            entity.setProcessInstanceId(processInstanceId);
+            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", WorkflowNames.storyboardList, businessKey, processInstanceId, variables);
+        } finally {
+            identityService.setAuthenticatedUserId(null);
+        }
+        return processInstance;
+    }
 
     private List<Task> getTodoTasks(String userId, String workflowName) {
         List<Task> tasks = new ArrayList<Task>();
@@ -124,8 +125,32 @@ public class StoryboardWorkflowService {
     }
 
     @Transactional(readOnly = true)
+    public List<NewsStoryboard> findListTodoTasks(String userId) {
+        List<NewsStoryboard> results = new ArrayList<NewsStoryboard>();
+
+        // 根据流程的业务ID查询实体并关联
+        for (Task task : getTodoTasks(userId, WorkflowNames.storyboardList)) {
+            String processInstanceId = task.getProcessInstanceId();
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
+                    processInstanceId(processInstanceId).active().singleResult();
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsStoryboard entity = storyboardManager.getStoryboard(new Long(businessKey));
+            entity.setTask(task);
+            entity.setProcessInstance(processInstance);
+            entity.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            results.add(entity);
+        }
+
+        return results;
+    }
+
+    @Transactional(readOnly = true)
     public int getTodoTasksCount(String userId) {
-        return getTodoTasks(userId, WorkflowNames.storyboardTemplate).size();
+        return getTodoTasks(userId, WorkflowNames.storyboardTemplate).size() +
+                getTodoTasks(userId, WorkflowNames.storyboardList).size();
     }
 
     @Transactional(readOnly = true)
@@ -145,6 +170,58 @@ public class StoryboardWorkflowService {
                 continue;
             }
             for (NewsStoryboardTemplate entity : result) {
+                if (entity.getId().equals(new Long(businessKey))) {
+                    List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
+                            orderByTaskCreateTime().desc().list();
+                    entity.setTask(tasks.get(0));
+                    entity.setProcessInstance(processInstance);
+                    entity.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsStoryboardTemplate> getAllFinishedTemplates() {
+        HashSet<String> inProcess = new HashSet<String>();
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+            processDefinitionKey(WorkflowNames.storyboardTemplate).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey != null) {
+                inProcess.add(businessKey);
+            }
+        }
+
+        ArrayList<NewsStoryboardTemplate> result = new ArrayList<NewsStoryboardTemplate>();
+        for (NewsStoryboardTemplate entity : storyboardManager.getAllStoryboardTemplates()) {
+            if (!inProcess.contains(entity.getId().toString())) {
+                result.add(entity);
+            }
+        }
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsStoryboard> getAllStoryboards() {
+        ArrayList<NewsStoryboard> result = new ArrayList<NewsStoryboard>();
+        for (NewsStoryboard entity : storyboardManager.getAllStoryboards()) {
+            result.add(entity);
+        }
+
+        //  填充running task
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.storyboardList).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            for (NewsStoryboard entity : result) {
                 if (entity.getId().equals(new Long(businessKey))) {
                     List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().
                             orderByTaskCreateTime().desc().list();

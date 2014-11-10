@@ -43,30 +43,28 @@
                                             <th>栏目</th>
                                             <th>播出日期</th>
                                             <th>标题</th>
-                                            <th>开始时段</th>
-                                            <th>结束时段</th>
+                                            <%--<th>开始时段</th>--%>
+                                            <%--<th>结束时段</th>--%>
                                             <th>当前节点</th>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardDetail"--%>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
-                                            <c:set var="task" value="${detail.storyboard.task }"/>
-                                            <tr id="${detail.storyboard.id }">
+                                            <tr id="${detail.storyboard.id }" data-temp-id="${detail.template.id }">
                                                 <td>${detail.userName }</td>
                                                 <td>${detail.columnName }</td>
                                                 <td><fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                <td>${detail.storyboard.title }</td>
-                                                <td>${detail.storyboard.startTC }</td>
-                                                <td>${detail.storyboard.endTC }</td>
-                                                <td>${task.name }</td>
+                                                <td>${detail.title }</td>
+                                                <%--<td>${detail.template.startTC }</td>--%>
+                                                <%--<td>${detail.template.endTC }</td>--%>
+                                                <td>${detail.task.name }</td>
                                                 <td>
-                                                    <%--<a class="viewstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>--%>
-                                                    <c:if test="${task == null}">
-                                                    <a class="editstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
-                                                    </c:if>
+                                                    <%--<c:if test="${detail.task == null}">--%>
+                                                    <a class="editstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                                                    <%--</c:if>--%>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -84,13 +82,10 @@
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
     $(document).ready(function () {
-//        $('.viewstoryboard').click(function () {
-//            var sbId = $(this).parents('tr').attr('id');
-//            location.href = ctx + '/news/storyboard/view/' + sbId;
-//        });
         $('.editstoryboard').click(function () {
             var sbId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/storyboard/edit/' + sbId;
+            var tempId = $(this).parents('tr').attr('data-temp-id');
+            location.href = ctx + '/news/storyboard/edit/' + sbId + '/' + tempId;
         });
     });
 </script>

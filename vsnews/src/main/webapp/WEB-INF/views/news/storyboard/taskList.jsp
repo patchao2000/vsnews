@@ -56,7 +56,16 @@
                                         <c:forEach items="${list }" var="detail">
                                             <tr id="${detail.entityId }" data-tid="${detail.task.id }" data-temp-task="${detail.isTemplateTask }">
                                                 <td>${detail.userName }</td>
-                                                <td><fmt:formatDate value="${detail.storyboard.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${detail.isTemplateTask == true}">
+                                                            <fmt:formatDate value="${detail.template.applyTime}" pattern="yyyy-MM-dd HH:mm" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <fmt:formatDate value="${detail.storyboard.applyTime}" pattern="yyyy-MM-dd HH:mm" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${detail.isTemplateTask == true}">模板</c:when>

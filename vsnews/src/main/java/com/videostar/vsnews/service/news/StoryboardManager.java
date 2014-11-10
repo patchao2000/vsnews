@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,11 +48,21 @@ public class StoryboardManager {
 
     @Transactional(readOnly = false)
     public void saveStoryboard(NewsStoryboard entity) {
+        Date now = new Date();
+        if (entity.getId() == null)
+            entity.setApplyTime(now);
+        entity.setModifyTime(now);
+        
         storyboardDao.save(entity);
     }
 
     @Transactional(readOnly = false)
     public void saveStoryboardTemplate(NewsStoryboardTemplate entity) {
+        Date now = new Date();
+        if (entity.getId() == null)
+            entity.setApplyTime(now);
+        entity.setModifyTime(now);
+
         storyboardTemplateDao.save(entity);
     }
 

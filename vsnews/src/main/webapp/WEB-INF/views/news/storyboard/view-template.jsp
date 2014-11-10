@@ -262,16 +262,16 @@
             //  audit mode
             <c:if test="${auditMode == true}">
                 var opinion = $('#storyboard_auditOpinion').val();
-            if (opinion.length == 0) {
-                alert('请输入审核意见！');
-                event.preventDefault();
-                return;
-            }
-            var passed = false;
-            if ($("#submit-type").val() == "pass")
-                passed = true;
-            map["leaderPass"] = passed;
-            map["leaderbackreason"] = opinion;
+                if (opinion.length == 0) {
+                    alert('请输入审核意见！');
+                    event.preventDefault();
+                    return;
+                }
+                var passed = false;
+                if ($("#submit-type").val() == "pass")
+                    passed = true;
+                map["leaderPass"] = passed;
+                map["leaderbackreason"] = opinion;
             </c:if>
 
             //  reapply mode, all changes must send as variable map
@@ -298,25 +298,25 @@
 
             <c:if test="${auditMode == true || reapplyMode == true}">
                 //  sending complete req
-                    $.ajax({
-                        type: 'post',
-                        async: true,
-                        url: ctx + '/news/storyboard/complete/' + ${taskId},
-                        contentType: "application/json; charset=utf-8",
-                        data : JSON.stringify(map),
-                        success: function (resp) {
-                            if (resp == 'success') {
-                                alert('任务完成');
-                                location.href = ctx + '/news/storyboard/list/task'
-                            } else {
-                                alert('操作失败!');
-                            }
-                        },
-                        error: function () {
-                            alert('操作失败!!');
+                $.ajax({
+                    type: 'post',
+                    async: true,
+                    url: ctx + '/news/storyboard/complete/' + ${taskId},
+                    contentType: "application/json; charset=utf-8",
+                    data : JSON.stringify(map),
+                    success: function (resp) {
+                        if (resp == 'success') {
+                            alert('任务完成');
+                            location.href = ctx + '/news/storyboard/list/task'
+                        } else {
+                            alert('操作失败!');
                         }
-                    });
-            event.preventDefault();
+                    },
+                    error: function () {
+                        alert('操作失败!!');
+                    }
+                });
+                event.preventDefault();
             </c:if>
         });
 

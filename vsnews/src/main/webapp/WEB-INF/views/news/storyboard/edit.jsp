@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%--@elvariable id="storyboard" type="com.videostar.vsnews.entity.news.NewsStoryboard"--%>
+<%--@elvariable id="storyboardTemplate" type="com.videostar.vsnews.entity.news.NewsStoryboardTemplate"--%>
 <%--@elvariable id="title" type="java.lang.String"--%>
 <%--@elvariable id="editors" type="java.util.List"--%>
 <%--@elvariable id="columns" type="java.util.map"--%>
@@ -44,7 +45,7 @@
                             </div>
                         </div>
                         <div class='box-content'>
-                            <form:form modelAttribute="storyboard" id="inputForm" action="#" class="form form-horizontal"
+                            <form:form modelAttribute="storyboardTemplate" id="inputForm" action="#" class="form form-horizontal"
                                        style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
 
                                 <div class='form-group'>
@@ -63,17 +64,6 @@
                                     <label class='col-md-2 control-label' for='storyboard_studio'>演播室：</label>
                                     <div class='col-md-4'>
                                         <form:input class='form-control' id='storyboard_studio' path='studio' type='text' readonly="true" />
-                                    </div>
-                                </div>
-                                <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='storyboard_airDate'>播出时间：</label>
-                                    <div class='col-md-10'>
-                                        <div class='datetimepicker input-group'>
-                                            <form:input class='form-control' id='storyboard_airDate' path='airDate' type='text' readonly="true" />
-                                            <span class='input-group-addon'>
-                                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class='form-group'>
@@ -169,6 +159,30 @@
                                     </div>
                                 </div>
                             </form:form>
+                            <hr class='hr-normal'>
+                            <form:form modelAttribute="storyboard" id="storyboardForm" action="#" class="form form-horizontal"
+                                       style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                                <div class='form-group'>
+                                    <label class='col-md-2 control-label' for='storyboard_airDate'>播出时间：</label>
+                                        <div class='col-md-10'>
+                                            <div class='datetimepicker input-group'>
+                                                <form:input class='form-control' id='storyboard_airDate' path='airDate' type='text' />
+                                                <span class='input-group-addon'>
+                                                <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <c:if test="${storyboard.status == 0}">
+                                    <div class='form-actions form-actions-padding-sm'>
+                                        <div class='row'>
+                                            <div class='col-md-10 col-md-offset-2'>
+                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>保存</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </form:form>
                         </div>
                     </div>
 
@@ -187,6 +201,7 @@
                                     <c:if test="${storyboard.lockerUserId == null}">
                                         <div class='col-md-4'>
                                             <a id="lock" class="btn btn-success" title='锁定' href="#"><i class="icon-edit icon-white"></i> 进入编辑模式</a>
+                                            <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
                                         </div>
                                     </c:if>
                                     <c:if test="${storyboard.lockerUserId != null}">
@@ -202,6 +217,7 @@
                                         </div>
                                         <a id="add_topic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
                                         <a id="unlock" class="btn btn-success" title='解锁' href="#"><i class="icon-edit icon-white"></i> 退出编辑模式</a>
+                                        <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
                                     </c:if>
                                 </div>
                                 <div class='responsive-table'>
@@ -292,7 +308,7 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
                 } else {
                     alert('操作失败!');
                 }
@@ -312,7 +328,7 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
                 } else {
                     alert('操作失败!');
                 }
@@ -332,7 +348,7 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
                 } else {
                     alert('操作失败!');
                 }
@@ -352,7 +368,7 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
                 } else {
                     alert('操作失败!');
                 }
@@ -372,7 +388,7 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
                 } else {
                     alert('操作失败!');
                 }
@@ -396,7 +412,7 @@
             success: function (resp) {
                 if (resp == 'success') {
                     alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
                 } else {
                     alert('操作失败!');
                 }
@@ -451,6 +467,9 @@
         $("#storyboard_cameramen").select2("readonly", true);
         $("#storyboard_lightingEngineers").select2("readonly", true);
         $("#storyboard_technicians").select2("readonly", true);
+
+        $("#storyboardForm").submit(function (event) {
+        });
     });
 
 </script>

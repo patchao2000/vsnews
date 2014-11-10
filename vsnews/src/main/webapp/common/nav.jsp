@@ -6,7 +6,8 @@
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
     boolean inMessage = false, inMessageWrite = false, inMessageInbox = false, inMessageSent = false;
-    boolean inStoryboard = false, inStoryboardApply = false, inStoryboardAll = false, inStoryboardList = false;
+    boolean inStoryboard = false, inStoryboardTempApply = false, inStoryboardApply = false, inStoryboardAll = false,
+            inStoryboardTempAll = false, inStoryboardList = false;
     boolean inWelcome = false;
     if (uri.contains("/news/topic"))
         inTopic = true;
@@ -56,12 +57,16 @@
 
     if (uri.contains("/storyboard"))
         inStoryboard = true;
-    if (uri.contains("/storyboard/apply"))
+    if (uri.contains("/storyboard/view-template"))
+        inStoryboardTempApply = true;
+    if (uri.contains("/storyboard/view") && !uri.contains("/storyboard/view-template"))
         inStoryboardApply = true;
     if (uri.contains("/storyboard/taskList"))
         inStoryboardList = true;
-    if (uri.contains("/storyboard/list/all"))
+    if (uri.contains("/storyboard/all-storyboards"))
         inStoryboardAll = true;
+    if (uri.contains("/storyboard/all-templates"))
+        inStoryboardTempAll = true;
 %>
 <div id='main-nav-bg'></div>
 <nav class='main-nav-fixed' id='main-nav'>
@@ -182,10 +187,16 @@
                     <i class='icon-angle-down angle-down'></i>
                 </a>
                 <ul class='<%=inStoryboard?"in":""%> nav nav-stacked'>
-                    <li class='<%=inStoryboardApply?"active":""%>'>
+                    <li class='<%=inStoryboardTempApply?"active":""%>'>
                         <a href='${ctx}/news/storyboard/apply-template'>
                             <i class='icon-caret-right'></i>
                             <span>创建串联单模板</span>
+                        </a>
+                    </li>
+                    <li class='<%=inStoryboardApply?"active":""%>'>
+                        <a href='${ctx}/news/storyboard/apply-list'>
+                            <i class='icon-caret-right'></i>
+                            <span>创建串联单</span>
                         </a>
                     </li>
                     <li class='<%=inStoryboardList?"active":""%>'>
@@ -194,10 +205,16 @@
                             <span>待办任务</span>
                         </a>
                     </li>
-                    <li class='<%=inStoryboardAll?"active":""%>'>
+                    <li class='<%=inStoryboardTempAll?"active":""%>'>
                         <a href='${ctx}/news/storyboard/list/template/all'>
                             <i class='icon-caret-right'></i>
                             <span>所有串联单模板</span>
+                        </a>
+                    </li>
+                    <li class='<%=inStoryboardAll?"active":""%>'>
+                        <a href='${ctx}/news/storyboard/list/all'>
+                            <i class='icon-caret-right'></i>
+                            <span>所有串联单</span>
                         </a>
                     </li>
                 </ul>

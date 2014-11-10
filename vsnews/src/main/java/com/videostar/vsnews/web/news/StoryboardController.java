@@ -77,8 +77,16 @@ public class StoryboardController {
         model.addAttribute("createMode", true);
     }
 
+    private void makeCreateStoryboardModel(Model model, User user, NewsStoryboard entity) {
+        model.addAttribute("templates", workflowService.getAllFinishedTemplates());
+
+        model.addAttribute("storyboard", entity);
+        model.addAttribute("title", "创建串联单");
+        model.addAttribute("createMode", true);
+    }
+
     @RequestMapping(value = {"apply-template"})
-    public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String createTemplate(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
         if (user == null)
             return UserUtil.redirectTimeoutString;
@@ -101,8 +109,8 @@ public class StoryboardController {
 
     @RequestMapping(value = "start-template", method = RequestMethod.POST)
     public String startStoryboardTemplateWorkflow(@ModelAttribute("storyboardTemplate") @Valid NewsStoryboardTemplate entity,
-                                          BindingResult bindingResult,
-                                          Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+                                                  BindingResult bindingResult,
+                                                  Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
             if (user == null)
@@ -118,7 +126,7 @@ public class StoryboardController {
             entity.setUserId(user.getId());
 
             Map<String, Object> variables = new HashMap<String, Object>();
-            logger.debug("start storyboard Workflow: title {}", entity.getTitle());
+            logger.debug("start storyboard template Workflow: title {}", entity.getTitle());
 
             ProcessInstance processInstance = workflowService.startStoryboardTemplateWorkflow(entity, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
@@ -134,6 +142,96 @@ public class StoryboardController {
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
         return "redirect:/news/storyboard/apply-template";
+    }
+
+    @RequestMapping(value = {"apply-list"})
+    public String createStoryboard(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return UserUtil.redirectTimeoutString;
+
+        if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT)) {
+            redirectAttributes.addFlashAttribute("error", "您没有创建串联单权限！");
+            return "redirect:/main/welcome";
+        }
+
+        if (columnService.getUserColumns(user).size() == 0) {
+            redirectAttributes.addFlashAttribute("error", "您没有任何栏目权限！");
+            return "redirect:/main/welcome";
+        }
+
+        NewsStoryboard entity = new NewsStoryboard();
+        makeCreateStoryboardModel(model, user, entity);
+        return "/news/storyboard/view";
+    }
+
+    @RequestMapping(value = "start-list", method = RequestMethod.POST)
+    public String startStoryboardListWorkflow(@ModelAttribute("storyboard") @Valid NewsStoryboard entity,
+                                              BindingResult bindingResult,
+                                              RedirectAttributes redirectAttributes, HttpSession session) {
+        try {
+            User user = UserUtil.getUserFromSession(session);
+            if (user == null)
+                return UserUtil.redirectTimeoutString;
+
+            if (bindingResult.hasErrors()) {
+                logger.debug("has bindingResult errors!");
+
+                return "redirect:/news/storyboard/list/template/all";
+            }
+
+            entity.setUserId(user.getId());
+
+            Map<String, Object> variables = new HashMap<String, Object>();
+            logger.debug("start storyboard Workflow: {}", entity.getId());
+
+            ProcessInstance processInstance = workflowService.startStoryboardListWorkflow(entity, variables);
+            redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+        } catch (ActivitiException e) {
+            if (e.getMessage().contains("no processes deployed with key")) {
+                logger.warn("没有部署流程!", e);
+            } else {
+                logger.error("启动串联单流程失败：", e);
+                redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+            }
+        } catch (Exception e) {
+            logger.error("启动串联单流程失败：", e);
+            redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+        }
+        return "redirect:/news/storyboard/list/template/all";
+    }
+
+    @RequestMapping(value = "save-list", method = RequestMethod.POST)
+    public String saveStoryboardList(@ModelAttribute("storyboard") @Valid NewsStoryboard entity,
+                                      BindingResult bindingResult,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes, HttpSession session) {
+        try {
+            User user = UserUtil.getUserFromSession(session);
+            if (user == null)
+                return UserUtil.redirectTimeoutString;
+
+            if (bindingResult.hasErrors()) {
+                logger.debug("has bindingResult errors!");
+
+                makeCreateStoryboardModel(model, user, entity);
+
+                return "redirect:/news/storyboard/view";
+            }
+
+            entity.setUserId(user.getId());
+            logger.debug("save storyboard list: {}", entity.getId());
+
+            storyboardManager.saveStoryboard(entity);
+
+            redirectAttributes.addFlashAttribute("message", "保存串联单成功!");
+        } catch (Exception e) {
+            logger.error("保存串联单失败：", e);
+            redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+        }
+
+        return "redirect:/news/storyboard/apply-list";
     }
 
     @RequestMapping(value = "list/task")
@@ -152,6 +250,19 @@ public class StoryboardController {
             detail.setTitle(entity.getTitle());
             detail.setEntityId(entity.getId());
             detail.setIsTemplateTask(true);
+            list.add(detail);
+        }
+        for (NewsStoryboard entity : workflowService.findListTodoTasks(userId)) {
+            StoryboardTaskDetail detail = new StoryboardTaskDetail();
+            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setStoryboard(entity);
+            NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+            detail.setColumnName(columnService.getColumn(template.getColumnId()).getName());
+            detail.setTask(entity.getTask());
+            detail.setProcessInstance(entity.getProcessInstance());
+            detail.setTitle(template.getTitle());
+            detail.setEntityId(entity.getId());
+            detail.setIsTemplateTask(false);
             list.add(detail);
         }
 
@@ -189,6 +300,32 @@ public class StoryboardController {
             detail.setTask(entity.getTask());
             detail.setProcessInstance(entity.getProcessInstance());
             detail.setTitle(entity.getTitle());
+            detail.setEntityId(entity.getId());
+            detail.setIsTemplateTask(true);
+            list.add(detail);
+        }
+        mav.addObject("list", list);
+        return mav;
+    }
+
+    @RequestMapping(value = "list/all")
+    public ModelAndView allStoryboardsList(HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return new ModelAndView(UserUtil.redirectTimeoutString);
+
+        ModelAndView mav = new ModelAndView("/news/storyboard/all-storyboards");
+        List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
+        for (NewsStoryboard entity : workflowService.getAllStoryboards()) {
+            StoryboardTaskDetail detail = new StoryboardTaskDetail();
+            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setStoryboard(entity);
+            NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+            detail.setTemplate(template);
+            detail.setColumnName(columnService.getColumn(template.getColumnId()).getName());
+            detail.setTask(entity.getTask());
+            detail.setProcessInstance(entity.getProcessInstance());
+            detail.setTitle(template.getTitle());
             detail.setEntityId(entity.getId());
             detail.setIsTemplateTask(true);
             list.add(detail);
@@ -289,191 +426,196 @@ public class StoryboardController {
         mav.addObject("title", "查看串联单模板");
         mav.addObject("readonly", true);
 
+        if (userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) ||
+            userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT)) {
+            mav.addObject("canCreate", true);
+        }
+
         return mav;
     }
 
-//
-//    @RequestMapping(value = "edit/{id}")
-//    public ModelAndView editStoryboard(@PathVariable("id") Long id, HttpSession session) {
-//        User user = UserUtil.getUserFromSession(session);
-//        if (user == null)
-//            return new ModelAndView(UserUtil.redirectTimeoutString);
-//
-//        ModelAndView mav = new ModelAndView("/news/storyboard/edit");
-//        NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//        mav.addObject("storyboard", entity);
-//        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
-//        mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
-//        List<NewsColumn> userColumns = columnService.getUserColumns(user);
-//        mav.addObject("columns", userColumns);
-//        mav.addObject("title", "编辑串联单");
-//        mav.addObject("alltopics", topicManager.getAllTopics());
-//        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
-//
-//        List<TopicInfoDetail> topics = new ArrayList<TopicInfoDetail>();
-//        TimeCode total = new TimeCode(0);
-//        for (NewsTopicInfo info : entity.getTopics()) {
-//            TopicInfoDetail detail = new TopicInfoDetail();
-//            detail.setOrderValue(info.getOrderValue());
-//            detail.setTopicUuid(info.getTopicUuid());
-//            NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
-//            detail.setTopic(topic);
-//
-////            detail.setVideoFileReady(topicManager.haveVideoFiles(topic));
-//            detail.setVideoStatus(topicManager.getVideoFileStatus(topic));
-//            detail.setVideoFilePath(topicManager.getVideoFilePath(topic));
-////            detail.setAudioFileReady(topicManager.haveAudioFiles(topic));
-//            detail.setAudioStatus(topicManager.getAudioFileStatus(topic));
-//            NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
-//            detail.setArticle(article);
-//            if (article != null) {
-//                articleWorkflowService.fillRunningTask(article);
-//            }
-//
-//            TimeCode videoLength = topicManager.getVideoFileLength(topic);
-//            detail.setVideoLength(videoLength.toString());
-//            total.add(videoLength);
-//            detail.setTotalLength(total.toString());
-//            detail.setArticleLength(articleManager.getArticleLength(article).toString());
-//
-//            topics.add(detail);
-//        }
-//        mav.addObject("topics", topics);
-//
-//        return mav;
-//    }
-//
-//    @RequestMapping(value = "lock/{id}")
-//    @ResponseBody
-//    public String lock(@PathVariable("id") Long id, HttpSession session) {
-//        try {
-//            String userId = UserUtil.getUserFromSession(session).getId();
-//            NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//            if (entity.getLockerUserId() != null) {
-//                logger.error("NewsStoryboard already locked by {}", entity.getLockerUserId());
-//                return "error";
-//            }
-//            storyboardManager.lockStoryboard(entity, userId);
-//            logger.debug("NewsStoryboard locked by {}", userId);
-//            return "success";
-//        } catch (Exception e) {
-//            logger.error("error on lock NewsStoryboard");
-//            return "error";
-//        }
-//    }
-//
-//    @RequestMapping(value = "unlock/{id}")
-//    @ResponseBody
-//    public String unlock(@PathVariable("id") Long id) {
-//        try {
-//            NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//            if (entity.getLockerUserId() == null) {
-//                logger.error("NewsStoryboard is not locked");
-//                return "error";
-//            }
-//            storyboardManager.unlockStoryboard(entity);
-//            logger.debug("NewsStoryboard unlocked");
-//            return "success";
-//        } catch (Exception e) {
-//            logger.error("error on unlock NewsStoryboard");
-//            return "error";
-//        }
-//    }
-//
-//    @RequestMapping(value = "addtopic/{id}/{uuid}")
-//    @ResponseBody
-//    public String addTopic(@PathVariable("id") Long id, @PathVariable("uuid") String uuid, HttpSession session) {
-//        try {
-//            String userId = UserUtil.getUserFromSession(session).getId();
-//            NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//            if (entity.getLockerUserId() == null) {
-//                logger.error("NewsStoryboard is not locked");
-//                return "error";
-//            }
-//            if (!entity.getLockerUserId().equals(userId)) {
-//                logger.error("NewsStoryboard is not locked by {}", userId);
-//                return "error";
-//            }
-//
-//            storyboardManager.addTopic(entity, uuid);
-//            logger.debug("topic added to NewsStoryboard");
-//            return "success";
-//        } catch (Exception e) {
-//            logger.error("error on add topic to NewsStoryboard");
-//            return "error";
-//        }
-//    }
-//
-//    @RequestMapping(value = "topicup/{id}/{topicindex}")
-//    @ResponseBody
-//    public String topicUp(@PathVariable("id") Long id, @PathVariable("topicindex") int index, HttpSession session) {
-//        try {
-//            String userId = UserUtil.getUserFromSession(session).getId();
-//            NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//            if (entity.getLockerUserId() == null) {
-//                logger.error("NewsStoryboard is not locked");
-//                return "error";
-//            }
-//            if (!entity.getLockerUserId().equals(userId)) {
-//                logger.error("NewsStoryboard is not locked by {}", userId);
-//                return "error";
-//            }
-//
-//            storyboardManager.topicUp(entity, index);
-//            logger.debug("topic moved up");
-//            return "success";
-//        } catch (Exception e) {
-//            logger.error("error on topic move up");
-//            return "error";
-//        }
-//    }
-//
-//    @RequestMapping(value = "topicdown/{id}/{topicindex}")
-//    @ResponseBody
-//    public String topicDown(@PathVariable("id") Long id, @PathVariable("topicindex") int index, HttpSession session) {
-//        try {
-//            String userId = UserUtil.getUserFromSession(session).getId();
-//            NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//            if (entity.getLockerUserId() == null) {
-//                logger.error("NewsStoryboard is not locked");
-//                return "error";
-//            }
-//            if (!entity.getLockerUserId().equals(userId)) {
-//                logger.error("NewsStoryboard is not locked by {}", userId);
-//                return "error";
-//            }
-//
-//            storyboardManager.topicDown(entity, index);
-//            logger.debug("topic moved down");
-//            return "success";
-//        } catch (Exception e) {
-//            logger.error("error on topic move down");
-//            return "error";
-//        }
-//    }
-//
-//    @RequestMapping(value = "topicremove/{id}/{topicindex}")
-//    @ResponseBody
-//    public String topicRemove(@PathVariable("id") Long id, @PathVariable("topicindex") int index, HttpSession session) {
-//        try {
-//            String userId = UserUtil.getUserFromSession(session).getId();
-//            NewsStoryboard entity = storyboardManager.getStoryboard(id);
-//            if (entity.getLockerUserId() == null) {
-//                logger.error("NewsStoryboard is not locked");
-//                return "error";
-//            }
-//            if (!entity.getLockerUserId().equals(userId)) {
-//                logger.error("NewsStoryboard is not locked by {}", userId);
-//                return "error";
-//            }
-//
-//            storyboardManager.topicRemove(entity, index);
-//            logger.debug("topic removed");
-//            return "success";
-//        } catch (Exception e) {
-//            logger.error("error on topic remove");
-//            return "error";
-//        }
-//    }
+
+    @RequestMapping(value = "edit/{id}/{templateId}")
+    public ModelAndView editStoryboard(@PathVariable("id") Long id, @PathVariable("templateId") Long templateId, HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return new ModelAndView(UserUtil.redirectTimeoutString);
+
+        ModelAndView mav = new ModelAndView("/news/storyboard/edit");
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(templateId);
+        mav.addObject("storyboard", entity);
+        mav.addObject("storyboardTemplate", template);
+        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
+        List<NewsColumn> userColumns = columnService.getUserColumns(user);
+        mav.addObject("columns", userColumns);
+        mav.addObject("title", "编辑串联单");
+        mav.addObject("alltopics", topicManager.getAllTopics());
+        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
+
+        List<TopicInfoDetail> topics = new ArrayList<TopicInfoDetail>();
+        TimeCode total = new TimeCode(0);
+        for (NewsTopicInfo info : entity.getTopics()) {
+            TopicInfoDetail detail = new TopicInfoDetail();
+            detail.setOrderValue(info.getOrderValue());
+            detail.setTopicUuid(info.getTopicUuid());
+            NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
+            detail.setTopic(topic);
+
+            detail.setVideoStatus(topicManager.getVideoFileStatus(topic));
+            detail.setVideoFilePath(topicManager.getVideoFilePath(topic));
+            detail.setAudioStatus(topicManager.getAudioFileStatus(topic));
+            NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
+            detail.setArticle(article);
+            if (article != null) {
+                articleWorkflowService.fillRunningTask(article);
+            }
+
+            TimeCode videoLength = topicManager.getVideoFileLength(topic);
+            detail.setVideoLength(videoLength.toString());
+            total.add(videoLength);
+            detail.setTotalLength(total.toString());
+            detail.setArticleLength(articleManager.getArticleLength(article).toString());
+
+            topics.add(detail);
+        }
+        mav.addObject("topics", topics);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "lock/{id}")
+    @ResponseBody
+    public String lock(@PathVariable("id") Long id, HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            if (entity.getLockerUserId() != null) {
+                logger.error("NewsStoryboard already locked by {}", entity.getLockerUserId());
+                return "error";
+            }
+            storyboardManager.lockStoryboard(entity, userId);
+            logger.debug("NewsStoryboard locked by {}", userId);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on lock NewsStoryboard");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "unlock/{id}")
+    @ResponseBody
+    public String unlock(@PathVariable("id") Long id) {
+        try {
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            if (entity.getLockerUserId() == null) {
+                logger.error("NewsStoryboard is not locked");
+                return "error";
+            }
+            storyboardManager.unlockStoryboard(entity);
+            logger.debug("NewsStoryboard unlocked");
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on unlock NewsStoryboard");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "addtopic/{id}/{uuid}")
+    @ResponseBody
+    public String addTopic(@PathVariable("id") Long id, @PathVariable("uuid") String uuid, HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            if (entity.getLockerUserId() == null) {
+                logger.error("NewsStoryboard is not locked");
+                return "error";
+            }
+            if (!entity.getLockerUserId().equals(userId)) {
+                logger.error("NewsStoryboard is not locked by {}", userId);
+                return "error";
+            }
+
+            storyboardManager.addTopic(entity, uuid);
+            logger.debug("topic added to NewsStoryboard");
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on add topic to NewsStoryboard");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "topicup/{id}/{topicindex}")
+    @ResponseBody
+    public String topicUp(@PathVariable("id") Long id, @PathVariable("topicindex") int index, HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            if (entity.getLockerUserId() == null) {
+                logger.error("NewsStoryboard is not locked");
+                return "error";
+            }
+            if (!entity.getLockerUserId().equals(userId)) {
+                logger.error("NewsStoryboard is not locked by {}", userId);
+                return "error";
+            }
+
+            storyboardManager.topicUp(entity, index);
+            logger.debug("topic moved up");
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on topic move up");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "topicdown/{id}/{topicindex}")
+    @ResponseBody
+    public String topicDown(@PathVariable("id") Long id, @PathVariable("topicindex") int index, HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            if (entity.getLockerUserId() == null) {
+                logger.error("NewsStoryboard is not locked");
+                return "error";
+            }
+            if (!entity.getLockerUserId().equals(userId)) {
+                logger.error("NewsStoryboard is not locked by {}", userId);
+                return "error";
+            }
+
+            storyboardManager.topicDown(entity, index);
+            logger.debug("topic moved down");
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on topic move down");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "topicremove/{id}/{topicindex}")
+    @ResponseBody
+    public String topicRemove(@PathVariable("id") Long id, @PathVariable("topicindex") int index, HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            if (entity.getLockerUserId() == null) {
+                logger.error("NewsStoryboard is not locked");
+                return "error";
+            }
+            if (!entity.getLockerUserId().equals(userId)) {
+                logger.error("NewsStoryboard is not locked by {}", userId);
+                return "error";
+            }
+
+            storyboardManager.topicRemove(entity, index);
+            logger.debug("topic removed");
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on topic remove");
+            return "error";
+        }
+    }
 
 }

@@ -17,7 +17,7 @@ import java.util.List;
 public class NewsStoryboardTemplate extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private int status;
+//    private int status;
 
     //    标题
     @NotBlank(message = "标题不能为空")
@@ -75,14 +75,14 @@ public class NewsStoryboardTemplate extends NewsProcessEntity implements Seriali
     //    审核意见
     private String auditOpinion;
 
-    @Column
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
+//    @Column
+//    public int getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(int status) {
+//        this.status = status;
+//    }
 
     @Column(nullable = false)
     public String getTitle() {
