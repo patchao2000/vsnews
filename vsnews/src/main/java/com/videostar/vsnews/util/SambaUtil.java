@@ -49,7 +49,7 @@ public class SambaUtil {
             sambaPath = sambaPath.substring(4);
         }
         sambaPath = sambaPath.replaceAll("/", "\\\\\\\\");
-        logger.debug("sambaPath: {}", sambaPath);
+//        logger.debug("sambaPath: {}", sambaPath);
         return sambaPath;
     }
 }

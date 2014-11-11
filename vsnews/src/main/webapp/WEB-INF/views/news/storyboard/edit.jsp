@@ -14,6 +14,10 @@
 <%--@elvariable id="columns" type="java.util.map"--%>
 <%--@elvariable id="technicians" type="java.util.List"--%>
 <%--@elvariable id="sambaPath" type="java.lang.String"--%>
+<%--@elvariable id="readonly" type="java.lang.Boolean"--%>
+<%--@elvariable id="auditMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="taskId" type="java.lang.String"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -173,7 +177,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <c:if test="${storyboard.status == 0}">
+                                <c:if test="${storyboard.status == 0 && auditMode != true && reapplyMode != true && readonly != true}">
                                     <div class='form-actions form-actions-padding-sm'>
                                         <div class='row'>
                                             <div class='col-md-10 col-md-offset-2'>
@@ -196,30 +200,37 @@
                             </div>
                         </div>
                         <div class='box-content'>
-                            <form class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
-                                <div class='form-group'>
-                                    <c:if test="${storyboard.lockerUserId == null}">
-                                        <div class='col-md-4'>
-                                            <a id="lock" class="btn btn-success" title='锁定' href="#"><i class="icon-edit icon-white"></i> 进入编辑模式</a>
-                                            <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
-                                        </div>
-                                    </c:if>
-                                    <c:if test="${storyboard.lockerUserId != null}">
-                                        <%--@elvariable id="alltopics" type="java.util.List"--%>
-                                        <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
-                                        <label class='col-md-2 control-label' for='storyboard_topic'>新闻选题：</label>
-                                        <div class='col-md-4'>
-                                            <select class='select2 form-control' id="storyboard_topic">
-                                                <c:forEach items="${alltopics }" var="topic">
-                                                    <option value="${topic.uuid}">${topic.title}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <a id="add_topic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
-                                        <a id="unlock" class="btn btn-success" title='解锁' href="#"><i class="icon-edit icon-white"></i> 退出编辑模式</a>
-                                        <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
-                                    </c:if>
-                                </div>
+                            <form:form modelAttribute="storyboard" id="auditForm" action="#" class="form form-horizontal"
+                                       style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
+                                <c:if test="${auditMode != true && readonly != true}">
+                                    <div class='form-group'>
+                                        <c:if test="${storyboard.lockerUserId == null}">
+                                            <div class='col-md-4'>
+                                                <a id="lock" class="btn btn-success" title='锁定' href="#"><i class="icon-edit icon-white"></i> 进入编辑模式</a>
+                                                <c:if test="${reapplyMode != true}">
+                                                    <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
+                                                </c:if>
+                                            </div>
+                                        </c:if>
+                                        <c:if test="${storyboard.lockerUserId != null}">
+                                            <%--@elvariable id="alltopics" type="java.util.List"--%>
+                                            <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
+                                            <label class='col-md-2 control-label' for='storyboard_topic'>新闻选题：</label>
+                                            <div class='col-md-4'>
+                                                <select class='select2 form-control' id="storyboard_topic">
+                                                    <c:forEach items="${alltopics }" var="topic">
+                                                        <option value="${topic.uuid}">${topic.title}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            <a id="add_topic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
+                                            <a id="unlock" class="btn btn-success" title='解锁' href="#"><i class="icon-edit icon-white"></i> 退出编辑模式</a>
+                                            <c:if test="${reapplyMode != true}">
+                                                <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
+                                            </c:if>
+                                        </c:if>
+                                    </div>
+                                </c:if>
                                 <div class='responsive-table'>
                                     <div class='scrollable-area'>
                                         <table class='table table-bordered table-striped' style='margin-bottom:0;'>
@@ -276,9 +287,11 @@
                                                         <c:if test="${detail.videoStatus == '剪辑结束'}">
                                                             <a class='view_material_file btn btn-success btn-xs' href='#'>素材文件</a>
                                                         </c:if>
+                                                        <c:if test="${auditMode != true && readonly != true}">
                                                         <a class="up_topic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
                                                         <a class="down_topic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
                                                         <a class="remove_topic btn btn-danger btn-xs" href="#"><i class="icon-remove"></i>删除</a>
+                                                        </c:if>
                                                     </td>
                                                     </c:if>
                                                 </tr>
@@ -287,7 +300,30 @@
                                         </table>
                                     </div>
                                 </div>
-                            </form>
+                                <c:if test="${auditMode == true}">
+                                    <hr class='hr-normal'>
+                                    <div class='form-group'>
+                                        <label class='col-md-2 control-label' for='storyboard_auditOpinion'>审核意见：</label>
+                                        <div class='col-md-10'>
+                                            <form:textarea class='form-control' id='storyboard_auditOpinion' path='auditOpinion' />
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="submit_type" value="" id="submit-type"/>
+                                </c:if>
+                                <div class='form-actions form-actions-padding-sm'>
+                                    <div class='row'>
+                                        <div class='col-md-10 col-md-offset-2'>
+                                            <c:if test="${reapplyMode == true}">
+                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>提交</button>
+                                            </c:if>
+                                            <c:if test="${auditMode == true}">
+                                                <button class='btn btn-primary' type='submit' id="auditPass"><i class='icon-ok'></i>同意</button>
+                                                <button class='btn btn-danger' type='submit' id="auditReject"><i class='icon-remove'></i>驳回</button>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form:form>
                         </div>
                     </div>
                 </div>
@@ -298,6 +334,83 @@
 <%@ include file="/common/alljs.jsp" %>
 
 <script type="text/javascript">
+    var failMessage = '操作失败!', successMessage = '任务完成!';
+
+    <c:if test="${auditMode == true}">
+        $("#auditPass").live("click",function(){
+            $("#submit-type").val("pass");
+        });
+
+        $("#auditReject").live("click",function(){
+            $("#submit-type").val("reject");
+        });
+    </c:if>
+
+    $("#auditForm").submit(function (event) {
+        var map = {};
+
+        //  audit mode
+        <c:if test="${auditMode == true}">
+        var opinion = $('#storyboard_auditOpinion').val();
+        if (opinion.length == 0) {
+            alert('请输入审核意见！');
+            event.preventDefault();
+            return;
+        }
+        var passed = false;
+        if ($("#submit-type").val() == "pass")
+            passed = true;
+        map["audit1Pass"] = passed;
+        map["audit2Pass"] = passed;
+        map["leaderbackreason"] = opinion;
+        </c:if>
+
+        <c:if test="${reapplyMode == true}">
+        map["airDate"] = $('#storyboard_airDate').val();
+        </c:if>
+
+        <c:if test="${auditMode == true || reapplyMode == true}">
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/storyboard/complete/' + ${taskId},
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify(map),
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                    location.href = ctx + '/news/storyboard/list/task'
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+        event.preventDefault();
+        </c:if>
+    });
+
+    $("#audit").live("click",function(){
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/start-list/' + ${storyboard.id},
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert(successMessage);
+                    location.href = ctx + '/news/storyboard/list/all';
+                } else {
+                    alert(failMessage);
+                }
+            },
+            error: function () {
+                alert(failMessage);
+            }
+        });
+    });
 
     $("#lock").live("click",function(){
         $.ajax({
@@ -308,13 +421,13 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
                 } else {
-                    alert('操作失败!');
+                    alert(failMessage);
                 }
             },
             error: function () {
-                alert('操作失败!!');
+                alert(failMessage);
             }
         });
     });
@@ -328,16 +441,27 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
+                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
                 } else {
-                    alert('操作失败!');
+                    alert(failMessage);
                 }
             },
             error: function () {
-                alert('操作失败!!');
+                alert(failMessage);
             }
         });
     });
+
+    function refreshCurrent() {
+        <c:choose>
+        <c:when test="${reapplyMode == true}">
+            location.href = ctx + '/news/storyboard/reapply/' + ${storyboard.id} + '/' + ${taskId};
+        </c:when>
+        <c:otherwise>
+            location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+        </c:otherwise>
+        </c:choose>
+    }
 
     $(".up_topic").live("click",function(){
         $.ajax({
@@ -348,13 +472,13 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
+                    refreshCurrent();
                 } else {
-                    alert('操作失败!');
+                    alert(failMessage);
                 }
             },
             error: function () {
-                alert('操作失败!!');
+                alert(failMessage);
             }
         });
     });
@@ -368,13 +492,13 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
+                    refreshCurrent();
                 } else {
-                    alert('操作失败!');
+                    alert(failMessage);
                 }
             },
             error: function () {
-                alert('操作失败!!');
+                alert(failMessage);
             }
         });
     });
@@ -388,13 +512,13 @@
             success: function (resp) {
                 if (resp == 'success') {
 //                    alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
+                    refreshCurrent();
                 } else {
-                    alert('操作失败!');
+                    alert(failMessage);
                 }
             },
             error: function () {
-                alert('操作失败!!');
+                alert(failMessage);
             }
         });
     });
@@ -412,13 +536,13 @@
             success: function (resp) {
                 if (resp == 'success') {
                     alert('任务完成');
-                    location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id} + '/' + ${storyboardTemplate.id };
+                    refreshCurrent();
                 } else {
-                    alert('操作失败!');
+                    alert(failMessage);
                 }
             },
             error: function () {
-                alert('操作失败!!');
+                alert(failMessage);
             }
         });
     });
@@ -469,6 +593,28 @@
         $("#storyboard_technicians").select2("readonly", true);
 
         $("#storyboardForm").submit(function (event) {
+            var map = {};
+            map["airDate"] = $('#storyboard_airDate').val();
+
+            $.ajax({
+                type: 'post',
+                async: true,
+                url: ctx + '/news/storyboard/save/' + ${storyboard.id},
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify(map),
+                success: function (resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/news/storyboard/edit/' + ${storyboard.id};
+                    } else {
+                        alert('操作失败!');
+                    }
+                },
+                error: function () {
+                    alert('操作失败!!');
+                }
+            });
+            event.preventDefault();
         });
     });
 

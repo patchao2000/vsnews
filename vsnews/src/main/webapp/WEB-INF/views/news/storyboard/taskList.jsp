@@ -110,6 +110,16 @@
             else
                 alert("ERROR!");
         }
+        else {
+            if (tkey == 'modifyForAudit1' || tkey == 'modifyForAudit2') {
+                location.href = ctx + '/news/storyboard/reapply/' + entityId + '/' + taskId;
+            }
+            else if (tkey == 'class1Audit' || tkey == 'class2Audit') {
+                location.href = ctx + '/news/storyboard/audit/' + entityId + '/' + taskId;
+            }
+            else
+                alert("ERROR!");
+        }
     }
 
     $(document).ready(function () {

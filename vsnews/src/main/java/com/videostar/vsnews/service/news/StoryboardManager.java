@@ -52,7 +52,7 @@ public class StoryboardManager {
         if (entity.getId() == null)
             entity.setApplyTime(now);
         entity.setModifyTime(now);
-        
+
         storyboardDao.save(entity);
     }
 
@@ -99,6 +99,15 @@ public class StoryboardManager {
         if (entity.getLockerUserId() != null) {
             entity.setLockerUserId(null);
             storyboardDao.save(entity);
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean isLockedByOther(NewsStoryboard entity, String userId) {
+        String locker = entity.getLockerUserId();
+        if (locker != null && locker != userId) {
             return true;
         }
         return false;

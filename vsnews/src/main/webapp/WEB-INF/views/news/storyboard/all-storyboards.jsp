@@ -50,10 +50,11 @@
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        <%--@elvariable id="userId" type="java.lang.String"--%>
                                         <%--@elvariable id="list" type="java.util.List"--%>
                                         <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
-                                            <tr id="${detail.storyboard.id }" data-temp-id="${detail.template.id }">
+                                            <tr id="${detail.storyboard.id }">
                                                 <td>${detail.userName }</td>
                                                 <td>${detail.columnName }</td>
                                                 <td><fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd HH:mm" /></td>
@@ -62,9 +63,11 @@
                                                 <%--<td>${detail.template.endTC }</td>--%>
                                                 <td>${detail.task.name }</td>
                                                 <td>
-                                                    <%--<c:if test="${detail.task == null}">--%>
-                                                    <a class="editstoryboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
-                                                    <%--</c:if>--%>
+                                                    <a class="view-storyboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
+                                                    <c:if test="${detail.storyboard.status == 0 &&
+                                                    (detail.storyboard.lockerUserId == null || detail.storyboard.lockerUserId == userId)}">
+                                                        <a class="edit-storyboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -82,10 +85,14 @@
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.editstoryboard').click(function () {
+        $('.view-storyboard').click(function () {
             var sbId = $(this).parents('tr').attr('id');
-            var tempId = $(this).parents('tr').attr('data-temp-id');
-            location.href = ctx + '/news/storyboard/edit/' + sbId + '/' + tempId;
+            location.href = ctx + '/news/storyboard/view/' + sbId;
+        });
+
+        $('.edit-storyboard').click(function () {
+            var sbId = $(this).parents('tr').attr('id');
+            location.href = ctx + '/news/storyboard/edit/' + sbId;
         });
     });
 </script>

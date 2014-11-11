@@ -12,7 +12,10 @@ insert into ACT_ID_GROUP values ('reporter', 1, '记者', 'assignment');
 insert into ACT_ID_GROUP values ('technician', 1, '技术员', 'assignment');
 insert into ACT_ID_GROUP values ('deviceAudit', 1, '设备管理', 'assignment');
 insert into ACT_ID_GROUP values ('storyboardWrite', 1, '串联单撰写', 'assignment');
-insert into ACT_ID_GROUP values ('storyboardAudit', 1, '串联单审核', 'assignment');
+insert into ACT_ID_GROUP values ('storyboardAudit1', 1, '串联单一审', 'assignment');
+insert into ACT_ID_GROUP values ('storyboardAudit2', 1, '串联单二审', 'assignment');
+insert into ACT_ID_GROUP values ('storyboardTempWrite', 1, '串联单模板撰写', 'assignment');
+insert into ACT_ID_GROUP values ('storyboardTempAudit', 1, '串联单模板审核', 'assignment');
 
 insert into ACT_ID_USER values ('admin', 1, 'Admin', '', 'admin@videostar.com', '000000', '');
 
@@ -53,100 +56,140 @@ CREATE TABLE `role_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'topicWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'topicDispatch');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'editor');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'articleAudit1');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'articleWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'topicAudit');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'editor');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'articleWrite');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'articleAudit1');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardWrite');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardAudit');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardAudit1');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardTempWrite');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardTempAudit');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'user');
+
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'topicWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'editor');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'articleWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'storyboardWrite');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'storyboardTempWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'user');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'articleAudit3');
+
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'topicDispatch');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'articleAudit1');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'articleAudit2');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'articleAudit3');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'topicAudit');
-INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardAudit');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardAudit1');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardAudit2');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardTempAudit');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'user');
+
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (5,'user');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (5,'deviceAudit');
+
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'reporter');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'technician');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (6,'user');
+
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (7,'admin');
+
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (8,'reporter');
 
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('admin','admin');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','topicWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','topicDispatch');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','topicAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','editor');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','articleWrite');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','articleAudit1');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardAudit1');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardTempWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardTempAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','user');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicDispatch');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','editor');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','articleWrite');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','articleAudit1');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardAudit1');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardTempWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardTempAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','user');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','topicWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','editor');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','articleWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','storyboardWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','storyboardTempWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','user');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','topicWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','editor');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','articleWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','storyboardWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','storyboardTempWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','user');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','topicDispatch');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','articleAudit1');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','articleAudit2');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','articleAudit3');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','articleWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','articleWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','articleWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','articleWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('cama','technician');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camb','technician');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camc','technician');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('teca','technician');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecb','technician');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecc','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','topicAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardAudit1');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardAudit2');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardTempAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','user');
+
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('deva','deviceAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','editor');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','editor');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','editor');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','editor');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('deva','user');
+
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('cama','reporter');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camb','reporter');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camc','reporter');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('repa','reporter');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('repb','reporter');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('repc','reporter');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','topicAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','topicAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardAudit');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','topicDispatch');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicDispatch');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','topicDispatch');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','topicWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','topicWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','topicWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','storyboardWrite');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','storyboardWrite');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('cama','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camb','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camc','technician');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('cama','user');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camb','user');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('camc','user');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','user');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','user');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','user');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('deva','user');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','user');
-INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edtb','user');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('teca','reporter');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecb','reporter');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecc','reporter');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('teca','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecb','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecc','technician');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('teca','user');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecb','user');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('tecc','user');
+
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('repa','reporter');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('repb','reporter');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('repc','reporter');
 
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('1',1,'chfa','userinfo','roles','2',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('2',1,'chfb','userinfo','roles','2',NULL,NULL);
+
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('3',1,'edta','userinfo','roles','3',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('4',1,'edtb','userinfo','roles','3',NULL,NULL);
+
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('5',1,'chfc','userinfo','roles','4',NULL,NULL);
+
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('6',1,'deva','userinfo','roles','5',NULL,NULL);
+
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('7',1,'cama','userinfo','roles','6',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('8',1,'camb','userinfo','roles','6',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('9',1,'camc','userinfo','roles','6',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('10',1,'teca','userinfo','roles','6',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('11',1,'tecb','userinfo','roles','6',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('12',1,'tecc','userinfo','roles','6',NULL,NULL);
+
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('13',1,'admin','userinfo','roles','7',NULL,NULL);
+
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('14',1,'repa','userinfo','roles','8',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('15',1,'repb','userinfo','roles','8',NULL,NULL);
 INSERT INTO `act_id_info` (`ID_`,`REV_`,`USER_ID_`,`TYPE_`,`KEY_`,`VALUE_`,`PASSWORD_`,`PARENT_ID_`) VALUES ('16',1,'repc','userinfo','roles','8',NULL,NULL);

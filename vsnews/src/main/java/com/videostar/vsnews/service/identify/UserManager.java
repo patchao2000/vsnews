@@ -28,21 +28,24 @@ import java.util.*;
 @Component
 @Transactional(readOnly = true)
 public class UserManager {
-    public static final int RIGHTS_USER             = 0;
-    public static final int RIGHTS_TOPIC_WRITE      = 1;
-    public static final int RIGHTS_TOPIC_AUDIT      = 2;
-    public static final int RIGHTS_TOPIC_DISPATCH   = 3;
-    public static final int RIGHTS_ARTICLE_WRITE    = 4;
-    public static final int RIGHTS_ARTICLE_AUDIT_1  = 5;
-    public static final int RIGHTS_ARTICLE_AUDIT_2  = 6;
-    public static final int RIGHTS_ARTICLE_AUDIT_3  = 7;
-    public static final int RIGHTS_EDITOR           = 8;
-    public static final int RIGHTS_REPORTER         = 9;
-    public static final int RIGHTS_TECHNICIAN       = 10;
-    public static final int RIGHTS_DEVICE_AUDIT     = 11;
-    public static final int RIGHTS_STORYBOARD_WRITE = 12;
-    public static final int RIGHTS_STORYBOARD_AUDIT = 13;
-    public static final int RIGHTS_ADMIN            = 99;
+    public static final int RIGHTS_USER                     = 0;
+    public static final int RIGHTS_TOPIC_WRITE              = 1;
+    public static final int RIGHTS_TOPIC_AUDIT              = 2;
+    public static final int RIGHTS_TOPIC_DISPATCH           = 3;
+    public static final int RIGHTS_ARTICLE_WRITE            = 4;
+    public static final int RIGHTS_ARTICLE_AUDIT_1          = 5;
+    public static final int RIGHTS_ARTICLE_AUDIT_2          = 6;
+    public static final int RIGHTS_ARTICLE_AUDIT_3          = 7;
+    public static final int RIGHTS_EDITOR                   = 8;
+    public static final int RIGHTS_REPORTER                 = 9;
+    public static final int RIGHTS_TECHNICIAN               = 10;
+    public static final int RIGHTS_DEVICE_AUDIT             = 11;
+    public static final int RIGHTS_STORYBOARD_WRITE         = 12;
+    public static final int RIGHTS_STORYBOARD_AUDIT_1       = 13;
+    public static final int RIGHTS_STORYBOARD_AUDIT_2       = 14;
+    public static final int RIGHTS_STORYBOARD_TEMP_WRITE    = 15;
+    public static final int RIGHTS_STORYBOARD_TEMP_AUDIT    = 16;
+    public static final int RIGHTS_ADMIN                    = 99;
 
     public static final String INFO_USER_ROLES      = "roles";
 
@@ -72,7 +75,10 @@ public class UserManager {
         userRights.put(RIGHTS_TECHNICIAN, "technician");
         userRights.put(RIGHTS_DEVICE_AUDIT, "deviceAudit");
         userRights.put(RIGHTS_STORYBOARD_WRITE, "storyboardWrite");
-        userRights.put(RIGHTS_STORYBOARD_AUDIT, "storyboardAudit");
+        userRights.put(RIGHTS_STORYBOARD_AUDIT_1, "storyboardAudit1");
+        userRights.put(RIGHTS_STORYBOARD_AUDIT_2, "storyboardAudit2");
+        userRights.put(RIGHTS_STORYBOARD_TEMP_WRITE, "storyboardTempWrite");
+        userRights.put(RIGHTS_STORYBOARD_TEMP_AUDIT, "storyboardTempAudit");
         userRights.put(RIGHTS_ADMIN, "admin");
     }
 

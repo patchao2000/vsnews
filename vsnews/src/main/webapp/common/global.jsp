@@ -7,7 +7,9 @@
 <%--<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>--%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <%@page import="com.videostar.vsnews.util.ConfigXmlReader" %>
-<% ConfigXmlReader.parseConfig(); %>
+<%
+    ConfigXmlReader.parseConfig();
+%>
 <script type="text/javascript">
     var ctx = '<%=request.getContextPath() %>';
     var nginx_url = '<%=ConfigXmlReader.getNginxUrl()%>';

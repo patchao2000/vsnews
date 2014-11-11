@@ -38,7 +38,7 @@ public class StoryboardWorkflowFinishProcessor implements ExecutionListener {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsStoryboard entity = storyboardManager.getStoryboard(new Long(processInstance.getBusinessKey()));
 
-        entity.setStatus(NewsStoryboard.STATUS_AUDITED);
+        entity.setStatus(NewsStoryboard.STATUS_END_AUDIT);
 
         logger.debug("StoryboardWorkflowFinishProcessor: {}", entity.getId());
 

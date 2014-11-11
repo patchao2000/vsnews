@@ -39,7 +39,8 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
     private int status;
 
     public static final int STATUS_EDITING = 0;
-    public static final int STATUS_AUDITED = 1;
+    public static final int STATUS_BEGIN_AUDIT = 1;
+    public static final int STATUS_END_AUDIT = 2;
 
     public NewsStoryboard() {
         this.status = STATUS_EDITING;

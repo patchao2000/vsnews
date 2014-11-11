@@ -239,21 +239,21 @@ public class StoryboardWorkflowService {
         return repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
     }
 
-//    public Boolean isFinished(NewsStoryboard entity) {
-//        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
-//        listRunning.addAll(runtimeService.createProcessInstanceQuery().
-//                processDefinitionKey(WorkflowNames.storyboard).active().orderByProcessInstanceId().desc().list());
-//        for (ProcessInstance processInstance : listRunning) {
-//            String businessKey = processInstance.getBusinessKey();
-//            if (businessKey == null) {
-//                continue;
-//            }
-//            if (entity.getId().equals(new Long(businessKey)))
-//                return false;
-//        }
-//
-//        return true;
-//    }
+    public Boolean isInProcess(NewsStoryboard entity) {
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.storyboardList).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            if (entity.getId().equals(new Long(businessKey)))
+                return false;
+        }
+
+        return true;
+    }
 
     @Autowired
     public void setStoryboardManager(StoryboardManager storyboardManager) {

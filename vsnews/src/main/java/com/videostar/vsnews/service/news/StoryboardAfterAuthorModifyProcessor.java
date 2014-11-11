@@ -46,7 +46,7 @@ public class StoryboardAfterAuthorModifyProcessor implements TaskListener {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsStoryboard entity = storyboardManager.getStoryboard(new Long(processInstance.getBusinessKey()));
 
-        entity.setTopics((List<NewsTopicInfo>) delegateTask.getVariable("topics"));
+//        entity.setTopics((List<NewsTopicInfo>) delegateTask.getVariable("topics"));
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {

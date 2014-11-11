@@ -23,6 +23,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,9 +94,9 @@ public class StoryboardController {
         if (user == null)
             return UserUtil.redirectTimeoutString;
 
-        if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) &&
-            !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT)) {
-            redirectAttributes.addFlashAttribute("error", "您没有创建串联单权限！");
+        if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_TEMP_WRITE) &&
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_TEMP_AUDIT)) {
+            redirectAttributes.addFlashAttribute("error", "您没有创建串联单模板权限！");
             return "redirect:/main/welcome";
         }
 
@@ -151,7 +154,7 @@ public class StoryboardController {
             return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) &&
-            !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT)) {
+            !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT_1)) {
             redirectAttributes.addFlashAttribute("error", "您没有创建串联单权限！");
             return "redirect:/main/welcome";
         }
@@ -166,28 +169,37 @@ public class StoryboardController {
         return "/news/storyboard/view";
     }
 
-    @RequestMapping(value = "start-list", method = RequestMethod.POST)
-    public String startStoryboardListWorkflow(@ModelAttribute("storyboard") @Valid NewsStoryboard entity,
-                                              BindingResult bindingResult,
-                                              RedirectAttributes redirectAttributes, HttpSession session) {
+    @RequestMapping(value = "start-list/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String startStoryboardListWorkflow(@PathVariable("id") Long id,
+                RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
             if (user == null)
                 return UserUtil.redirectTimeoutString;
 
-            if (bindingResult.hasErrors()) {
-                logger.debug("has bindingResult errors!");
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
 
-                return "redirect:/news/storyboard/list/template/all";
+            if (storyboardManager.isLockedByOther(entity, user.getId())) {
+                logger.error("locked by other user!");
+                redirectAttributes.addFlashAttribute("error", "已被其他用户锁定！");
+
+                return "error";
             }
 
             entity.setUserId(user.getId());
+            entity.setStatus(NewsStoryboard.STATUS_BEGIN_AUDIT);
 
             Map<String, Object> variables = new HashMap<String, Object>();
+            variables.put("needAudit1", true);
+            variables.put("needAudit2", true);
+
             logger.debug("start storyboard Workflow: {}", entity.getId());
 
             ProcessInstance processInstance = workflowService.startStoryboardListWorkflow(entity, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+            return "success";
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {
                 logger.warn("没有部署流程!", e);
@@ -199,7 +211,8 @@ public class StoryboardController {
             logger.error("启动串联单流程失败：", e);
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
-        return "redirect:/news/storyboard/list/template/all";
+//        return "redirect:/news/storyboard/list/all";
+        return "error";
     }
 
     @RequestMapping(value = "save-list", method = RequestMethod.POST)
@@ -331,12 +344,13 @@ public class StoryboardController {
             list.add(detail);
         }
         mav.addObject("list", list);
+        mav.addObject("userId", user.getId());
         return mav;
     }
 
     @RequestMapping(value = "audit/template/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     public String auditStoryboardTemplate(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
-                             Model model, HttpSession session) {
+                                          Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
         if (user == null)
@@ -354,9 +368,35 @@ public class StoryboardController {
         return "/news/storyboard/view-template";
     }
 
+    @RequestMapping(value = "audit/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String auditStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
+                                  Model model, HttpSession session) {
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return UserUtil.redirectTimeoutString;
+
+        addSelectOptions(model, user);
+
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+        model.addAttribute("storyboard", entity);
+        model.addAttribute("storyboardTemplate", template);
+        model.addAttribute("title", "审核串联单");
+        model.addAttribute("readonly", true);
+        model.addAttribute("auditMode", true);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("alltopics", topicManager.getAllTopics());
+        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
+
+        model.addAttribute("topics", getTopicsList(entity));
+
+        return "/news/storyboard/edit";
+    }
+
     @RequestMapping(value = "reapply/template/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     public String reapplyStoryboardTemplate(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
-                               Model model, HttpSession session) {
+                                            Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
         if (user == null)
@@ -373,6 +413,31 @@ public class StoryboardController {
         return "/news/storyboard/view-template";
     }
 
+    @RequestMapping(value = "reapply/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String reapplyStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
+                                    Model model, HttpSession session) {
+
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return UserUtil.redirectTimeoutString;
+
+        addSelectOptions(model, user);
+
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+        model.addAttribute("storyboard", entity);
+        model.addAttribute("storyboardTemplate", template);
+        model.addAttribute("title", "修改串联单内容");
+        model.addAttribute("reapplyMode", true);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("alltopics", topicManager.getAllTopics());
+        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
+
+        model.addAttribute("topics", getTopicsList(entity));
+
+        return "/news/storyboard/edit";
+    }
+
     @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
     public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap) {
@@ -381,7 +446,7 @@ public class StoryboardController {
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
             return "success";
         } catch (Exception e) {
-            logger.error("error on complete task {}, variables={}", taskId, topicMap);
+            logger.error("error on complete task {}, variables={}, exception: {}", taskId, topicMap, e.getMessage());
             return "error";
         }
     }
@@ -427,7 +492,7 @@ public class StoryboardController {
         mav.addObject("readonly", true);
 
         if (userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) ||
-            userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT)) {
+            userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT_1)) {
             mav.addObject("canCreate", true);
         }
 
@@ -435,25 +500,27 @@ public class StoryboardController {
     }
 
 
-    @RequestMapping(value = "edit/{id}/{templateId}")
-    public ModelAndView editStoryboard(@PathVariable("id") Long id, @PathVariable("templateId") Long templateId, HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
+    @RequestMapping(value = "save/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String saveStoryboard(@PathVariable("id") Long id, @RequestBody Map<String, Object> map) {
+        try {
+            NewsStoryboard entity = storyboardManager.getStoryboard(id);
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                entity.setAirDate(format.parse((String) map.get("airDate")));
+            } catch (ParseException e) {
+                logger.error("airDate wrong!");
+            }
+            storyboardManager.saveStoryboard(entity);
+            logger.debug("save: NewsStoryboard {}, variables={}", id, map);
+            return "success";
+        } catch (Exception e) {
+            logger.debug("error on save: NewsStoryboard {}, variables={}", id, map);
+            return "error";
+        }
+    }
 
-        ModelAndView mav = new ModelAndView("/news/storyboard/edit");
-        NewsStoryboard entity = storyboardManager.getStoryboard(id);
-        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(templateId);
-        mav.addObject("storyboard", entity);
-        mav.addObject("storyboardTemplate", template);
-        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
-        mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
-        List<NewsColumn> userColumns = columnService.getUserColumns(user);
-        mav.addObject("columns", userColumns);
-        mav.addObject("title", "编辑串联单");
-        mav.addObject("alltopics", topicManager.getAllTopics());
-        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
-
+    private List<TopicInfoDetail> getTopicsList(NewsStoryboard entity) {
         List<TopicInfoDetail> topics = new ArrayList<TopicInfoDetail>();
         TimeCode total = new TimeCode(0);
         for (NewsTopicInfo info : entity.getTopics()) {
@@ -480,9 +547,42 @@ public class StoryboardController {
 
             topics.add(detail);
         }
-        mav.addObject("topics", topics);
+        return topics;
+    }
 
+    private ModelAndView editStoryboard(Long id, HttpSession session, Boolean readonly) {
+        User user = UserUtil.getUserFromSession(session);
+        if (user == null)
+            return new ModelAndView(UserUtil.redirectTimeoutString);
+
+        ModelAndView mav = new ModelAndView("/news/storyboard/edit");
+        NewsStoryboard entity = storyboardManager.getStoryboard(id);
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+        mav.addObject("storyboard", entity);
+        mav.addObject("storyboardTemplate", template);
+        mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
+        mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
+        List<NewsColumn> userColumns = columnService.getUserColumns(user);
+        mav.addObject("columns", userColumns);
+        mav.addObject("title", "编辑串联单");
+        mav.addObject("alltopics", topicManager.getAllTopics());
+        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
+
+        mav.addObject("topics", getTopicsList(entity));
+        if (readonly) {
+            mav.addObject("readonly", true);
+        }
         return mav;
+    }
+
+    @RequestMapping(value = "edit/{id}")
+    public ModelAndView editStoryboard(@PathVariable("id") Long id, HttpSession session) {
+        return editStoryboard(id, session, false);
+    }
+
+    @RequestMapping(value = "view/{id}")
+    public ModelAndView viewStoryboard(@PathVariable("id") Long id, HttpSession session) {
+        return editStoryboard(id, session, true);
     }
 
     @RequestMapping(value = "lock/{id}")
