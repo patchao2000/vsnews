@@ -170,7 +170,7 @@
                                     <label class='col-md-2 control-label' for='storyboard_airDate'>播出时间：</label>
                                         <div class='col-md-10'>
                                             <div class='datetimepicker input-group'>
-                                                <form:input class='form-control' id='storyboard_airDate' path='airDate' type='text' />
+                                                <form:input class='form-control' id='storyboard_airDate' path='airDate' type='text' readonly="${readonly}" />
                                                 <span class='input-group-addon'>
                                                 <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
                                             </span>

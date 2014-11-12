@@ -3,7 +3,6 @@ package com.videostar.vsnews.web.news;
 import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.*;
-import com.videostar.vsnews.util.ConfigXmlReader;
 import com.videostar.vsnews.util.SambaUtil;
 import com.videostar.vsnews.util.TimeCode;
 import com.videostar.vsnews.util.UserUtil;
@@ -80,7 +79,7 @@ public class StoryboardController {
         model.addAttribute("createMode", true);
     }
 
-    private void makeCreateStoryboardModel(Model model, User user, NewsStoryboard entity) {
+    private void makeCreateStoryboardModel(Model model, NewsStoryboard entity) {
         model.addAttribute("templates", workflowService.getAllFinishedTemplates());
 
         model.addAttribute("storyboard", entity);
@@ -165,7 +164,7 @@ public class StoryboardController {
         }
 
         NewsStoryboard entity = new NewsStoryboard();
-        makeCreateStoryboardModel(model, user, entity);
+        makeCreateStoryboardModel(model, entity);
         return "/news/storyboard/view";
     }
 
@@ -191,8 +190,9 @@ public class StoryboardController {
             entity.setStatus(NewsStoryboard.STATUS_BEGIN_AUDIT);
 
             Map<String, Object> variables = new HashMap<String, Object>();
-            variables.put("needAudit1", true);
-            variables.put("needAudit2", true);
+            NewsColumn column = columnService.getColumn(storyboardManager.getStoryboardTemplate(entity).getColumnId());
+            variables.put("needAudit1", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_1) != 0));
+            variables.put("needAudit2", ((column.getAuditLevel() & NewsColumn.AUDIT_LEVEL_2) != 0));
 
             logger.debug("start storyboard Workflow: {}", entity.getId());
 
@@ -211,7 +211,7 @@ public class StoryboardController {
             logger.error("启动串联单流程失败：", e);
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
         }
-//        return "redirect:/news/storyboard/list/all";
+
         return "error";
     }
 
@@ -228,7 +228,7 @@ public class StoryboardController {
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
 
-                makeCreateStoryboardModel(model, user, entity);
+                makeCreateStoryboardModel(model, entity);
 
                 return "redirect:/news/storyboard/view";
             }
@@ -269,7 +269,7 @@ public class StoryboardController {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
             detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
             detail.setStoryboard(entity);
-            NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+            NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
             detail.setColumnName(columnService.getColumn(template.getColumnId()).getName());
             detail.setTask(entity.getTask());
             detail.setProcessInstance(entity.getProcessInstance());
@@ -333,7 +333,7 @@ public class StoryboardController {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
             detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
             detail.setStoryboard(entity);
-            NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+            NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
             detail.setTemplate(template);
             detail.setColumnName(columnService.getColumn(template.getColumnId()).getName());
             detail.setTask(entity.getTask());
@@ -379,7 +379,7 @@ public class StoryboardController {
         addSelectOptions(model, user);
 
         NewsStoryboard entity = storyboardManager.getStoryboard(id);
-        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
         model.addAttribute("storyboard", entity);
         model.addAttribute("storyboardTemplate", template);
         model.addAttribute("title", "审核串联单");
@@ -424,7 +424,7 @@ public class StoryboardController {
         addSelectOptions(model, user);
 
         NewsStoryboard entity = storyboardManager.getStoryboard(id);
-        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
         model.addAttribute("storyboard", entity);
         model.addAttribute("storyboardTemplate", template);
         model.addAttribute("title", "修改串联单内容");
@@ -557,20 +557,23 @@ public class StoryboardController {
 
         ModelAndView mav = new ModelAndView("/news/storyboard/edit");
         NewsStoryboard entity = storyboardManager.getStoryboard(id);
-        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity.getTemplateId());
+        NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
         mav.addObject("storyboard", entity);
         mav.addObject("storyboardTemplate", template);
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         List<NewsColumn> userColumns = columnService.getUserColumns(user);
         mav.addObject("columns", userColumns);
-        mav.addObject("title", "编辑串联单");
         mav.addObject("alltopics", topicManager.getAllTopics());
         mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
 
         mav.addObject("topics", getTopicsList(entity));
         if (readonly) {
             mav.addObject("readonly", true);
+            mav.addObject("title", "查看串联单");
+        }
+        else {
+            mav.addObject("title", "编辑串联单");
         }
         return mav;
     }

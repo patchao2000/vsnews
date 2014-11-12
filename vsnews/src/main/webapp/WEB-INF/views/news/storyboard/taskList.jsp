@@ -74,8 +74,9 @@
                                                 <td>${detail.title }</td>
                                                 <td>
                                                     <%--<a href='${ctx }/diagram-viewer/index.html?processDefinitionId=${pi.processDefinitionId}&processInstanceId=${pi.id }' title="点击查看流程图">${task.name }</a>--%>
-                                                    <a class="trace" href='#' data-pid="${detail.processInstance.id }"
-                                                       data-pdid="${detail.processInstance.processDefinitionId}" title="点击查看流程图">${detail.task.name }</a>
+                                                    <%--<a class="trace" href='#' data-pid="${detail.processInstance.id }"--%>
+                                                    <%--data-pdid="${detail.processInstance.processDefinitionId}" title="点击查看流程图">${detail.task.name }</a>--%>
+                                                    ${detail.task.name }
                                                 </td>
                                                 <td>
                                                     <a class="handle btn btn-primary btn-xs" data-tkey='${detail.task.taskDefinitionKey }'

@@ -46,6 +46,10 @@ public class StoryboardManager {
         return storyboardTemplateDao.findOne(id);
     }
 
+    public NewsStoryboardTemplate getStoryboardTemplate(NewsStoryboard storyboard) {
+        return storyboardTemplateDao.findOne(storyboard.getTemplateId());
+    }
+
     @Transactional(readOnly = false)
     public void saveStoryboard(NewsStoryboard entity) {
         Date now = new Date();
@@ -107,7 +111,7 @@ public class StoryboardManager {
     @Transactional(readOnly = true)
     public Boolean isLockedByOther(NewsStoryboard entity, String userId) {
         String locker = entity.getLockerUserId();
-        if (locker != null && locker != userId) {
+        if (locker != null && !locker.equals(userId)) {
             return true;
         }
         return false;

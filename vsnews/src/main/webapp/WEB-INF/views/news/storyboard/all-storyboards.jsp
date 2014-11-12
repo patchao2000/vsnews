@@ -43,8 +43,6 @@
                                             <th>栏目</th>
                                             <th>播出日期</th>
                                             <th>标题</th>
-                                            <%--<th>开始时段</th>--%>
-                                            <%--<th>结束时段</th>--%>
                                             <th>当前节点</th>
                                             <th>操作</th>
                                         </tr>
@@ -59,9 +57,10 @@
                                                 <td>${detail.columnName }</td>
                                                 <td><fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.title }</td>
-                                                <%--<td>${detail.template.startTC }</td>--%>
-                                                <%--<td>${detail.template.endTC }</td>--%>
-                                                <td>${detail.task.name }</td>
+                                                <td><c:choose>
+                                                    <c:when test="${detail.storyboard.status == 2}">审核完成</c:when>
+                                                    <c:otherwise>${detail.task.name }</c:otherwise>
+                                                </c:choose></td>
                                                 <td>
                                                     <a class="view-storyboard btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                     <c:if test="${detail.storyboard.status == 0 &&
