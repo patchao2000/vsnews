@@ -38,7 +38,7 @@ public class ArticleWorkflowFinishProcessor implements ExecutionListener {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         NewsArticle article = articleManager.getArticle(new Long(processInstance.getBusinessKey()));
 
-        article.setStatus(1);
+        article.setStatus(NewsArticle.STATUS_END_AUDIT);
 
         logger.debug("ArticleWorkflowFinishProcessor: {}", article.getId());
 

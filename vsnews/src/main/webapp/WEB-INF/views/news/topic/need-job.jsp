@@ -52,7 +52,7 @@
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicDetail"--%>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
                                             <tr id="${detail.topic.id }">
                                                 <c:set var="task" value="${detail.topic.task }"/>
@@ -63,7 +63,12 @@
                                                 <td>${detail.topic.title }</td>
                                                 <td><c:if test="${detail.avFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if></td>
                                                 <td><c:if test="${detail.articleReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if></td>
-                                                <td>${task.name }</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${detail.topic.status == 2}">审核完成</c:when>
+                                                        <c:otherwise>${task.name }</c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>
                                                     <a class="view-topic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                     <a class="topic-files btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>素材文件</a>

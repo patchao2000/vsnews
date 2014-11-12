@@ -44,16 +44,13 @@
                                             <th>派遣人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
-                                            <%--<th>内容</th>--%>
-                                            <%--<th>设备</th>--%>
                                             <th>当前节点</th>
-                                            <%--<th>状态</th>--%>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicDetail"--%>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
                                             <tr id="${detail.topic.id }">
                                                 <c:set var="task" value="${detail.topic.task }"/>
@@ -62,10 +59,12 @@
                                                 <td>${detail.dispatcherName }</td>
                                                 <td><fmt:formatDate value="${detail.topic.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.topic.title }</td>
-                                                <%--<td>${topic.content }</td>--%>
-                                                <%--<td>${topic.devices }</td>--%>
-                                                <td>${task.name }</td>
-                                                <%--<td>${detail.topic.statusString }</td>--%>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${detail.topic.status == 2}">审核完成</c:when>
+                                                        <c:otherwise>${task.name }</c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>
                                                     <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                     <a class="topicfiles btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>素材文件</a>

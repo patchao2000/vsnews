@@ -46,48 +46,57 @@
                                             <th>派遣人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
-                                            <%--<th>内容</th>--%>
-                                            <%--<th>设备</th>--%>
                                             <th>当前节点</th>
-                                            <%--<th>任务创建时间</th>--%>
-                                            <%--<th>流程状态</th>--%>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
-                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicDetail"--%>
+                                        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
-                                            <c:set var="task" value="${detail.topic.task }"/>
+                                            <c:set var="task" value="${detail.task }"/>
                                             <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
-                                            <c:set var="pi" value="${detail.topic.processInstance }"/>
+                                            <c:set var="pi" value="${detail.processInstance }"/>
                                             <%--@elvariable id="pi" type="org.activiti.engine.runtime.ProcessInstance"--%>
 
-                                            <tr id="${detail.topic.id }" data-tid="${task.id }">
+                                            <c:choose>
+                                                <c:when test="${detail.isFileInfoTask == true}">
+                                                    <tr id="${detail.fileInfo.id }" data-tid="${task.id }">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <tr id="${detail.topic.id }" data-tid="${task.id }">
+                                                </c:otherwise>
+                                            </c:choose>
                                                 <td>${detail.userName }</td>
                                                 <td>${detail.dispatcherName }</td>
-                                                <td><fmt:formatDate value="${detail.topic.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                <td>${detail.topic.title }</td>
-                                                <%--<td>${topic.content }</td>--%>
-                                                <%--<td>${topic.devices }</td>--%>
                                                 <td>
-                                                    <%--<a href='${ctx }/diagram-viewer/index.html?processDefinitionId=${pi.processDefinitionId}&processInstanceId=${pi.id }' title="点击查看流程图">${task.name }</a>--%>
-                                                    <a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
-                                                <%--${task.name }--%>
+                                                    <c:choose>
+                                                    <c:when test="${detail.isFileInfoTask == true}">
+                                                        <fmt:formatDate value="${detail.fileInfo.applyTime}" pattern="yyyy-MM-dd HH:mm" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <fmt:formatDate value="${detail.topic.applyTime}" pattern="yyyy-MM-dd HH:mm" />
+                                                    </c:otherwise>
+                                                    </c:choose>
                                                 </td>
-                                                <%--<td><fmt:formatDate value="${task.createTime}" pattern="yyyy-MM-dd HH:mm" /></td>--%>
-                                                <%--<td>${pi.suspended ? "已挂起" : "正常" }；<b title='流程版本号'>V: ${topic.processDefinition.version }</b></td>--%>
                                                 <td>
-
-                                                    <%--<c:if test="${empty task.assignee }">--%>
-                                                        <%--<a class="btn btn-success btn-xs" href="${ctx }/news/topic/task/claim/${task.id}">--%>
-                                                            <%--<i class="icon-edit"></i>签收</a>--%>
-                                                    <%--</c:if>--%>
-                                                    <%--<c:if test="${not empty task.assignee }">--%>
-                                                        <%-- 此处用tkey记录当前节点的名称 --%>
-                                                        <a class="handle btn btn-primary btn-xs" data-tkey='${task.taskDefinitionKey }' data-tname='${task.name }'
-                                                           data-assignee="${task.assignee }" href="#"><i class="icon-edit"></i>办理</a>
-                                                    <%--</c:if>--%>
+                                                    <c:choose>
+                                                    <c:when test="${detail.isFileInfoTask == true}">
+                                                        ${detail.fileInfo.title}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        ${detail.topic.title}
+                                                    </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <%--<a class="trace" href='#' pid="${pi.id }" pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>--%>
+                                                    ${task.name }
+                                                </td>
+                                                <td>
+                                                    <%-- 此处用tkey记录当前节点的名称 --%>
+                                                    <a class="handle btn btn-primary btn-xs" data-tkey='${task.taskDefinitionKey }' data-tname='${task.name }'
+                                                       data-assignee="${task.assignee }" href="#"><i class="icon-edit"></i>办理</a>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -103,21 +112,170 @@
     </section>
 </div>
 
+<div class="modal fade group-dialog" id="auditModal" tabindex="-1" role="dialog" aria-labelledby="auditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="auditModalLabel">添加素材位置</h4>
+            </div>
+            <div class="modal-body">
+                <label for='audit_file_title'>素材名称：</label>
+                <input class='form-control' name="title" id="audit_file_title">
+                <label for='audit_file_path'>素材文件：</label>
+                <input class='form-control' name="path" id="audit_file_path">
+                <label for='audit_file_length'>素材长度：</label>
+                <input class='form-control' name="length" id="audit_file_length">
+                <%--<hr class='hr-normal'>--%>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <%--<button type="button" class="btn btn-primary" id="savefile"><i class='icon-save'></i> 保存</button>--%>
+                <button class='btn btn-primary' type='button' id="auditPass"><i class='icon-ok'></i> 同意</button>
+                <button class='btn btn-danger' type='button' id="auditReject"><i class='icon-remove'></i> 驳回</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade group-dialog" id="reapplyModal" tabindex="-1" role="dialog" aria-labelledby="reapplyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="reapplyModalLabel">添加素材位置</h4>
+            </div>
+            <div class="modal-body">
+                <label for='reapply_file_title'>素材名称：</label>
+                <input class='form-control' name="title" id="reapply_file_title">
+                <label for='reapply_file_path'>素材文件：</label>
+                <input class='form-control' name="path" id="reapply_file_path">
+                <label for='reapply_file_length'>素材长度：</label>
+                <input class='form-control' name="length" id="reapply_file_length">
+                <%--<hr class='hr-normal'>--%>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="reapply"><i class='icon-save'></i> 提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
-    function handle(tkey, topicId, taskId) {
-        if (tkey == 'modifyContent') {
-            location.href = ctx + '/news/topic/reapply/'+topicId+'/'+taskId;
+    var g_taskId = '';
+
+    $('#auditPass').click(function () {
+        var map = {};
+        map["leaderPass"] = true;
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/topic/complete/' + g_taskId,
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify(map),
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                } else {
+                    alert('操作失败!');
+                }
+                location.href = ctx + '/news/topic/list/task'
+            },
+            error: function () {
+                alert('操作失败!!');
+                location.href = ctx + '/news/topic/list/task'
+            }
+        });
+    });
+
+    $('#auditReject').click(function () {
+        var map = {};
+        map["leaderPass"] = false;
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/topic/complete/' + g_taskId,
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify(map),
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                } else {
+                    alert('操作失败!');
+                }
+                location.href = ctx + '/news/topic/list/task'
+            },
+            error: function () {
+                alert('操作失败!!');
+                location.href = ctx + '/news/topic/list/task'
+            }
+        });
+    });
+
+    $('#reapply').click(function () {
+        var map = {};
+        map["title"] = $("#reapply_file_title").val();
+        map["filePath"] = $("#reapply_file_path").val();
+        map["lengthTC"] = $("#reapply_file_length").val();
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/topic/complete/' + g_taskId,
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify(map),
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                } else {
+                    alert('操作失败!');
+                }
+                location.href = ctx + '/news/topic/list/task'
+            },
+            error: function () {
+                alert('操作失败!!');
+                location.href = ctx + '/news/topic/list/task'
+            }
+        });
+    });
+
+    function handle(tkey, entityId, taskId) {
+        if (tkey == 'fileInfoLeaderAudit') {
+            $.getJSON(ctx + '/news/topic/detail/fileinfo/' + entityId, function(data) {
+                $("#audit_file_title").val(data.title);
+                $("#audit_file_path").val(data.filePath);
+                $("#audit_file_length").val(data.lengthTC);
+
+                g_taskId = taskId;
+                $('#auditModal').modal('toggle');
+            });
+
+//            location.href = ctx + '/news/topic/audit-fileinfo/'+entityId+'/'+taskId;
+        }
+        else if (tkey == 'fileInfoModifyContent') {
+            $.getJSON(ctx + '/news/topic/detail/fileinfo/' + entityId, function(data) {
+                $("#reapply_file_title").val(data.title);
+                $("#reapply_file_path").val(data.filePath);
+                $("#reapply_file_length").val(data.lengthTC);
+
+                g_taskId = taskId;
+                $('#reapplyModal').modal('toggle');
+            });
+//            location.href = ctx + '/news/topic/reapply-fileinfo/'+entityId+'/'+taskId;
+        }
+        else if (tkey == 'modifyContent') {
+            location.href = ctx + '/news/topic/reapply/'+entityId+'/'+taskId;
         }
         else if (tkey == 'adjustDevices') {
-            location.href = ctx + '/news/topic/reapply-device/'+topicId+'/'+taskId;
+            location.href = ctx + '/news/topic/reapply-device/'+entityId+'/'+taskId;
         }
         else if (tkey == 'leaderAudit') {
-            location.href = ctx + '/news/topic/audit/'+topicId+'/'+taskId+'/'+tkey;
+            location.href = ctx + '/news/topic/audit/'+entityId+'/'+taskId+'/'+tkey;
         }
         else if (tkey == 'deviceAudit') {
-            location.href = ctx + '/news/topic/audit-device/'+topicId+'/'+taskId+'/'+tkey;
+            location.href = ctx + '/news/topic/audit-device/'+entityId+'/'+taskId+'/'+tkey;
         }
         else if (tkey == 'dispatching') {
             var map = {};
@@ -167,7 +325,7 @@
             // 当前节点的英文名称
             var tkey = $(this).attr('data-tkey');
             // 记录ID
-            var topicId = $(this).parents('tr').attr('id');
+            var entityId = $(this).parents('tr').attr('id');
             // 任务ID
             var taskId = $(this).parents('tr').attr('data-tid');
 
@@ -179,7 +337,7 @@
                     contentType: "application/json; charset=utf-8",
                     success: function (resp) {
                         if (resp == 'success') {
-                            handle(tkey, topicId, taskId);
+                            handle(tkey, entityId, taskId);
                         } else {
                             alert('任务签收失败!');
                         }
@@ -191,7 +349,7 @@
 
             }
             else {
-                handle(tkey, topicId, taskId);
+                handle(tkey, entityId, taskId);
             }
         });
     });

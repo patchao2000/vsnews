@@ -74,7 +74,7 @@
                                     </div>
                                     <label class='col-md-2 control-label' for='storyboard_airDate'>播出时间：</label>
                                     <div class='col-md-4'>
-                                        <div class='datetimepicker input-group'>
+                                        <div class='datepicker input-group' id="storyboard_airDate_picker">
                                             <form:input class='form-control' id='storyboard_airDate' path='airDate' type='text' readonly="${readonly}" />
                                             <span class='input-group-addon'>
                                                 <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
@@ -125,88 +125,10 @@
 <%@ include file="/common/alljs.jsp" %>
 
 <script type="text/javascript">
-    <c:if test="${auditMode == true}">
-    $("#auditPass").live("click",function(){
-        $("#submit-type").val("pass");
-    });
-
-    $("#auditReject").live("click",function(){
-        $("#submit-type").val("reject");
-    });
-    </c:if>
-
-    function setMultiSelectToMap(id, map_index, map) {
-        var array = [];
-        var i = 0;
-        $.each(
-                $(id + ' :selected'), function () {
-                    array[i++] = $(this).val();
-                }
-        );
-        map[map_index] = array;
-    }
-
     $(function () {
         <c:if test="${readonly == true}">
         $("#storyboard_templateId").select2("readonly", true);
         </c:if>
-
-        <%--<c:if test="${reapplyMode == true}">--%>
-        <%--$.getJSON(ctx + '/news/storyboard/detail-with-vars/${storyboard.id}/${taskId}', function(data) {--%>
-            <%--$("#leaderbackreason").val(data.variables.leaderbackreason);--%>
-            <%--if (data.variables.devicebackreason == undefined)--%>
-                <%--$("#devicebackblock").hide();--%>
-        <%--});--%>
-        <%--</c:if>--%>
-
-        $("#inputForm").submit(function (event) {
-            var map = {};
-
-            <%--//  audit mode--%>
-            <%--<c:if test="${auditMode == true}">--%>
-            <%--var opinion = $('#storyboard_auditOpinion').val();--%>
-            <%--if (opinion.length == 0) {--%>
-                <%--alert('请输入审核意见！');--%>
-                <%--event.preventDefault();--%>
-                <%--return;--%>
-            <%--}--%>
-            <%--var passed = false;--%>
-            <%--if ($("#submit-type").val() == "pass")--%>
-                <%--passed = true;--%>
-            <%--map["leaderPass"] = passed;--%>
-            <%--map["leaderbackreason"] = opinion;--%>
-            <%--</c:if>--%>
-
-            <%--//  reapply mode, all changes must send as variable map--%>
-            <%--<c:if test="${reapplyMode == true}">--%>
-            <%--map["airDate"] = $('#storyboard_airDate').val();--%>
-            <%--map["templateId"] = $('#storyboard_templateId' + ' :selected').val();--%>
-            <%--</c:if>--%>
-
-            <%--<c:if test="${auditMode == true || reapplyMode == true}">--%>
-            <%--//  sending complete req--%>
-            <%--$.ajax({--%>
-                <%--type: 'post',--%>
-                <%--async: true,--%>
-                <%--url: ctx + '/news/storyboard/complete/' + ${taskId},--%>
-                <%--contentType: "application/json; charset=utf-8",--%>
-                <%--data : JSON.stringify(map),--%>
-                <%--success: function (resp) {--%>
-                    <%--if (resp == 'success') {--%>
-                        <%--alert('任务完成');--%>
-                        <%--location.href = ctx + '/news/storyboard/list/task'--%>
-                    <%--} else {--%>
-                        <%--alert('操作失败!');--%>
-                    <%--}--%>
-                <%--},--%>
-                <%--error: function () {--%>
-                    <%--alert('操作失败!!');--%>
-                <%--}--%>
-            <%--});--%>
-            <%--event.preventDefault();--%>
-            <%--</c:if>--%>
-        });
-
     });
 
 </script>

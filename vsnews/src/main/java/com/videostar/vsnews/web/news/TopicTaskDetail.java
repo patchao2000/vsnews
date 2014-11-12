@@ -1,23 +1,30 @@
 package com.videostar.vsnews.web.news;
 
+import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 
 /**
- * TopicDetail
+ * TopicTaskDetail
  * 
  * Created by patchao2000 on 14-8-5.
  */
-public class TopicDetail implements java.io.Serializable {
+public class TopicTaskDetail implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private NewsTopic Topic;
     private String userName;
     private String dispatcherName;
-//    private String columnName;
-//    private String plainTitle;
     private Boolean avFileReady;
     private Boolean articleReady;
+
+    private NewsFileInfo fileInfo;
+    private Boolean isFileInfoTask;
+
+    private Task task;
+    private ProcessInstance processInstance;
 
     public NewsTopic getTopic() {
         return Topic;
@@ -27,21 +34,37 @@ public class TopicDetail implements java.io.Serializable {
         this.Topic = Topic;
     }
 
-//    public String getColumnName() {
-//        return columnName;
-//    }
-//
-//    public void setColumnName(String columnName) {
-//        this.columnName = columnName;
-//    }
+    public NewsFileInfo getFileInfo() {
+        return fileInfo;
+    }
 
-//    public String getPlainTitle() {
-//        return plainTitle;
-//    }
-//
-//    public void setPlainTitle(String plainTitle) {
-//        this.plainTitle = plainTitle;
-//    }
+    public void setFileInfo(NewsFileInfo fileInfo) {
+        this.fileInfo = fileInfo;
+    }
+
+    public Boolean getIsFileInfoTask() {
+        return isFileInfoTask;
+    }
+
+    public void setIsFileInfoTask(Boolean isFileInfoTask) {
+        this.isFileInfoTask = isFileInfoTask;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public ProcessInstance getProcessInstance() {
+        return processInstance;
+    }
+
+    public void setProcessInstance(ProcessInstance processInstance) {
+        this.processInstance = processInstance;
+    }
 
     public String getUserName() {
         return userName;

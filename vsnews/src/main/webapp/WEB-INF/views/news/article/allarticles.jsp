@@ -44,8 +44,7 @@
                                             <th>申请时间</th>
                                             <th>标题</th>
                                             <th>当前节点</th>
-                                            <%--<th>内容</th>--%>
-                                            <th>状态</th>
+                                            <%--<th>状态</th>--%>
                                             <th>操作</th>
                                         </tr>
                                         </thead>
@@ -63,15 +62,18 @@
                                                 <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.article.mainTitle }</td>
                                                 <td>
+                                                    <%--<c:choose>--%>
+                                                        <%--<c:when test="${task != null}">--%>
+                                                        <%--<a class="trace" href='#' data-pid="${pi.id }" data-pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>--%>
+                                                        <%--</c:when>--%>
+                                                        <%--<c:otherwise>无/已完成</c:otherwise>--%>
+                                                    <%--</c:choose>--%>
                                                     <c:choose>
-                                                        <c:when test="${task != null}">
-                                                        <a class="trace" href='#' data-pid="${pi.id }" data-pdid="${pi.processDefinitionId}" title="点击查看流程图">${task.name }</a>
-                                                        </c:when>
-                                                        <c:otherwise>无/已完成</c:otherwise>
+                                                        <c:when test="${detail.article.status == 2}">审核完成</c:when>
+                                                        <c:otherwise>${task.name }</c:otherwise>
                                                     </c:choose>
                                                 </td>
-                                                <%--<td>${detail.plainContent }</td>--%>
-                                                <td>${detail.article.statusString }</td>
+                                                <%--<td>${detail.article.statusString }</td>--%>
                                                 <td>
                                                     <a class="viewArticle btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                 </td>

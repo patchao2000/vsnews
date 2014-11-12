@@ -1,5 +1,7 @@
 package com.videostar.vsnews.service.news;
 
+import com.videostar.vsnews.entity.news.NewsFileInfo;
+import com.videostar.vsnews.entity.news.NewsStoryboardTemplate;
 import org.activiti.engine.*;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -48,7 +50,7 @@ public class TopicWorkflowService {
      */
     public ProcessInstance startTopicNewWorkflow(NewsTopic entity, Map<String, Object> variables) {
         topicManager.saveTopic(entity);
-        logger.debug("save entity: {}", entity);
+//        logger.debug("save entity: {}", entity);
         String businessKey = entity.getId().toString();
 
         ProcessInstance processInstance = null;
@@ -66,17 +68,37 @@ public class TopicWorkflowService {
         return processInstance;
     }
 
+    public ProcessInstance startFileInfoWorkflow(NewsFileInfo entity, Map<String, Object> variables) {
+        topicManager.saveFileInfo(entity);
+//        logger.debug("save entity: {}", entity);
+        String businessKey = entity.getId().toString();
+
+        ProcessInstance processInstance = null;
+        try {
+            // 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
+            identityService.setAuthenticatedUserId(entity.getUserId());
+
+            processInstance = runtimeService.startProcessInstanceByKey(WorkflowNames.fileInfo, businessKey, variables);
+            String processInstanceId = processInstance.getId();
+            entity.setProcessInstanceId(processInstanceId);
+            logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", WorkflowNames.fileInfo, businessKey, processInstanceId, variables);
+        } finally {
+            identityService.setAuthenticatedUserId(null);
+        }
+        return processInstance;
+    }
+
     @Transactional(readOnly = true)
-    private List<Task> getTodoTasks(String userId) {
+    private List<Task> getTodoTasks(String userId, String workflowName) {
         List<Task> tasks = new ArrayList<Task>();
 
         // 根据当前人的ID查询
-        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicNew).taskAssignee(userId).active().orderByTaskId().desc()
+        TaskQuery todoQuery = taskService.createTaskQuery().processDefinitionKey(workflowName).taskAssignee(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
         List<Task> todoList = todoQuery.list();
 
         // 根据当前人未签收的任务
-        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(WorkflowNames.topicNew).taskCandidateUser(userId).active().orderByTaskId().desc()
+        TaskQuery claimQuery = taskService.createTaskQuery().processDefinitionKey(workflowName).taskCandidateUser(userId).active().orderByTaskId().desc()
                 .orderByTaskCreateTime().desc();
         List<Task> unsignedTasks = claimQuery.list();
 
@@ -88,11 +110,11 @@ public class TopicWorkflowService {
     }
 
     @Transactional(readOnly = true)
-    public List<NewsTopic> findTodoTasks(String userId) {
+    public List<NewsTopic> findTopicTodoTasks(String userId) {
         List<NewsTopic> results = new ArrayList<NewsTopic>();
 
         // 根据流程的业务ID查询实体并关联
-        for (Task task : getTodoTasks(userId)) {
+        for (Task task : getTodoTasks(userId, WorkflowNames.topicNew)) {
             String processInstanceId = task.getProcessInstanceId();
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
             String businessKey = processInstance.getBusinessKey();
@@ -104,6 +126,28 @@ public class TopicWorkflowService {
             topic.setProcessInstance(processInstance);
             topic.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
             results.add(topic);
+        }
+
+        return results;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsFileInfo> findFileInfoTodoTasks(String userId) {
+        List<NewsFileInfo> results = new ArrayList<NewsFileInfo>();
+
+        // 根据流程的业务ID查询实体并关联
+        for (Task task : getTodoTasks(userId, WorkflowNames.fileInfo)) {
+            String processInstanceId = task.getProcessInstanceId();
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).active().singleResult();
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsFileInfo info = topicManager.getFileInfo(new Long(businessKey));
+            info.setTask(task);
+            info.setProcessInstance(processInstance);
+            info.setProcessDefinition(getProcessDefinition(processInstance.getProcessDefinitionId()));
+            results.add(info);
         }
 
         return results;
@@ -132,10 +176,10 @@ public class TopicWorkflowService {
 
     @Transactional(readOnly = true)
     public int getTodoTasksCount(String userId) {
-        return getTodoTasks(userId).size();
+        return getTodoTasks(userId, WorkflowNames.topicNew).size() +
+                getTodoTasks(userId, WorkflowNames.fileInfo).size();
     }
 
-//    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<NewsTopic> getAllTopics() {
         ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();

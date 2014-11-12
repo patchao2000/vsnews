@@ -19,6 +19,9 @@
 <body class='${defbodyclass}'>
 <%@ include file="/common/header.jsp" %>
 
+<%--@elvariable id="videoCount" type="java.lang.Integer"--%>
+<%--@elvariable id="audioCount" type="java.lang.Integer"--%>
+<%--@elvariable id="isAdmin" type="java.lang.Boolean"--%>
 <div id='wrapper'>
     <%@ include file="/common/nav.jsp" %>
     <section id='content'>
@@ -40,8 +43,12 @@
                             <form class="form form-horizontal" style="margin-bottom: 0;" method="post" accept-charset="UTF-8">
                                 <div class='form-group'>
                                     <div class='col-md-6'>
+                                        <c:if test="${videoCount < 1}">
                                         <a id="add-video" class="btn btn-success" href="#"><i class="icon-add icon-white"></i> 添加视频素材</a>
+                                        </c:if>
+                                        <c:if test="${audioCount < 1}">
                                         <a id="add-audio" class="btn btn-success" href="#"><i class="icon-add icon-white"></i> 添加音频素材</a>
+                                        </c:if>
                                     </div>
                                 </div>
                                 <div class='responsive-table'>
@@ -50,7 +57,7 @@
                                             <thead>
                                             <tr>
                                                 <th>添加人</th>
-                                                <th>申请时间</th>
+                                                <th>添加时间</th>
                                                 <th>素材名称</th>
                                                 <th>素材类别</th>
                                                 <th>状态</th>
@@ -77,8 +84,10 @@
                                                     <td>${detail.newsFileInfo.lengthTC }</td>
                                                     <%--<td>${detail.newsFileInfo.filePath }</td>--%>
                                                     <td>
+                                                        <c:if test="${detail.newsFileInfo.statusString != '剪辑结束' || isAdmin == true}">
                                                         <a class="edit-file btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
                                                         <a class="remove-file btn btn-primary btn-xs" href="#"><i class="icon-remove"></i>删除</a>
+                                                        </c:if>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -243,30 +252,57 @@
         }
 
         if (add_mode == true) {
-            $.post(ctx + '/news/topic/add-file/' + ${topic.id} +'/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
+            if (file_status == 1) {
+                $.post(ctx + '/news/topic/start-fileinfo-args/' + ${topic.id} +'/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
+                        function (resp) {
+                            if (resp == 'success') {
+                                alert('任务完成');
+                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                            } else {
+                                alert('操作失败!');
+                            }
+                        });
+            }
+            else {
+                $.post(ctx + '/news/topic/add-file/' + ${topic.id} +'/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
                     function (resp) {
                         if (resp == 'success') {
-                            alert('任务完成');
-                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                                alert('任务完成');
+                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
                         } else {
                             alert('操作失败!');
                         }
                     });
+            }
         }
         else {
-            $.post(ctx + '/news/topic/edit-file/' + ${topic.id} +'/' + fileId + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
-                    function (resp) {
-                        if (resp == 'success') {
-                            alert('任务完成');
-                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                        } else {
-                            alert('操作失败!');
-                        }
-                    });
+            if (file_status == 1) {
+                $.post(ctx + '/news/topic/start-fileinfo-id/' + fileId,
+                        function (resp) {
+                            if (resp == 'success') {
+                                alert('任务完成');
+                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                            } else {
+                                alert('操作失败!');
+                            }
+                        });
+            }
+            else {
+                $.post(ctx + '/news/topic/edit-file/' + ${topic.id} +'/' + fileId + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
+                        function (resp) {
+                            if (resp == 'success') {
+                                alert('任务完成');
+                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                            } else {
+                                alert('操作失败!');
+                            }
+                        });
+            }
         }
     });
 
     $(document).ready(function () {
+        $("#file_length").mask("99:99:99:99");
     });
 </script>
 </body>

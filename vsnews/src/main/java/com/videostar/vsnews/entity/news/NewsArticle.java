@@ -22,9 +22,9 @@ import javax.validation.constraints.Size;
 public class NewsArticle extends NewsProcessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    //   状态: 0 -> 撰写中, 1 -> 撰写完毕
-    public static final int STATUS_WRITING = 0;
-    public static final int STATUS_WRITTEN = 1;
+    public static final int STATUS_EDITING = 0;
+    public static final int STATUS_BEGIN_AUDIT = 1;
+    public static final int STATUS_END_AUDIT = 2;
 
     private int status;
 
@@ -79,6 +79,10 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
 
     //    选题UUID
     private String topicUuid;
+
+    public NewsArticle() {
+        this.status = STATUS_EDITING;
+    }
 
     @Column
     public Long getColumnId() {
@@ -258,16 +262,16 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
         this.adoptedByCCTV = adoptedByCCTV;
     }
 
-    @Transient
-    public final String getStatusString() {
-        switch(status) {
-            case STATUS_WRITING:
-                return "撰写中";
-            case STATUS_WRITTEN:
-                return "撰写完毕";
-        }
-        return "ERROR";
-    }
+//    @Transient
+//    public final String getStatusString() {
+//        switch(status) {
+//            case STATUS_WRITING:
+//                return "撰写中";
+//            case STATUS_WRITTEN:
+//                return "撰写完毕";
+//        }
+//        return "ERROR";
+//    }
 
     @Column
     public String getVideo() {

@@ -48,7 +48,7 @@ public class StoryboardAfterAuthorModifyProcessor implements TaskListener {
 
 //        entity.setTopics((List<NewsTopicInfo>) delegateTask.getVariable("topics"));
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             entity.setAirDate(format.parse((String) delegateTask.getVariable("airDate")));
         } catch (ParseException e) {

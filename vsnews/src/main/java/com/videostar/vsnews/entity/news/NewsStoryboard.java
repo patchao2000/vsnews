@@ -24,7 +24,7 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
     private Long templateId;
 
     //    播出日期
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date airDate;
 
     //    锁定用户ID

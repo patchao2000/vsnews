@@ -22,7 +22,13 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
 
     private String uuid;
 
-    private List<NewsFileInfo> files;
+//    private List<NewsFileInfo> files;
+
+    private int status;
+
+    public static final int STATUS_EDITING = 0;
+    public static final int STATUS_BEGIN_AUDIT = 1;
+    public static final int STATUS_END_AUDIT = 2;
 
     //    标题
     @NotBlank(message = "标题不能为空")
@@ -55,7 +61,17 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     private Date endTime;
 
     public NewsTopic() {
+        this.status = STATUS_EDITING;
         uuid = UUID.randomUUID().toString();
+    }
+
+    @Column
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @Column(unique = true, nullable = false)
@@ -67,15 +83,15 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "TOPIC_ID")
-    public List<NewsFileInfo> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<NewsFileInfo> files) {
-        this.files = files;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "TOPIC_ID")
+//    public List<NewsFileInfo> getFiles() {
+//        return files;
+//    }
+//
+//    public void setFiles(List<NewsFileInfo> files) {
+//        this.files = files;
+//    }
 
     @Column(nullable = false)
     public String getTitle() {

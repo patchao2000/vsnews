@@ -212,6 +212,7 @@ public class ArticleController {
             }
 
             article.setUserId(user.getId());
+            article.setStatus(NewsArticle.STATUS_BEGIN_AUDIT);
 
             Map<String, Object> variables = new HashMap<String, Object>();
             logger.debug("startWorkflow: title {} content {} column {}", article.getMainTitle(), article.getContent(), article.getColumnId());

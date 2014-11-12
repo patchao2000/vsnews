@@ -12,8 +12,10 @@ import java.util.Date;
  * Created by patchao2000 on 14-9-19.
  */
 @Entity
-@Table(name = "NEWS_TOPIC_FILES")
-public class NewsFileInfo extends IdEntity implements Serializable {
+@Table(name = "NEWS_FILE_INFO")
+public class NewsFileInfo extends NewsProcessEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public static final int TYPE_VIDEO_MATERIAL = 0;
     public static final int TYPE_AUDIO_MATERIAL = 1;
     public static final int TYPE_DOCUMENT = 2;
@@ -23,6 +25,7 @@ public class NewsFileInfo extends IdEntity implements Serializable {
 
     public static final int STATUS_BEGIN_EDIT = 0;
     public static final int STATUS_END_EDIT = 1;
+    public static final int STATUS_END_AUDIT = 2;
 
     int status;
 
@@ -32,9 +35,13 @@ public class NewsFileInfo extends IdEntity implements Serializable {
 
     String filePath;
 
-    String userId;
+//    String userId;
 
     String lengthTC;
+
+    //    选题UUID
+    private String topicUuid;
+    private String oldTopicUuid;
 
     @Transient
     public final String getStatusString() {
@@ -43,8 +50,28 @@ public class NewsFileInfo extends IdEntity implements Serializable {
                 return "剪辑开始";
             case STATUS_END_EDIT:
                 return "剪辑结束";
+            case STATUS_END_AUDIT:
+                return "审核完成";
         }
         return "ERROR";
+    }
+
+    @Column
+    public String getTopicUuid() {
+        return topicUuid;
+    }
+
+    public void setTopicUuid(String topicUuid) {
+        this.topicUuid = topicUuid;
+    }
+
+    @Column
+    public String getOldTopicUuid() {
+        return oldTopicUuid;
+    }
+
+    public void setOldTopicUuid(String oldTopicUuid) {
+        this.oldTopicUuid = oldTopicUuid;
     }
 
     @Column
@@ -84,14 +111,14 @@ public class NewsFileInfo extends IdEntity implements Serializable {
         this.filePath = filePath;
     }
 
-    @Column
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+//    @Column
+//    public String getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
 
     @Column
     public int getType() {

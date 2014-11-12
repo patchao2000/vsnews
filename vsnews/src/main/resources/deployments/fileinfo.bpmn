@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="fileinfo" name="素材文件流程" isExecutable="true">
+    <extensionElements>
+      <activiti:executionListener event="end" delegateExpression="${fileInfoWorkflowFinishProcessor}"></activiti:executionListener>
+    </extensionElements>
+    <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <userTask id="fileInfoLeaderAudit" name="素材内容审核" activiti:candidateGroups="topicAudit">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${fileInfoAfterAuditProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="fileInfoModifyContent" name="调整素材内容" activiti:assignee="${applyUserId}">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${fileInfoAfterAuthorModifyProcessor}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow4" name="不同意" sourceRef="fileInfoLeaderAudit" targetRef="fileInfoModifyContent">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!leaderPass}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="fileInfoModifyContent" targetRef="fileInfoLeaderAudit"></sequenceFlow>
+    <sequenceFlow id="flow7" sourceRef="startevent1" targetRef="fileInfoLeaderAudit"></sequenceFlow>
+    <sequenceFlow id="flow8" name="同意" sourceRef="fileInfoLeaderAudit" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${leaderPass}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_fileinfo">
+    <bpmndi:BPMNPlane bpmnElement="fileinfo" id="BPMNPlane_fileinfo">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="150.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="785.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="fileInfoLeaderAudit" id="BPMNShape_leaderAudit">
+        <omgdc:Bounds height="55.0" width="105.0" x="350.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="fileInfoModifyContent" id="BPMNShape_modifyContent">
+        <omgdc:Bounds height="55.0" width="105.0" x="550.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="455.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="550.0" y="137.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="11.0" width="33.0" x="465.0" y="137.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="602.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="602.0" y="76.0"></omgdi:waypoint>
+        <omgdi:waypoint x="402.0" y="76.0"></omgdi:waypoint>
+        <omgdi:waypoint x="402.0" y="110.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="185.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="350.0" y="137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="402.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="402.0" y="199.0"></omgdi:waypoint>
+        <omgdi:waypoint x="802.0" y="199.0"></omgdi:waypoint>
+        <omgdi:waypoint x="802.0" y="155.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="11.0" width="100.0" x="412.0" y="165.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,6 +1,6 @@
 package com.videostar.vsnews.service.news;
 
-import com.videostar.vsnews.entity.news.NewsTopic;
+import com.videostar.vsnews.entity.news.NewsFileInfo;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * TopicWorkflowFinishProcessor
+ * FileInfoWorkflowFinishProcessor
  *
- * Created by patchao2000 on 14-6-25.
+ * Created by patchao2000 on 14/11/12.
  */
 @Component
 @Transactional
-public class TopicWorkflowFinishProcessor implements ExecutionListener {
+public class FileInfoWorkflowFinishProcessor implements ExecutionListener {
     private static final long serialVersionUID = 1L;
 
-    private static Logger logger = LoggerFactory.getLogger(TopicWorkflowFinishProcessor.class);
+    private static Logger logger = LoggerFactory.getLogger(FileInfoWorkflowFinishProcessor.class);
 
     @Autowired
     TopicManager topicManager;
@@ -36,12 +36,12 @@ public class TopicWorkflowFinishProcessor implements ExecutionListener {
         String processInstanceId = execution.getProcessInstanceId();
 
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        NewsTopic topic = topicManager.getTopic(new Long(processInstance.getBusinessKey()));
+        NewsFileInfo entity = topicManager.getFileInfo(new Long(processInstance.getBusinessKey()));
 
-        topic.setStatus(NewsTopic.STATUS_END_AUDIT);
+        entity.setStatus(NewsFileInfo.STATUS_END_AUDIT);
 
-        logger.debug("TopicWorkflowFinishProcessor: {}", topic.getId());
+        logger.debug("FileInfoWorkflowFinishProcessor: {}", entity.getId());
 
-        topicManager.saveTopic(topic);
+        topicManager.saveFileInfo(entity);
     }
 }

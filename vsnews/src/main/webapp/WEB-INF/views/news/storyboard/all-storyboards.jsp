@@ -55,7 +55,7 @@
                                             <tr id="${detail.storyboard.id }">
                                                 <td>${detail.userName }</td>
                                                 <td>${detail.columnName }</td>
-                                                <td><fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                                <td><fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd" /></td>
                                                 <td>${detail.title }</td>
                                                 <td><c:choose>
                                                     <c:when test="${detail.storyboard.status == 2}">审核完成</c:when>

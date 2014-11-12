@@ -288,9 +288,9 @@ public class StoryboardController {
     public String todoCount(HttpSession session) {
         try {
             String userId = UserUtil.getUserFromSession(session).getId();
-            Integer count = workflowService.getTodoTasksCount(userId);
+            int count = workflowService.getTodoTasksCount(userId);
             logger.debug("todo task count: {}", count);
-            return count.toString();
+            return String.valueOf(count);
         } catch (Exception e) {
             logger.error("error on get todo task count!");
             return "error";
@@ -505,7 +505,7 @@ public class StoryboardController {
     public String saveStoryboard(@PathVariable("id") Long id, @RequestBody Map<String, Object> map) {
         try {
             NewsStoryboard entity = storyboardManager.getStoryboard(id);
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 entity.setAirDate(format.parse((String) map.get("airDate")));
             } catch (ParseException e) {
@@ -530,7 +530,7 @@ public class StoryboardController {
             NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
             detail.setTopic(topic);
 
-            detail.setVideoStatus(topicManager.getVideoFileStatus(topic));
+            detail.setVideoStatus(topicManager.getVideoFileStatusString(topic));
             detail.setVideoFilePath(topicManager.getVideoFilePath(topic));
             detail.setAudioStatus(topicManager.getAudioFileStatus(topic));
             NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
@@ -566,6 +566,32 @@ public class StoryboardController {
         mav.addObject("columns", userColumns);
         mav.addObject("alltopics", topicManager.getAllTopics());
         mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
+
+        //  check topic file's status
+        Boolean canSubmitAudit = true;
+        for (NewsTopic topic : topicManager.getAllTopics()) {
+            if (!topicManager.haveVideoFiles(topic)) {
+                canSubmitAudit = false;
+                break;
+            }
+            if (topicManager.getVideoFileStatus(topic) != NewsFileInfo.STATUS_END_EDIT) {
+                canSubmitAudit = false;
+                break;
+            }
+            NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
+            if (article != null) {
+                articleWorkflowService.fillRunningTask(article);
+                if (article.getTask() != null) {
+                    canSubmitAudit = false;
+                    break;
+                }
+            }
+            else {
+                canSubmitAudit = false;
+                break;
+            }
+        }
+        mav.addObject("canSubmitAudit", canSubmitAudit);
 
         mav.addObject("topics", getTopicsList(entity));
         if (readonly) {

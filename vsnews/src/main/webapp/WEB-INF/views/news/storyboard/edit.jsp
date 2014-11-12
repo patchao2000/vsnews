@@ -18,6 +18,7 @@
 <%--@elvariable id="auditMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="taskId" type="java.lang.String"--%>
+<%--@elvariable id="canSubmitAudit" type="java.lang.Boolean"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -169,7 +170,7 @@
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='storyboard_airDate'>播出时间：</label>
                                         <div class='col-md-10'>
-                                            <div class='datetimepicker input-group'>
+                                            <div class='datepicker input-group'>
                                                 <form:input class='form-control' id='storyboard_airDate' path='airDate' type='text' readonly="${readonly}" />
                                                 <span class='input-group-addon'>
                                                 <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
@@ -207,7 +208,7 @@
                                         <c:if test="${storyboard.lockerUserId == null}">
                                             <div class='col-md-4'>
                                                 <a id="lock" class="btn btn-success" title='锁定' href="#"><i class="icon-edit icon-white"></i> 进入编辑模式</a>
-                                                <c:if test="${reapplyMode != true}">
+                                                <c:if test="${reapplyMode != true && canSubmitAudit == true}">
                                                     <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
                                                 </c:if>
                                             </div>
@@ -225,7 +226,7 @@
                                             </div>
                                             <a id="add_topic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
                                             <a id="unlock" class="btn btn-success" title='解锁' href="#"><i class="icon-edit icon-white"></i> 退出编辑模式</a>
-                                            <c:if test="${reapplyMode != true}">
+                                            <c:if test="${reapplyMode != true && canSubmitAudit == true}">
                                                 <a id="audit" class="btn btn-primary" href="#"><i class="icon-check icon-white"></i> 提交审核</a>
                                             </c:if>
                                         </c:if>

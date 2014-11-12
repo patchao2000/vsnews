@@ -233,6 +233,9 @@
     }
 
     $(function () {
+        $("#storyboard_startTC").mask("99:99:99");
+        $("#storyboard_endTC").mask("99:99:99");
+
         <c:if test="${readonly == true}">
         $("#storyboard_columnId").select2("readonly", true);
         $("#storyboard_editors").select2("readonly", true);

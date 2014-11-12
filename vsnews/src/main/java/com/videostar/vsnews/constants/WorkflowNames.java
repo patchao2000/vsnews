@@ -13,4 +13,5 @@ public class WorkflowNames {
     public static final String article123 = "article123";                       //  三步审批文稿流程
     public static final String storyboardTemplate = "storyboard-template";      //  创建串联单模板流程
     public static final String storyboardList= "storyboard-list";               //  创建串联单流程
+    public static final String fileInfo = "fileinfo";                           //  素材文件流程
 }

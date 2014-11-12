@@ -1,5 +1,6 @@
 package com.videostar.vsnews.service.news;
 
+import com.videostar.vsnews.dao.FileInfoDao;
 import com.videostar.vsnews.dao.TopicDao;
 import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
@@ -24,8 +25,14 @@ public class TopicManager {
 
     private TopicDao topicDao;
 
+    private FileInfoDao fileInfoDao;
+
     public NewsTopic getTopic(Long id) {
         return topicDao.findOne(id);
+    }
+
+    public NewsFileInfo getFileInfo(Long id) {
+        return fileInfoDao.findOne(id);
     }
 
     public NewsTopic getTopic(String uuid) {
@@ -43,42 +50,66 @@ public class TopicManager {
     }
 
     @Transactional(readOnly = false)
+    public void saveFileInfo(NewsFileInfo entity) {
+        Date now = new Date();
+        if (entity.getId() == null)
+            entity.setApplyTime(now);
+        entity.setModifyTime(now);
+
+        fileInfoDao.save(entity);
+    }
+
+    @Transactional(readOnly = false)
     public void addFileToTopic(NewsTopic entity, NewsFileInfo fileInfo) {
-        entity.getFiles().add(fileInfo);
-        topicDao.save(entity);
+//        entity.getFiles().add(fileInfo);
+//        topicDao.save(entity);
+        fileInfo.setTopicUuid(entity.getUuid());
+        saveFileInfo(fileInfo);
     }
 
     @Transactional(readOnly = false)
     public void removeFileFromTopic(NewsTopic entity, Long fileInfoId) {
-        List<NewsFileInfo> list = entity.getFiles();
-        for (NewsFileInfo info : list) {
-            if (info.getId().equals(fileInfoId)) {
-                list.remove(info);
-                break;
-            }
-        }
-        topicDao.save(entity);
+//        List<NewsFileInfo> list = entity.getFiles();
+//        for (NewsFileInfo info : list) {
+//            if (info.getId().equals(fileInfoId)) {
+//                list.remove(info);
+//                break;
+//            }
+//        }
+//        topicDao.save(entity);
+        NewsFileInfo info = fileInfoDao.findOne(fileInfoId);
+        info.setOldTopicUuid(info.getTopicUuid());
+        info.setTopicUuid(null);
+        saveFileInfo(info);
     }
 
     @Transactional(readOnly = false)
     public void editTopicFile(NewsTopic entity, Long fileInfoId,
                               String title, String filePath, int status, String lengthTC) {
-        List<NewsFileInfo> list = entity.getFiles();
+//        List<NewsFileInfo> list = entity.getFiles();
+        List<NewsFileInfo> list = fileInfoDao.findByTopicUuid(entity.getUuid());
         for (NewsFileInfo info : list) {
             if (info.getId().equals(fileInfoId)) {
                 info.setTitle(title);
                 info.setFilePath(filePath);
                 info.setStatus(status);
                 info.setLengthTC(lengthTC);
+                saveFileInfo(info);
                 break;
             }
         }
-        topicDao.save(entity);
+//        topicDao.save(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsFileInfo> getTopicFiles(NewsTopic topic) {
+        return fileInfoDao.findByTopicUuid(topic.getUuid());
     }
 
     @Transactional(readOnly = true)
     public Boolean haveVideoFiles(NewsTopic entity) {
-        for (NewsFileInfo info : entity.getFiles()) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
                 return true;
         }
@@ -87,8 +118,9 @@ public class TopicManager {
     }
 
     @Transactional(readOnly = true)
-    public String getVideoFileStatus(NewsTopic entity) {
-        for (NewsFileInfo info : entity.getFiles()) {
+    public String getVideoFileStatusString(NewsTopic entity) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
                 return info.getStatusString();
         }
@@ -97,8 +129,20 @@ public class TopicManager {
     }
 
     @Transactional(readOnly = true)
+    public int getVideoFileStatus(NewsTopic entity) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
+            if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
+                return info.getStatus();
+        }
+
+        return -1;
+    }
+
+    @Transactional(readOnly = true)
     public String getVideoFilePath(NewsTopic entity) {
-        for (NewsFileInfo info : entity.getFiles()) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL &&
                 info.getStatus() == NewsFileInfo.STATUS_END_EDIT)
                 return info.getFilePath();
@@ -109,7 +153,8 @@ public class TopicManager {
 
     @Transactional(readOnly = true)
     public TimeCode getVideoFileLength(NewsTopic entity) {
-        for (NewsFileInfo info : entity.getFiles()) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
                 return new TimeCode(info.getLengthTC());
         }
@@ -119,7 +164,8 @@ public class TopicManager {
 
     @Transactional(readOnly = true)
     public Boolean haveAudioFiles(NewsTopic entity) {
-        for (NewsFileInfo info : entity.getFiles()) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_AUDIO_MATERIAL)
                 return true;
         }
@@ -129,7 +175,8 @@ public class TopicManager {
 
     @Transactional(readOnly = true)
     public String getAudioFileStatus(NewsTopic entity) {
-        for (NewsFileInfo info : entity.getFiles()) {
+//        for (NewsFileInfo info : entity.getFiles()) {
+        for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_AUDIO_MATERIAL)
                 return info.getStatusString();
         }
@@ -154,5 +201,10 @@ public class TopicManager {
     @Autowired
     public void setTopicDao(TopicDao dao) {
         this.topicDao = dao;
+    }
+
+    @Autowired
+    public void setFileInfoDao(FileInfoDao dao) {
+        this.fileInfoDao = dao;
     }
 }

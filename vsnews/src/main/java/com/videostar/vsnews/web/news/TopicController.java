@@ -1,8 +1,6 @@
 package com.videostar.vsnews.web.news;
 
-import com.videostar.vsnews.entity.news.NewsArticle;
-import com.videostar.vsnews.entity.news.NewsFileInfo;
-import com.videostar.vsnews.entity.news.NewsTopic;
+import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ArticleManager;
 import com.videostar.vsnews.service.news.StoryboardManager;
@@ -134,6 +132,7 @@ public class TopicController {
             }
 
             topic.setUserId(user.getId());
+            topic.setStatus(NewsTopic.STATUS_BEGIN_AUDIT);
 
             //  check user is in leader(topicAudit) group
             Boolean isLeader = userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT);
@@ -162,20 +161,95 @@ public class TopicController {
         return "redirect:/news/topic/apply";
     }
 
+    private String startFileInfoWorkflow(NewsFileInfo entity, RedirectAttributes redirectAttributes, HttpSession session) {
+        try {
+            User user = UserUtil.getUserFromSession(session);
+            if (user == null)
+                return UserUtil.redirectTimeoutString;
+
+            entity.setUserId(user.getId());
+
+            Map<String, Object> variables = new HashMap<String, Object>();
+
+            logger.debug("start fileinfo Workflow: {}", entity.getId());
+
+            ProcessInstance processInstance = workflowService.startFileInfoWorkflow(entity, variables);
+            redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+            return "success";
+        } catch (ActivitiException e) {
+            if (e.getMessage().contains("no processes deployed with key")) {
+                logger.warn("没有部署流程!", e);
+            } else {
+                logger.error("启动串联单流程失败：", e);
+                redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+            }
+        } catch (Exception e) {
+            logger.error("启动串联单流程失败：", e);
+            redirectAttributes.addFlashAttribute("error", "系统内部错误！");
+        }
+
+        return "error";
+    }
+
+    @RequestMapping(value = "start-fileinfo-id/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String startFileInfoWorkflowFromId(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, HttpSession session) {
+
+        NewsFileInfo entity = topicManager.getFileInfo(id);
+        return startFileInfoWorkflow(entity, redirectAttributes, session);
+    }
+
+    @RequestMapping(value = "start-fileinfo-args/{id}/{type}/{title}/{status}/{filepath}/{length}")
+    @ResponseBody
+    public String startFileInfoWorkflowFromArgs(@PathVariable("id") Long id, @PathVariable("type") int type,
+            @PathVariable("title") String title, @PathVariable("status") int status,
+            @PathVariable("filepath") String filepath, @PathVariable("length") String length,
+            RedirectAttributes redirectAttributes, HttpSession session) {
+
+        NewsTopic topic = topicManager.getTopic(id);
+        NewsFileInfo info = new NewsFileInfo();
+        info.setFilePath(filepath);
+        info.setType(type);
+        info.setTitle(title);
+        info.setStatus(status);
+//        String userId = UserUtil.getUserFromSession(session).getId();
+//        info.setUserId(userId);
+        info.setAddedTime(new Date());
+        info.setLengthTC(length);
+        topicManager.addFileToTopic(topic, info);
+
+        return startFileInfoWorkflow(info, redirectAttributes, session);
+    }
+
     @RequestMapping(value = "list/task")
     public ModelAndView taskList(HttpSession session) {
         ModelAndView mav = new ModelAndView("/news/topic/taskList");
         String userId = UserUtil.getUserFromSession(session).getId();
 
-        List<TopicDetail> list = new ArrayList<TopicDetail>();
-        for (NewsTopic topic : workflowService.findTodoTasks(userId)) {
-            TopicDetail detail = new TopicDetail();
+        List<TopicTaskDetail> list = new ArrayList<TopicTaskDetail>();
+
+        for (NewsTopic topic : workflowService.findTopicTodoTasks(userId)) {
+            TopicTaskDetail detail = new TopicTaskDetail();
+            detail.setIsFileInfoTask(false);
             detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
             detail.setTopic(topic);
             String dispatcher = topic.getDispatcher();
             if (dispatcher != null) {
                 detail.setDispatcherName(userManager.getUserById(dispatcher).getFirstName());
             }
+            detail.setTask(topic.getTask());
+            detail.setProcessInstance(topic.getProcessInstance());
+            list.add(detail);
+        }
+
+        for (NewsFileInfo info : workflowService.findFileInfoTodoTasks(userId)) {
+            TopicTaskDetail detail = new TopicTaskDetail();
+            detail.setIsFileInfoTask(true);
+            detail.setUserName(userManager.getUserById(info.getUserId()).getFirstName());
+            detail.setFileInfo(info);
+            detail.setTask(info.getTask());
+            detail.setProcessInstance(info.getProcessInstance());
             list.add(detail);
         }
 
@@ -188,9 +262,9 @@ public class TopicController {
     public String todoCount(HttpSession session) {
         try {
             String userId = UserUtil.getUserFromSession(session).getId();
-            Integer count = workflowService.getTodoTasksCount(userId);
+            int count = workflowService.getTodoTasksCount(userId);
             logger.debug("todo task count: {}", count);
-            return count.toString();
+            return String.valueOf(count);
         } catch (Exception e) {
             logger.error("error on get todo task count!");
             return "error";
@@ -204,9 +278,10 @@ public class TopicController {
             return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/alltopics");
-        List<TopicDetail> list = new ArrayList<TopicDetail>();
+        List<TopicTaskDetail> list = new ArrayList<TopicTaskDetail>();
         for (NewsTopic topic : workflowService.getAllTopics()) {
-            TopicDetail detail = new TopicDetail();
+            TopicTaskDetail detail = new TopicTaskDetail();
+            detail.setIsFileInfoTask(false);
             detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
             detail.setTopic(topic);
             String dispatcher = topic.getDispatcher();
@@ -241,12 +316,13 @@ public class TopicController {
             return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/need-job");
-        List<TopicDetail> list = new ArrayList<TopicDetail>();
+        List<TopicTaskDetail> list = new ArrayList<TopicTaskDetail>();
         for (NewsTopic topic : storyboardManager.getTopicsNeedJob(user.getId())) {
 
             workflowService.fillRunningTask(topic);
 
-            TopicDetail detail = new TopicDetail();
+            TopicTaskDetail detail = new TopicTaskDetail();
+            detail.setIsFileInfoTask(false);
             detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
             detail.setTopic(topic);
             String dispatcher = topic.getDispatcher();
@@ -398,11 +474,17 @@ public class TopicController {
             return "error";
         }
     }
-    
+
     @RequestMapping(value = "detail/{id}")
     @ResponseBody
     public NewsTopic getTopic(@PathVariable("id") Long id) {
         return topicManager.getTopic(id);
+    }
+
+    @RequestMapping(value = "detail/fileinfo/{id}")
+    @ResponseBody
+    public NewsFileInfo getFileInfo(@PathVariable("id") Long id) {
+        return topicManager.getFileInfo(id);
     }
 
     @RequestMapping(value = "detail-with-vars/{id}/{taskId}")
@@ -501,19 +583,28 @@ public class TopicController {
         mav.addObject("materialFiles", materialFiles);
 
         List<FileInfoDetail> list = new ArrayList<FileInfoDetail>();
-        for (NewsFileInfo info : topic.getFiles()) {
+        int videoCount = 0, audioCount = 0;
+        for (NewsFileInfo info : topicManager.getTopicFiles(topic)) {
             FileInfoDetail detail = new FileInfoDetail();
             detail.setNewsFileInfo(info);
             detail.setUserName(userManager.getUserById(info.getUserId()).getFirstName());
             if (info.getType() == 0) {
                 detail.setFileTypeName("视频素材");
+                videoCount++;
             }
             else if (info.getType() == 1) {
                 detail.setFileTypeName("音频素材");
+                audioCount++;
             }
             list.add(detail);
         }
         mav.addObject("list", list);
+        if(userManager.isUserHaveRights(user, UserManager.RIGHTS_ADMIN)) {
+            mav.addObject("isAdmin", true);
+        }
+
+        mav.addObject("videoCount", videoCount);
+        mav.addObject("audioCount", audioCount);
 
         return mav;
     }

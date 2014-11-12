@@ -36,6 +36,7 @@
 <!-- / END - page related files and scripts [optional] -->
 <script src="${ctx}/assets/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.js" type="text/javascript"></script>
 <script src="${ctx}/assets/javascripts/plugins/select2/select2.js" type="text/javascript"></script>
+<script src="${ctx}/js/common/plugins/jquery.maskedinput.min.js" type="text/javascript"></script>
 <script>
     $('.datetimepicker').datetimepicker({
         format: 'yyyy-MM-dd hh:mm',
@@ -45,6 +46,14 @@
         hourStep: 1,
         minuteStep: 15,
         secondStep: 30,
+        inputMask: true
+    });
+
+    $('.datepicker').datetimepicker({
+        format: 'yyyy-MM-dd',
+        language: 'ch',
+        pickDate: true,
+        pickTime: false,
         inputMask: true
     });
 
