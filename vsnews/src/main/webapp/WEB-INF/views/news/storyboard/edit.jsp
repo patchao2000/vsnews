@@ -285,7 +285,7 @@
                                                         <c:if test="${detail.article != null}">
                                                             <a class='view_article btn btn-success btn-xs' href='#'>查看文稿</a>
                                                         </c:if>
-                                                        <c:if test="${detail.videoStatus == '剪辑结束'}">
+                                                        <c:if test="${detail.videoStatus != '剪辑开始'}">
                                                             <a class='view_material_file btn btn-success btn-xs' href='#'>素材文件</a>
                                                         </c:if>
                                                         <c:if test="${auditMode != true && readonly != true}">

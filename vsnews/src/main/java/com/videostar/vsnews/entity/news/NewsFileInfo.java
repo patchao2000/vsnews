@@ -25,7 +25,8 @@ public class NewsFileInfo extends NewsProcessEntity implements Serializable {
 
     public static final int STATUS_BEGIN_EDIT = 0;
     public static final int STATUS_END_EDIT = 1;
-    public static final int STATUS_END_AUDIT = 2;
+    public static final int STATUS_BEGIN_AUDIT = 2;
+    public static final int STATUS_END_AUDIT = 3;
 
     int status;
 
@@ -50,6 +51,8 @@ public class NewsFileInfo extends NewsProcessEntity implements Serializable {
                 return "剪辑开始";
             case STATUS_END_EDIT:
                 return "剪辑结束";
+            case STATUS_BEGIN_AUDIT:
+                return "正在审核";
             case STATUS_END_AUDIT:
                 return "审核完成";
         }

@@ -574,7 +574,7 @@ public class StoryboardController {
                 canSubmitAudit = false;
                 break;
             }
-            if (topicManager.getVideoFileStatus(topic) != NewsFileInfo.STATUS_END_EDIT) {
+            if (topicManager.getVideoFileStatus(topic) != NewsFileInfo.STATUS_END_AUDIT) {
                 canSubmitAudit = false;
                 break;
             }

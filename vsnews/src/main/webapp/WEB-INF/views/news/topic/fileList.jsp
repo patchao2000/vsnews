@@ -84,7 +84,7 @@
                                                     <td>${detail.newsFileInfo.lengthTC }</td>
                                                     <%--<td>${detail.newsFileInfo.filePath }</td>--%>
                                                     <td>
-                                                        <c:if test="${detail.newsFileInfo.statusString != '剪辑结束' || isAdmin == true}">
+                                                        <c:if test="${detail.newsFileInfo.statusString == '剪辑开始' || isAdmin == true}">
                                                         <a class="edit-file btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
                                                         <a class="remove-file btn btn-primary btn-xs" href="#"><i class="icon-remove"></i>删除</a>
                                                         </c:if>
@@ -276,28 +276,28 @@
             }
         }
         else {
-            if (file_status == 1) {
-                $.post(ctx + '/news/topic/start-fileinfo-id/' + fileId,
-                        function (resp) {
-                            if (resp == 'success') {
+            $.post(ctx + '/news/topic/edit-file/' + ${topic.id} +'/' + fileId + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
+                    function (resp) {
+                        if (resp == 'success') {
+                            if (file_status == 1) {
+                                $.post(ctx + '/news/topic/start-fileinfo-id/' + fileId,
+                                        function (resp) {
+                                            if (resp == 'success') {
+                                                alert('任务完成');
+                                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                                            } else {
+                                                alert('操作失败!');
+                                            }
+                                        });
+                            }
+                            else {
                                 alert('任务完成');
                                 location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                            } else {
-                                alert('操作失败!');
                             }
-                        });
-            }
-            else {
-                $.post(ctx + '/news/topic/edit-file/' + ${topic.id} +'/' + fileId + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
-                        function (resp) {
-                            if (resp == 'success') {
-                                alert('任务完成');
-                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                            } else {
-                                alert('操作失败!');
-                            }
-                        });
-            }
+                        } else {
+                            alert('操作失败!');
+                        }
+                    });
         }
     });
 

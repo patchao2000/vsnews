@@ -168,6 +168,7 @@ public class TopicController {
                 return UserUtil.redirectTimeoutString;
 
             entity.setUserId(user.getId());
+            entity.setStatus(NewsFileInfo.STATUS_BEGIN_AUDIT);
 
             Map<String, Object> variables = new HashMap<String, Object>();
 
@@ -192,7 +193,7 @@ public class TopicController {
         return "error";
     }
 
-    @RequestMapping(value = "start-fileinfo-id/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @RequestMapping(value = "start-fileinfo-id/{id}")
     @ResponseBody
     public String startFileInfoWorkflowFromId(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, HttpSession session) {
 
