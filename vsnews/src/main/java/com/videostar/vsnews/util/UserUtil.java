@@ -24,7 +24,7 @@ public class UserUtil {
 //        return attribute == null ? null : (User) attribute;
 //    }
 
-    public static final String redirectTimeoutString = "redirect:/login?timeout=true";
+//    public static final String redirectTimeoutString = "redirect:/login?timeout=true";
 
     public static User getUserFromSession(HttpSession session) {
         Object attribute = session.getAttribute(USER);

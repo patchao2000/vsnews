@@ -192,11 +192,7 @@ public class VideoController {
 //    }
 
     @RequestMapping(value = "list/all")
-    public ModelAndView allList(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
-
+    public ModelAndView allList() {
         ModelAndView mav = new ModelAndView("/news/video/videoList");
         List<VideoDetail> list = new ArrayList<VideoDetail>();
         for (NewsVideo video : videoManager.getAllVideos()) {

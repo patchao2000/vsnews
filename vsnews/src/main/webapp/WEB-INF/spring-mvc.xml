@@ -21,6 +21,37 @@
     <!-- 定义首页 -->
     <mvc:view-controller path="/" view-name="redirect:/login/"/>
 
+    <!-- 拦截器配置 -->
+    <mvc:interceptors>
+        <!-- session超时 -->
+        <mvc:interceptor>
+            <!--拦截所有2级以上目录-->
+            <mvc:mapping path="/*/**"/>
+            <bean class="com.videostar.vsnews.web.SessionTimeoutInterceptor">
+                <property name="allowUrls">
+                    <list>
+                        <!-- 如果请求中包含以下路径，则不进行拦截 -->
+                        <value>/login</value>
+                        <value>/user</value>
+                        <value>/js</value>
+                        <value>/css</value>
+                        <value>/assets</value>
+                        <value>/images</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 自定义异常处理，SessionTimeoutException 这个类可以是个空类，但是要写，方便在java代码里面使用 -->
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.videostar.vsnews.web.SessionTimeoutException">redirect:/login?timeout=true</prop>
+            </props>
+        </property>
+    </bean>
+
     <!-- 定义JSP -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>

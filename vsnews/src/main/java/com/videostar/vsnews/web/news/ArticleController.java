@@ -99,8 +99,6 @@ public class ArticleController {
     @RequestMapping(value = {"apply"})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
             !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
@@ -123,8 +121,6 @@ public class ArticleController {
     public String createFromTopic(@PathVariable("topicId") Long topicId,
                                   Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE) &&
             !userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_AUDIT_1) &&
@@ -158,8 +154,6 @@ public class ArticleController {
                                        Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
-            if (user == null)
-                return UserUtil.redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -297,10 +291,6 @@ public class ArticleController {
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
-
         ModelAndView mav = new ModelAndView("/news/article/allarticles");
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
         for (NewsArticle article : articleWorkflowService.getAllArticles()) {
@@ -318,10 +308,7 @@ public class ArticleController {
     @RequestMapping(value = "audit/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
     public String auditArticle(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                                Model model, HttpSession session) {
-
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -341,8 +328,6 @@ public class ArticleController {
                                Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -362,8 +347,6 @@ public class ArticleController {
         mav.addObject("article", article);
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         mav.addObject("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
         mav.addObject("cameramen", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));

@@ -90,8 +90,6 @@ public class StoryboardController {
     @RequestMapping(value = {"apply-template"})
     public String createTemplate(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_TEMP_WRITE) &&
             !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_TEMP_AUDIT)) {
@@ -115,8 +113,6 @@ public class StoryboardController {
                                                   Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
-            if (user == null)
-                return UserUtil.redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -149,8 +145,6 @@ public class StoryboardController {
     @RequestMapping(value = {"apply-list"})
     public String createStoryboard(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         if (!userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_WRITE) &&
             !userManager.isUserHaveRights(user, UserManager.RIGHTS_STORYBOARD_AUDIT_1)) {
@@ -174,8 +168,6 @@ public class StoryboardController {
                 RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
-            if (user == null)
-                return UserUtil.redirectTimeoutString;
 
             NewsStoryboard entity = storyboardManager.getStoryboard(id);
 
@@ -222,8 +214,6 @@ public class StoryboardController {
                                       RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
-            if (user == null)
-                return UserUtil.redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -300,8 +290,6 @@ public class StoryboardController {
     @RequestMapping(value = "list/template/all")
     public ModelAndView allTemplatesList(HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/storyboard/all-templates");
         List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
@@ -324,8 +312,6 @@ public class StoryboardController {
     @RequestMapping(value = "list/all")
     public ModelAndView allStoryboardsList(HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/storyboard/all-storyboards");
         List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
@@ -353,8 +339,6 @@ public class StoryboardController {
                                           Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -373,8 +357,6 @@ public class StoryboardController {
                                   Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -399,8 +381,6 @@ public class StoryboardController {
                                             Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -418,8 +398,6 @@ public class StoryboardController {
                                     Model model, HttpSession session) {
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model, user);
 
@@ -478,8 +456,6 @@ public class StoryboardController {
     @RequestMapping(value = "view/template/{id}")
     public ModelAndView viewStoryboardTemplate(@PathVariable("id") Long id, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/storyboard/view-template");
         NewsStoryboardTemplate entity = storyboardManager.getStoryboardTemplate(id);
@@ -552,8 +528,6 @@ public class StoryboardController {
 
     private ModelAndView editStoryboard(Long id, HttpSession session, Boolean readonly) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/storyboard/edit");
         NewsStoryboard entity = storyboardManager.getStoryboard(id);

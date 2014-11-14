@@ -75,8 +75,6 @@ public class MessageController {
         }
 
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         message.setSenderId(user.getId());
         messageManager.saveMessage(message);

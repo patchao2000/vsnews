@@ -97,8 +97,6 @@ public class TopicController {
     @RequestMapping(value = {"apply", ""})
     public String createForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_WRITE) &&
            !userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT)) {
@@ -121,8 +119,6 @@ public class TopicController {
                                           Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
-            if (user == null)
-                return UserUtil.redirectTimeoutString;
 
             if (bindingResult.hasErrors()) {
                 logger.debug("has bindingResult errors!");
@@ -164,8 +160,6 @@ public class TopicController {
     private String startFileInfoWorkflow(NewsFileInfo entity, RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
-            if (user == null)
-                return UserUtil.redirectTimeoutString;
 
             entity.setUserId(user.getId());
             entity.setStatus(NewsFileInfo.STATUS_BEGIN_AUDIT);
@@ -274,10 +268,6 @@ public class TopicController {
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
-
         ModelAndView mav = new ModelAndView("/news/topic/alltopics");
         List<TopicTaskDetail> list = new ArrayList<TopicTaskDetail>();
         for (NewsTopic topic : workflowService.getAllTopics()) {
@@ -313,8 +303,6 @@ public class TopicController {
     @RequestMapping(value = "list/need-job")
     public ModelAndView needJobList(HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/need-job");
         List<TopicTaskDetail> list = new ArrayList<TopicTaskDetail>();
@@ -344,11 +332,6 @@ public class TopicController {
     @RequestMapping(value = "audit/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
     public String auditTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
                              Model model, HttpSession session) {
-
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
-
         addSelectOptions(model);
 
         NewsTopic topic = topicManager.getTopic(id);
@@ -365,12 +348,7 @@ public class TopicController {
 
     @RequestMapping(value = "audit-device/{id}/{taskId}/{taskKey}", method = {RequestMethod.POST, RequestMethod.GET})
     public String auditDeviceTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId, @PathVariable("taskKey") String taskKey,
-                             Model model, HttpSession session) {
-
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
-
+                             Model model) {
         addSelectOptions(model);
 
         NewsTopic topic = topicManager.getTopic(id);
@@ -389,10 +367,7 @@ public class TopicController {
     @RequestMapping(value = "reapply/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     public String reapplyTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                                Model model, HttpSession session) {
-
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
 
         addSelectOptions(model);
 
@@ -411,12 +386,7 @@ public class TopicController {
 
     @RequestMapping(value = "reapply-device/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     public String reapplyDeviceTopic(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
-                               Model model, HttpSession session) {
-
-        User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return UserUtil.redirectTimeoutString;
-
+                               Model model) {
         addSelectOptions(model);
 
         NewsTopic topic = topicManager.getTopic(id);
@@ -434,8 +404,6 @@ public class TopicController {
     @RequestMapping(value = "view/{id}")
     public ModelAndView viewTopic(@PathVariable("id") Long id, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/view");
         NewsTopic topic = topicManager.getTopic(id);
@@ -573,8 +541,6 @@ public class TopicController {
     @RequestMapping(value = "view/files/{id}")
     public ModelAndView viewFiles(@PathVariable("id") Long id, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
-        if (user == null)
-            return new ModelAndView(UserUtil.redirectTimeoutString);
 
         ModelAndView mav = new ModelAndView("/news/topic/fileList");
         NewsTopic topic = topicManager.getTopic(id);
