@@ -419,9 +419,16 @@ public class TopicController {
         mav.addObject("readonly", true);
         mav.addObject("dispatcherReadonly", true);
 
-        if (userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE)) {
-            if (workflowService.isFinished(topic)) {
-                mav.addObject("createArticle", true);
+        NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
+        if (article != null) {
+            mav.addObject("viewArticle", true);
+            mav.addObject("articleId", article.getId());
+        }
+        else {
+            if (userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE)) {
+                if (workflowService.isFinished(topic)) {
+                    mav.addObject("createArticle", true);
+                }
             }
         }
 

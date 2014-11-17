@@ -98,13 +98,14 @@
                 </a>
                 <ul class='dropdown-menu'>
                     <li>
-                        <a href='user_profile.html'>
+                        <a href='#'>
+                        <%--<a href='user_profile.html'>--%>
                             <i class='icon-user'></i>
                             用户资料
                         </a>
                     </li>
                     <li>
-                        <a href='user_profile.html'>
+                        <a href='#'>
                             <i class='icon-cog'></i>
                             用户设置
                         </a>
@@ -119,12 +120,12 @@
                 </ul>
             </li>
         </ul>
-        <form action='search_results.html' class='navbar-form navbar-right hidden-xs' method='get'>
-            <button class='btn btn-link icon-search' name='button' type='submit'></button>
-            <div class='form-group'>
-                <input value="" class="form-control" placeholder="搜索..." autocomplete="off" id="q_header" name="q"
-                       type="text"/>
-            </div>
-        </form>
+        <%--<form action='search_results.html' class='navbar-form navbar-right hidden-xs' method='get'>--%>
+            <%--<button class='btn btn-link icon-search' name='button' type='submit'></button>--%>
+            <%--<div class='form-group'>--%>
+                <%--<input value="" class="form-control" placeholder="搜索..." autocomplete="off" id="q_header" name="q"--%>
+                       <%--type="text"/>--%>
+            <%--</div>--%>
+        <%--</form>--%>
     </nav>
 </header>

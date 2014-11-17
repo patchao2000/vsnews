@@ -21,6 +21,8 @@
 <%--@elvariable id="modifyDeviceOnly" type="java.lang.Boolean"--%>
 <%--@elvariable id="taskId" type="java.lang.String"--%>
 <%--@elvariable id="createArticle" type="java.lang.Boolean"--%>
+<%--@elvariable id="viewArticle" type="java.lang.Boolean"--%>
+<%--@elvariable id="articleId" type="java.lang.String"--%>
 <%--@elvariable id="dispatcher" type="java.lang.String"--%>
 <%--@elvariable id="dispatchers" type="java.util.List"--%>
 <%--@elvariable id="dispatcherReadonly" type="java.lang.Boolean"--%>
@@ -197,6 +199,9 @@
                                             <c:if test="${createArticle == true}">
                                                 <button class='btn btn-primary' type='submit'><i class='icon-save'></i>创建文稿</button>
                                             </c:if>
+                                            <c:if test="${viewArticle == true}">
+                                                <button class='btn btn-primary' type='submit'><i class='icon-save'></i>查看文稿</button>
+                                            </c:if>
                                         </div>
                                     </div>
                                 </div>
@@ -257,6 +262,10 @@
 
             <c:if test="${createArticle == true}">
             location.href = ctx + '/news/article/apply-topic/' + ${topic.id};
+            event.preventDefault();
+            </c:if>
+            <c:if test="${viewArticle == true}">
+            location.href = ctx + '/news/article/view/' + ${articleId};
             event.preventDefault();
             </c:if>
 

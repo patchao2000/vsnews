@@ -54,4 +54,8 @@ public class WebUtil {
             result = result.substring(0, max) + "...";
         return result;
     }
+
+    public static String getWindowsFormat(String input) {
+        return input.replaceAll("\n", "\r\n");
+    }
 }

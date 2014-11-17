@@ -19,7 +19,7 @@ CKEDITOR.editorConfig = function( config ) {
 //        { name: 'forms' },
 //        { name: 'tools' },
         { name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
-//        { name: 'others' },
+        //{ name: 'others' },
 //        '/',
         //  end remove
 

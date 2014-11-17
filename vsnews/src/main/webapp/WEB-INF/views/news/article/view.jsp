@@ -148,7 +148,7 @@
 
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label' for='article_sourcers'>快捷方式：</label>
-                                    <div class='col-md-4'>
+                                    <div class='col-md-6'>
                                         <input class="btn btn-default shortcut" id="sc_content" style="margin-bottom:5px" value="正文" type="button" />
                                         <input class="btn btn-default shortcut" id="sc_cg" style="margin-bottom:5px" value="CG" type="button" />
                                         <input class="btn btn-default shortcut" id="sc_interview" style="margin-bottom:5px" value="采访" type="button" />
@@ -192,9 +192,12 @@
                                         <input class="btn btn-default shortcut" id="article_show_video" style="margin-bottom:5px" value="显示" type="button" />
                                     </div>
                                     <label class='col-md-2 control-label' for='content_time'>时长：</label>
-                                    <div class='col-md-4'>
+                                    <div class='col-md-3'>
                                         <input class='form-control' id='content_time' readonly="readonly" type='text' rows="1" />
                                     </div>
+                                    <c:if test="${createMode == null}">
+                                        <input class="btn btn-default" id="download_text" style="margin-bottom:5px" value="下载文本" type="button" />
+                                    </c:if>
                                 </div>
                                 <div class='form-group'>
                                     <label class='col-md-2 control-label'>拟报单位：</label>
@@ -333,6 +336,11 @@
         return str;
     }
 
+    function removeHTMLTag2(str) {
+        str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+        return str;
+    }
+
     <c:if test="${auditMode == true}">
     $("#auditPass").live("click",function(){
         $("#submit-type").val("pass");
@@ -370,6 +378,10 @@
         }
     });
     </c:if>
+
+    $("#download_text").live("click",function() {
+        location.href = ctx + '/util/download/text/' + ${article.id};
+    });
 
     <c:if test="${auditMode == true || createMode == true}">
     $(".shortcut").live("click",function(){
