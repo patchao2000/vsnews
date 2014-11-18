@@ -321,6 +321,9 @@ public class TopicController {
             detail.setAvFileReady(topicManager.haveVideoFiles(topic) || topicManager.haveAudioFiles(topic));
             NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
             detail.setArticleReady(article != null);
+            if (article != null) {
+                detail.setArticleId(article.getId());
+            }
 
             list.add(detail);
         }

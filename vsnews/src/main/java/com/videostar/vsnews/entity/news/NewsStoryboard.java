@@ -42,6 +42,9 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
     public static final int STATUS_BEGIN_AUDIT = 1;
     public static final int STATUS_END_AUDIT = 2;
 
+    //    归档
+    private Boolean archived;
+
     public NewsStoryboard() {
         this.status = STATUS_EDITING;
     }
@@ -101,5 +104,14 @@ public class NewsStoryboard extends NewsProcessEntity implements Serializable {
 
     public void setTemplateId(Long templateId) {
         this.templateId = templateId;
+    }
+
+    @Column
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
     }
 }

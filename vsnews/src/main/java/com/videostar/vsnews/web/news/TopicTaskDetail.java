@@ -19,6 +19,7 @@ public class TopicTaskDetail implements java.io.Serializable {
     private String dispatcherName;
     private Boolean avFileReady;
     private Boolean articleReady;
+    private Long articleId;
 
     private NewsFileInfo fileInfo;
     private Boolean isFileInfoTask;
@@ -96,6 +97,14 @@ public class TopicTaskDetail implements java.io.Serializable {
 
     public void setArticleReady(Boolean articleReady) {
         this.articleReady = articleReady;
+    }
+
+    public Long getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
     }
 }
 

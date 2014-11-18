@@ -30,8 +30,9 @@
 
                     <div class='page-header page-header-with-buttons'>
                         <h1 class='pull-left'>
-                            <i class='icon-dashboard'></i>
-                            <span>欢迎访问VSNews</span>
+                            <%--<i class='icon-dashboard'></i>--%>
+                            <img src="${ctx}/images/oem_logo.jpg"/>
+                            <span>欢迎访问VIS News</span>
                         </h1>
                         <div class='pull-right'>
                             <div class='btn-group'>
@@ -47,7 +48,7 @@
                     </div>
                     <div class='alert alert-info alert-dismissable'>
                         <a class='close' data-dismiss='alert' href='#'>&times;</a>
-                        您好，${user.firstName }！欢迎您访问VSNews系统。
+                        您好，${user.firstName }！欢迎您访问VIS News系统。
                     </div>
 
                     <div class='row'>

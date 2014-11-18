@@ -2,7 +2,7 @@
 <header>
     <nav class='navbar navbar-default navbar-fixed-top'>
         <a class='navbar-brand' href='index.html'>
-            <img width="81" height="21" class="logo" alt="Flatty" src="${ctx}/assets/images/vsnews.png"/>
+            <%--<img width="81" height="21" class="logo" alt="Flatty" src="${ctx}/assets/images/vsnews.png"/>--%>
             <img width="21" height="21" class="logo-xs" alt="Flatty" src="${ctx}/assets/images/logo_xs.svg"/>
         </a>
         <a class='toggle-nav btn pull-left' href='#'>

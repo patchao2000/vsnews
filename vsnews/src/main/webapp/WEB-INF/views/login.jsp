@@ -15,14 +15,15 @@
     <link href="${ctx }/js/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
         body {
-            padding-top: 40px;
+            padding-top: 80px;
             padding-bottom: 40px;
             /*background-color: #eee;*/
+            background: transparent;
         }
 
         .alert {
-            max-width: 400px;
-            padding: 15px;
+            max-width: 300px;
+            padding: 10px;
             margin: 0 auto;
         }
 
@@ -70,7 +71,7 @@
         html,
         body {
             height: 100%;
-            /* The html and body elements cannot have any padding or margin. */
+             /*The html and body elements cannot have any padding or margin.*/
         }
 
         #wrap {
@@ -83,14 +84,25 @@
         }
 
         /* Set the fixed height of the footer here */
-        #footer {
-            height: 60px;
-            background-color: #f5f5f5;
-        }
+        /*#footer {*/
+            /*height: 60px;*/
+            /*background-color: #f5f5f5;*/
+        /*}*/
 
-        .text-muted {
-            margin: 20px 0;
-        }
+        /*.text-muted {*/
+            /*margin: 20px 0;*/
+        /*}*/
+
+    </style>
+
+    <style type="text/css">
+    html {
+        background: url("${ctx}/images/oem_login_back.jpg") no-repeat top center fixed;
+        /*-webkit-background-size: cover;*/
+        /*-moz-background-size: cover;*/
+        /*-o-background-size: cover;*/
+        /*background-size: cover;*/
+    }
     </style>
 
     <script src="${ctx }/js/common/jquery-1.11.1.js" type="text/javascript"></script>
@@ -109,7 +121,7 @@
 
         <div class="container">
             <form class="form-signin" role="form" action="${ctx }/user/logon" method="get">
-                <h2 class="form-signin-heading">VSNews</h2>
+                <h2 class="form-signin-heading">VIS News</h2>
                 <input id="username" name="username" type="text" class="form-control" placeholder="用户名" required
                        autofocus>
                 <input id="password" name="password" type="password" class="form-control" placeholder="密码" required>
@@ -121,11 +133,11 @@
         </div>
     </div>
 </div>
-<div id="footer">
-    <div class="container">
-        <p class="text-muted">组件版本信息 [ Activiti版本: ${prop['activiti.version']}, Spring版本: ${prop['spring.version']}
-            ]</p>
-    </div>
-</div>
+<%--<div id="footer">--%>
+    <%--<div class="container">--%>
+        <%--<p class="text-muted">组件版本信息 [ Activiti版本: ${prop['activiti.version']}, Spring版本: ${prop['spring.version']}--%>
+            <%--]</p>--%>
+    <%--</div>--%>
+<%--</div>--%>
 </body>
 </html>

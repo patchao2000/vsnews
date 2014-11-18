@@ -54,7 +54,7 @@
                                         <%--@elvariable id="list" type="java.util.List"--%>
                                         <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicTaskDetail"--%>
                                         <c:forEach items="${list }" var="detail">
-                                            <tr id="${detail.topic.id }">
+                                            <tr id="${detail.topic.id }" data-article-id="${detail.articleId }">
                                                 <c:set var="task" value="${detail.topic.task }"/>
                                                 <%--@elvariable id="task" type="org.activiti.engine.task.Task"--%>
                                                 <td>${detail.userName }</td>
@@ -62,7 +62,7 @@
                                                 <td><fmt:formatDate value="${detail.topic.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.topic.title }</td>
                                                 <td><c:if test="${detail.avFileReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if></td>
-                                                <td><c:if test="${detail.articleReady == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if></td>
+                                                <td><c:if test="${detail.articleReady == true}"><a class='btn btn-success btn-xs view-article' href='#'><i class='icon-ok'></i></a></c:if></td>
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${detail.topic.status == 2}">审核完成</c:when>
@@ -95,6 +95,11 @@
         $('.view-topic').click(function () {
             var topicId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/topic/view/' + topicId;
+        });
+
+        $('.view-article').click(function () {
+            var articleId = $(this).parents('tr').attr('data-article-id');
+            location.href = ctx + '/news/article/view/' + articleId;
         });
 
         $('.topic-files').click(function () {

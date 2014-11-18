@@ -78,6 +78,9 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     //    选题UUID
     private String topicUuid;
 
+    //    归档
+    private Boolean archived;
+
     public NewsArticle() {
         this.status = STATUS_EDITING;
     }
@@ -287,5 +290,14 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
 
     public void setTopicUuid(String topicUuid) {
         this.topicUuid = topicUuid;
+    }
+
+    @Column
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
     }
 }

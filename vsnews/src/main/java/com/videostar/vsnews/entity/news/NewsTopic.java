@@ -60,6 +60,9 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date endTime;
 
+    //    归档
+    private Boolean archived;
+
     public NewsTopic() {
         this.status = STATUS_EDITING;
         uuid = UUID.randomUUID().toString();
@@ -199,5 +202,14 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
 
     public void setDispatcher(String dispatcher) {
         this.dispatcher = dispatcher;
+    }
+
+    @Column
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
     }
 }

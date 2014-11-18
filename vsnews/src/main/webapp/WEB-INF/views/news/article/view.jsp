@@ -191,7 +191,7 @@
                                     <div class='col-md-1'>
                                         <input class="btn btn-default shortcut" id="article_show_video" style="margin-bottom:5px" value="显示" type="button" />
                                     </div>
-                                    <label class='col-md-2 control-label' for='content_time'>时长：</label>
+                                    <label class='col-md-1 control-label' for='content_time'>时长：</label>
                                     <div class='col-md-3'>
                                         <input class='form-control' id='content_time' readonly="readonly" type='text' rows="1" />
                                     </div>
