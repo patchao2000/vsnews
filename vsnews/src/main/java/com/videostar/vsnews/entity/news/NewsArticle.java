@@ -82,6 +82,7 @@ public class NewsArticle extends NewsProcessEntity implements Serializable {
     private Boolean archived;
 
     public NewsArticle() {
+        this.archived = false;
         this.status = STATUS_EDITING;
     }
 

@@ -143,6 +143,8 @@ public class ArticleController {
         article.setContent("<p>" + topic.getContent() + "</p>");
         article.setCameramen(topic.getCameramen());
         article.setReporters(topic.getReporters());
+        article.setInterviewTime(topic.getInterviewTime());
+        article.setLocation(topic.getLocation());
 
         makeCreateArticleModel(model, user, article);
 

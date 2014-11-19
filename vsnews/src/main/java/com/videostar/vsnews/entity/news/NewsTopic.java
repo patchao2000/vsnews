@@ -64,8 +64,9 @@ public class NewsTopic extends NewsProcessEntity implements Serializable {
     private Boolean archived;
 
     public NewsTopic() {
+        this.archived = false;
         this.status = STATUS_EDITING;
-        uuid = UUID.randomUUID().toString();
+        this.uuid = UUID.randomUUID().toString();
     }
 
     @Column

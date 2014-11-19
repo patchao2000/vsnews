@@ -336,10 +336,10 @@
         return str;
     }
 
-    function removeHTMLTag2(str) {
-        str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
-        return str;
-    }
+//    function removeHTMLTag2(str) {
+//        str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+//        return str;
+//    }
 
     <c:if test="${auditMode == true}">
     $("#auditPass").live("click",function(){
@@ -379,9 +379,11 @@
     });
     </c:if>
 
+    <c:if test="${article.id != null}">
     $("#download_text").live("click",function() {
         location.href = ctx + '/util/download/text/' + ${article.id};
     });
+    </c:if>
 
     <c:if test="${auditMode == true || createMode == true}">
     $(".shortcut").live("click",function(){
