@@ -3,6 +3,7 @@ package com.videostar.vsnews.web.identify;
 import com.videostar.vsnews.entity.Role;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnService;
+import com.videostar.vsnews.service.news.LogManager;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.identity.Group;
@@ -42,13 +43,16 @@ public class UserController {
     @Autowired
     private ColumnService columnService;
 
+    @Autowired
+    private LogManager logManager;
+
     /**
      * 登录系统
      *
      */
     @RequestMapping(value = "/logon")
     public String logon(@RequestParam("username") String userName, @RequestParam("password") String password, HttpSession session) {
-        logger.debug("logon request: {username={}, password={}}", userName, password);
+        logger.debug("logon request: {username={}}", userName);
         boolean checkPassword = userManager.checkPassword(userName, password);
         if (checkPassword) {
 
@@ -61,11 +65,13 @@ public class UserController {
 
             String[] groupNames = new String[groupList.size()];
             for (int i = 0; i < groupNames.length; i++) {
-                logger.debug("in group: {}", groupList.get(i).getName());
+//                logger.debug("in group: {}", groupList.get(i).getName());
                 groupNames[i] = groupList.get(i).getName();
             }
 
             session.setAttribute("groupNames", ArrayUtils.toString(groupNames));
+
+            logManager.addLog(user.getId(), "用户登录", null);
 
             return "redirect:/main/welcome";
         } else {

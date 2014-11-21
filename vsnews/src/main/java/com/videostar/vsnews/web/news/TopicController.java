@@ -2,10 +2,7 @@ package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
-import com.videostar.vsnews.service.news.ArticleManager;
-import com.videostar.vsnews.service.news.StoryboardManager;
-import com.videostar.vsnews.service.news.TopicManager;
-import com.videostar.vsnews.service.news.TopicWorkflowService;
+import com.videostar.vsnews.service.news.*;
 import com.videostar.vsnews.util.*;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.RuntimeService;
@@ -58,6 +55,9 @@ public class TopicController {
 
     @Autowired
     protected ArticleManager articleManager;
+
+    @Autowired
+    protected LogManager logManager;
 
     @SuppressWarnings("unchecked")
     private List<User> getDispatchersList() {
@@ -143,6 +143,9 @@ public class TopicController {
 
             ProcessInstance processInstance = workflowService.startTopicNewWorkflow(topic, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+            logManager.addLog(user.getId(), "发起选题流程", "ID: " + topic.getId() + "  标题: " + topic.getTitle());
+
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {
                 logger.warn("没有部署流程!", e);
