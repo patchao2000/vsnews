@@ -15,6 +15,7 @@ public class ArticleDetail implements java.io.Serializable {
     private String userName;
     private String columnName;
     private String plainContent;
+    private Boolean sendUp;
 
     public NewsArticle getArticle() {
         return article;
@@ -46,5 +47,13 @@ public class ArticleDetail implements java.io.Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Boolean getSendUp() {
+        return sendUp;
+    }
+
+    public void setSendUp(Boolean sendUp) {
+        this.sendUp = sendUp;
     }
 }

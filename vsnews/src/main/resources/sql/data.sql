@@ -16,6 +16,7 @@ insert into ACT_ID_GROUP values ('storyboardAudit1', 1, '串联单一审', 'assi
 insert into ACT_ID_GROUP values ('storyboardAudit2', 1, '串联单二审', 'assignment');
 insert into ACT_ID_GROUP values ('storyboardTempWrite', 1, '串联单模板撰写', 'assignment');
 insert into ACT_ID_GROUP values ('storyboardTempAudit', 1, '串联单模板审核', 'assignment');
+insert into ACT_ID_GROUP values ('fileAudit', 1, '文件审核', 'assignment');
 
 insert into ACT_ID_USER values ('admin', 1, 'Admin', '', 'admin@videostar.com', '000000', '');
 
@@ -64,6 +65,7 @@ INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardAudit1');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardTempWrite');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'storyboardTempAudit');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'fileAudit');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (2,'user');
 
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (3,'topicWrite');
@@ -81,6 +83,7 @@ INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'topicAudit');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardAudit1');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardAudit2');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'storyboardTempAudit');
+INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'fileAudit');
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (4,'user');
 
 INSERT INTO `role_groups` (`role_id`,`groups`) VALUES (5,'user');
@@ -106,6 +109,7 @@ INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storybo
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardAudit1');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardTempWrite');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','storyboardTempAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','fileAudit');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfa','user');
 
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','topicWrite');
@@ -118,6 +122,7 @@ INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storybo
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardAudit1');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardTempWrite');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','storyboardTempAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','fileAudit');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfb','user');
 
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('edta','topicWrite');
@@ -142,6 +147,7 @@ INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','topicAu
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardAudit1');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardAudit2');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','storyboardTempAudit');
+INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','fileAudit');
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('chfc','user');
 
 INSERT INTO `act_id_membership` (`USER_ID_`,`GROUP_ID_`) VALUES ('deva','deviceAudit');

@@ -4,6 +4,7 @@ import com.videostar.vsnews.entity.news.NewsColumn;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnManager;
 import com.videostar.vsnews.service.news.ColumnService;
+import com.videostar.vsnews.service.news.LogManager;
 import org.activiti.engine.identity.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +40,13 @@ public class ColumnController {
     @Autowired
     private ColumnService columnService;
 
+    @Autowired
+    private LogManager logManager;
+
     @RequestMapping(value = "add/{name}/{audit}", method = {RequestMethod.POST})
     @ResponseBody
-    public String addUser(@PathVariable("name") String name, @PathVariable("audit") int auditLevel) {
+    public String addUser(@PathVariable("name") String name, @PathVariable("audit") int auditLevel,
+                          HttpSession session) {
         try {
             if (columnManager.findColumn(name) != null) {
                 logger.error("column {} already exist", name);
@@ -49,6 +55,9 @@ public class ColumnController {
 
             NewsColumn column = columnService.newColumn(name, auditLevel);
             logger.debug("column created: {} {} {}", column.getId(), column.getName(), column.getAuditLevel());
+
+            logManager.addLog(session, "创建栏目", "ID: " + column.getId() + "  名称: " + column.getName());
+
             return "success";
         } catch (Exception e) {
             logger.error("error on create column: {}", name);
@@ -58,7 +67,8 @@ public class ColumnController {
 
     @RequestMapping(value = "modify/{id}/{name}/{audit}", method = {RequestMethod.POST})
     @ResponseBody
-    public String modifyColumn(@PathVariable("id") Long id, @PathVariable("name") String name, @PathVariable("audit") int auditLevel) {
+    public String modifyColumn(@PathVariable("id") Long id, @PathVariable("name") String name,
+                               @PathVariable("audit") int auditLevel, HttpSession session) {
         try {
             NewsColumn exist = columnManager.findColumn(name);
             if (exist != null && !exist.getId().equals(id)) {
@@ -68,6 +78,9 @@ public class ColumnController {
 
             NewsColumn column = columnService.modifyColumn(id, name, auditLevel);
             logger.debug("column modified: {} {} {}", column.getId(), column.getName(), column.getAuditLevel());
+
+            logManager.addLog(session, "修改栏目", "ID: " + column.getId() + "  名称: " + column.getName());
+
             return "success";
         } catch (Exception e) {
             logger.error("error on modify column: {}", name);
@@ -77,10 +90,13 @@ public class ColumnController {
 
     @RequestMapping(value = "delete/{id}", method = {RequestMethod.POST})
     @ResponseBody
-    public String deleteColumn(@PathVariable("id") Long id) {
+    public String deleteColumn(@PathVariable("id") Long id, HttpSession session) {
         try {
             columnService.deleteColumn(id);
             logger.debug("column deleted: {}", id);
+
+            logManager.addLog(session, "删除栏目", "ID: " + id);
+
             return "success";
         } catch (Exception e) {
             logger.error("error on delete column: {}", id);

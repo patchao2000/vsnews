@@ -43,6 +43,7 @@
                                             <th>申请人</th>
                                             <th>申请时间</th>
                                             <th>标题</th>
+                                            <th>拟报/报送</th>
                                             <th>当前节点</th>
                                             <%--<th>状态</th>--%>
                                             <th>操作</th>
@@ -61,6 +62,9 @@
                                                 <td>${detail.userName }</td>
                                                 <td><fmt:formatDate value="${detail.article.applyTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                 <td>${detail.article.mainTitle }</td>
+                                                <td>
+                                                    <c:if test="${detail.sendUp == true}"><a class='btn btn-success btn-xs' href='#'><i class='icon-ok'></i></a></c:if>
+                                                </td>
                                                 <td>
                                                     <%--<c:choose>--%>
                                                         <%--<c:when test="${task != null}">--%>

@@ -564,18 +564,11 @@
         var file = $(this).parents('tr').attr('data-material-file');
 //        alert(file);
         if (file.length > 0) {
-//            alert(file);
-//            if (isIE()) {
-                var wsh = new ActiveXObject("wscript.shell");
-                var path = '${sambaPath }' + file;
+            var wsh = new ActiveXObject("wscript.shell");
+            var path = '${sambaPath }' + file;
 //            alert(path);
-                wsh.run(path);
+            wsh.run('"'+path+'"');
 //                wsh.run('C:\\Temp\\1.txt');
-//            }
-//            else {
-//                alert('此功能仅支持IE浏览器！');
-//            }
-
         }
     });
 

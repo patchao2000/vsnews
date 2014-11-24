@@ -4,6 +4,8 @@ import com.videostar.vsnews.entity.news.NewsLog;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * LogDao
  *
@@ -11,4 +13,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public interface LogDao extends PagingAndSortingRepository<NewsLog, Long> {
+//    List<NewsLog> findAllByOrderByAccessTimeDesc();
 }

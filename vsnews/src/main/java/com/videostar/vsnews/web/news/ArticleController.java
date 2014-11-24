@@ -11,6 +11,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,9 @@ public class ArticleController {
 
     @Autowired
     protected IdentityService identityService;
+
+    @Autowired
+    private LogManager logManager;
 
     private void addSelectOptions(Model model, User user) {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
@@ -190,6 +194,7 @@ public class ArticleController {
 
                     ProcessInstance processInstance = topicWorkflowService.startTopicNewWorkflow(topic, variables);
 //                    redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+                    logManager.addLog(user.getId(), "发起选题流程", "ID: " + topic.getId() + "  标题: " + topic.getTitle());
 
                     article.setTopicUuid(topic.getUuid());
 
@@ -221,6 +226,9 @@ public class ArticleController {
 
             ProcessInstance processInstance = articleWorkflowService.startArticleWorkflow(article, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+            logManager.addLog(user.getId(), "发起文稿流程", "ID: " + article.getId() + "  标题: " + article.getMainTitle());
+
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {
                 logger.warn("没有部署流程!", e);
@@ -301,6 +309,13 @@ public class ArticleController {
             detail.setArticle(article);
             detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
             detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
+            detail.setSendUp(   article.getPrepareSendProvTV() ||
+                                article.getPrepareSendCCTV() ||
+                                article.getSentToProvTV() ||
+                                article.getSentToCCTV() ||
+                                article.getAdoptedByProvTV() ||
+                                article.getAdoptedByCCTV());
+
             list.add(detail);
         }
         mav.addObject("list", list);
@@ -382,6 +397,10 @@ public class ArticleController {
             String userId = UserUtil.getUserFromSession(session).getId();
             taskService.claim(taskId, userId);
             logger.debug("claim task {}", taskId);
+
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            logManager.addLog(session, "认领任务", "ID: " + taskId + "  描述: " + task.getName());
+
             return "success";
 //            redirectAttributes.addFlashAttribute("message", "任务已签收");
 //            return "redirect:/news/article/list/task";
@@ -393,8 +412,12 @@ public class ArticleController {
 
     @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> articleMap) {
+    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> articleMap,
+                           HttpSession session) {
         try {
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            logManager.addLog(session, "完成任务", "ID: " + taskId + "  描述: " + task.getName());
+
             taskService.complete(taskId, articleMap);
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, articleMap});
             return "success";

@@ -97,6 +97,7 @@
       $('.nav-responsive.nav-pills, .nav-responsive.nav-tabs').tabdrop();
     }
     setDataTable($(".data-table"));
+    setDataTableReverse($(".data-table-reverse"));
     setDataTable($(".data-table-column-filter"));
     if (jQuery().wysihtml5) {
       $('.wysihtml5').wysihtml5();
@@ -305,21 +306,64 @@
 //          oLanguage: {
 //            sLengthMenu: "_MENU_ records per page"
 //          }
-            oLanguage : {
-                sLengthMenu: "每页显示 _MENU_ 条记录",
-                sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
-                sInfoEmpty: "没有数据",
-                sInfoFiltered: "(从 _MAX_ 条数据中检索)",
-                sZeroRecords: "没有检索到数据",
-                sSearch: "搜索: ",
-                oPaginate: {
-                    "sFirst": "首页",
-                    "sPrevious": "前一页",
-                    "sNext": "后一页",
-                    "sLast": "尾页"
-                }
+          oLanguage : {
+            sLengthMenu: "每页显示 _MENU_ 条记录",
+            sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            sInfoEmpty: "没有数据",
+            sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+            sZeroRecords: "没有检索到数据",
+            sSearch: "搜索: ",
+            oPaginate: {
+              "sFirst": "首页",
+              "sPrevious": "前一页",
+              "sNext": "后一页",
+              "sLast": "尾页"
+            }
 
-            }        });
+          }        });
+        if ($(elem).hasClass("data-table-column-filter")) {
+          dt.columnFilter();
+        }
+        dt.closest('.dataTables_wrapper').find('div[id$=_filter] input').css("width", "200px");
+        return dt.closest('.dataTables_wrapper').find('input').addClass("form-control input-sm");//.attr('placeholder', '搜索');
+      });
+    }
+  };
+
+  this.setDataTableReverse = function(selector) {
+    if (jQuery().dataTable) {
+      return selector.each(function(i, elem) {
+        var dt, sdom;
+        if ($(elem).data("pagination-top-bottom") === true) {
+          sdom = "<'row datatables-top'<'col-sm-6'l><'col-sm-6 text-right'pf>r>t<'row datatables-bottom'<'col-sm-6'i><'col-sm-6 text-right'p>>";
+        } else if ($(elem).data("pagination-top") === true) {
+          sdom = "<'row datatables-top'<'col-sm-6'l><'col-sm-6 text-right'pf>r>t<'row datatables-bottom'<'col-sm-6'i><'col-sm-6 text-right'>>";
+        } else {
+          sdom = "<'row datatables-top'<'col-sm-6'l><'col-sm-6 text-right'f>r>t<'row datatables-bottom'<'col-sm-6'i><'col-sm-6 text-right'p>>";
+        }
+        dt = $(elem).dataTable({
+          sDom: sdom,
+          sPaginationType: "bootstrap",
+          "aaSorting": [[ 0, "desc" ]],
+          "iDisplayLength": $(elem).data("pagination-records") || 10,
+//          oLanguage: {
+//            sLengthMenu: "_MENU_ records per page"
+//          }
+          oLanguage : {
+            sLengthMenu: "每页显示 _MENU_ 条记录",
+            sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            sInfoEmpty: "没有数据",
+            sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+            sZeroRecords: "没有检索到数据",
+            sSearch: "搜索: ",
+            oPaginate: {
+              "sFirst": "首页",
+              "sPrevious": "前一页",
+              "sNext": "后一页",
+              "sLast": "尾页"
+            }
+
+          }        });
         if ($(elem).hasClass("data-table-column-filter")) {
           dt.columnFilter();
         }

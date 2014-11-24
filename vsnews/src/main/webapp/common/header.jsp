@@ -105,9 +105,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href='#'>
+                        <a class='change-password' href='#'>
                             <i class='icon-cog'></i>
-                            用户设置
+                            修改密码
                         </a>
                     </li>
                     <li class='divider'></li>
@@ -129,3 +129,43 @@
         <%--</form>--%>
     </nav>
 </header>
+
+<div class="modal fade user-dialog" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="changePasswordModalLabel">修改密码</h4>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>请输入原密码：</td>
+                        <td>
+                            <%--<label for='password'></label>--%>
+                            <input class='form-control' type="password" name="oldpassword" id="oldpassword" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>请输入新密码：</td>
+                        <td>
+                            <%--<label for='password'></label>--%>
+                            <input class='form-control' type="password" name="password" id="password" style="width:260px"></td>
+                    </tr>
+                    <tr>
+                        <td>请再次输入新密码：</td>
+                        <td>
+                            <%--<label for='password2'></label>--%>
+                            <input class='form-control' type="password" name="password2" id="password2" style="width:260px"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="save-password"><i class='icon-save'></i> 保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+

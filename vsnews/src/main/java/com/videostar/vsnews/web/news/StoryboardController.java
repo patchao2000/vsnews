@@ -10,6 +10,7 @@ import org.activiti.engine.ActivitiException;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,9 @@ public class StoryboardController {
 
     @Autowired
     protected TopicManager topicManager;
+
+    @Autowired
+    private LogManager logManager;
 
     private void addSelectOptions(Model model, User user) {
         model.addAttribute("editors", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_EDITOR)));
@@ -128,6 +132,9 @@ public class StoryboardController {
 
             ProcessInstance processInstance = workflowService.startStoryboardTemplateWorkflow(entity, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+            logManager.addLog(user.getId(), "发起串联单模板流程", "ID: " + entity.getId() + "  标题: " + entity.getTitle());
+
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {
                 logger.warn("没有部署流程!", e);
@@ -191,6 +198,8 @@ public class StoryboardController {
             ProcessInstance processInstance = workflowService.startStoryboardListWorkflow(entity, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
 
+            logManager.addLog(user.getId(), "发起串联单流程", "ID: " + entity.getId());
+
             return "success";
         } catch (ActivitiException e) {
             if (e.getMessage().contains("no processes deployed with key")) {
@@ -229,6 +238,9 @@ public class StoryboardController {
             storyboardManager.saveStoryboard(entity);
 
             redirectAttributes.addFlashAttribute("message", "保存串联单成功!");
+
+            logManager.addLog(user.getId(), "保存串联单内容", "ID: " + entity.getId());
+
         } catch (Exception e) {
             logger.error("保存串联单失败：", e);
             redirectAttributes.addFlashAttribute("error", "系统内部错误！");
@@ -418,10 +430,15 @@ public class StoryboardController {
 
     @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap) {
+    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap,
+                           HttpSession session) {
         try {
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            logManager.addLog(session, "完成任务", "ID: " + taskId + "  描述: " + task.getName());
+
             taskService.complete(taskId, topicMap);
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
+
             return "success";
         } catch (Exception e) {
             logger.error("error on complete task {}, variables={}, exception: {}", taskId, topicMap, e.getMessage());
@@ -446,6 +463,10 @@ public class StoryboardController {
             String userId = UserUtil.getUserFromSession(session).getId();
             taskService.claim(taskId, userId);
             logger.debug("claim task {}", taskId);
+
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            logManager.addLog(session, "认领任务", "ID: " + taskId + "  描述: " + task.getName());
+
             return "success";
         } catch (Exception e) {
             logger.error("error on claim task {}, {}", taskId, e.getMessage());
@@ -478,7 +499,8 @@ public class StoryboardController {
 
     @RequestMapping(value = "save/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String saveStoryboard(@PathVariable("id") Long id, @RequestBody Map<String, Object> map) {
+    public String saveStoryboard(@PathVariable("id") Long id, @RequestBody Map<String, Object> map,
+                                 HttpSession session) {
         try {
             NewsStoryboard entity = storyboardManager.getStoryboard(id);
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -489,6 +511,7 @@ public class StoryboardController {
             }
             storyboardManager.saveStoryboard(entity);
             logger.debug("save: NewsStoryboard {}, variables={}", id, map);
+            logManager.addLog(session, "保存串联单", "ID: " + entity.getId());
             return "success";
         } catch (Exception e) {
             logger.debug("error on save: NewsStoryboard {}, variables={}", id, map);
@@ -543,7 +566,9 @@ public class StoryboardController {
 
         //  check topic file's status
         Boolean canSubmitAudit = true;
-        for (NewsTopic topic : topicManager.getAllTopics()) {
+        for (NewsTopicInfo info : entity.getTopics()) {
+            NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
+
             if (!topicManager.haveVideoFiles(topic)) {
                 canSubmitAudit = false;
                 break;
@@ -600,6 +625,7 @@ public class StoryboardController {
             }
             storyboardManager.lockStoryboard(entity, userId);
             logger.debug("NewsStoryboard locked by {}", userId);
+            logManager.addLog(session, "锁定串联单", "ID: " + entity.getId());
             return "success";
         } catch (Exception e) {
             logger.error("error on lock NewsStoryboard");
@@ -609,7 +635,7 @@ public class StoryboardController {
 
     @RequestMapping(value = "unlock/{id}")
     @ResponseBody
-    public String unlock(@PathVariable("id") Long id) {
+    public String unlock(@PathVariable("id") Long id, HttpSession session) {
         try {
             NewsStoryboard entity = storyboardManager.getStoryboard(id);
             if (entity.getLockerUserId() == null) {
@@ -618,6 +644,7 @@ public class StoryboardController {
             }
             storyboardManager.unlockStoryboard(entity);
             logger.debug("NewsStoryboard unlocked");
+            logManager.addLog(session, "解锁串联单", "ID: " + entity.getId());
             return "success";
         } catch (Exception e) {
             logger.error("error on unlock NewsStoryboard");
@@ -642,6 +669,7 @@ public class StoryboardController {
 
             storyboardManager.addTopic(entity, uuid);
             logger.debug("topic added to NewsStoryboard");
+            logManager.addLog(session, "向串联单中添加选题", "ID: " + entity.getId());
             return "success";
         } catch (Exception e) {
             logger.error("error on add topic to NewsStoryboard");
@@ -713,6 +741,7 @@ public class StoryboardController {
             }
 
             storyboardManager.topicRemove(entity, index);
+            logManager.addLog(session, "从串联单中删除选题", "ID: " + entity.getId());
             logger.debug("topic removed");
             return "success";
         } catch (Exception e) {

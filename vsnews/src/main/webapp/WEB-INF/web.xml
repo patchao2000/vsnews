@@ -19,6 +19,11 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+	<!--统计在线用户的session listener-->
+	<listener>
+		<listener-class>com.videostar.vsnews.service.news.UserSessionListener</listener-class>
+	</listener>
+
 	<!-- 配置文件Servlet -->
 	<servlet>
 		<servlet-name>PropertiesServlet</servlet-name>

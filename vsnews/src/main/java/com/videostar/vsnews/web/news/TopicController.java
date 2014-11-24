@@ -9,6 +9,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,6 +174,8 @@ public class TopicController {
 
             ProcessInstance processInstance = workflowService.startFileInfoWorkflow(entity, variables);
             redirectAttributes.addFlashAttribute("message", "流程已启动，流程ID：" + processInstance.getId());
+
+            logManager.addLog(user.getId(), "发起文件流程", "ID: " + entity.getId() + "  文件: " + entity.getFilePath());
 
             return "success";
         } catch (ActivitiException e) {
@@ -448,6 +451,10 @@ public class TopicController {
             String userId = UserUtil.getUserFromSession(session).getId();
             taskService.claim(taskId, userId);
             logger.debug("claim task {}", taskId);
+
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            logManager.addLog(session, "认领任务", "ID: " + taskId + "  描述: " + task.getName());
+
             return "success";
 //        redirectAttributes.addFlashAttribute("message", "任务已签收");
 //        return "redirect:/news/topic/list/task";
@@ -481,8 +488,12 @@ public class TopicController {
 
     @RequestMapping(value = "complete/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap) {
+    public String complete(@PathVariable("id") String taskId, @RequestBody Map<String, Object> topicMap,
+                           HttpSession session) {
         try {
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            logManager.addLog(session, "完成任务", "ID: " + taskId + "  描述: " + task.getName());
+
             taskService.complete(taskId, topicMap);
             logger.debug("complete: task {}, variables={}", new Object[]{taskId, topicMap});
             return "success";
@@ -512,6 +523,7 @@ public class TopicController {
             topicManager.addFileToTopic(topic, info);
 
             logger.debug("file added to topic {}", filepath);
+            logManager.addLog(session, "添加选题文件", "ID: " + topic.getId() + "  描述: " + filepath);
             return "success";
         } catch (Exception e) {
             logger.debug("error on file added to topic {}", filepath);
@@ -530,6 +542,7 @@ public class TopicController {
             topicManager.editTopicFile(topic, fileId, title, filepath, status, length);
 
             logger.debug("topic file edited {}", fileId);
+            logManager.addLog(session, "编辑选题文件", "ID: " + topic.getId() + "  描述: " + filepath);
             return "success";
         } catch (Exception e) {
             logger.debug("error on edit topic file{}", fileId);
@@ -539,12 +552,14 @@ public class TopicController {
 
     @RequestMapping(value = "remove-file/{id}/{fileId}")
     @ResponseBody
-    public String removeFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId) {
+    public String removeFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId,
+                             HttpSession session) {
         try {
             NewsTopic topic = topicManager.getTopic(id);
             topicManager.removeFileFromTopic(topic, fileId);
 
             logger.debug("file removed from topic {}", fileId);
+            logManager.addLog(session, "删除选题文件", "ID: " + topic.getId() + "  文件ID: " + fileId);
             return "success";
         } catch (Exception e) {
             logger.debug("error on file remove from topic {}", fileId);

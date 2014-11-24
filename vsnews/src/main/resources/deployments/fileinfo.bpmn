@@ -6,7 +6,7 @@
     </extensionElements>
     <startEvent id="startevent1" name="Start" activiti:initiator="applyUserId"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
-    <userTask id="fileInfoLeaderAudit" name="素材内容审核" activiti:candidateGroups="topicAudit">
+    <userTask id="fileInfoLeaderAudit" name="素材内容审核" activiti:candidateGroups="fileAudit">
       <extensionElements>
         <activiti:taskListener event="complete" delegateExpression="${fileInfoAfterAuditProcessor}"></activiti:taskListener>
       </extensionElements>

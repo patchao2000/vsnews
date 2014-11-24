@@ -45,6 +45,7 @@ public class UserManager {
     public static final int RIGHTS_STORYBOARD_AUDIT_2       = 14;
     public static final int RIGHTS_STORYBOARD_TEMP_WRITE    = 15;
     public static final int RIGHTS_STORYBOARD_TEMP_AUDIT    = 16;
+    public static final int RIGHTS_FILE_AUDIT               = 17;
     public static final int RIGHTS_ADMIN                    = 99;
 
     public static final String INFO_USER_ROLES      = "roles";
@@ -79,6 +80,7 @@ public class UserManager {
         userRights.put(RIGHTS_STORYBOARD_AUDIT_2, "storyboardAudit2");
         userRights.put(RIGHTS_STORYBOARD_TEMP_WRITE, "storyboardTempWrite");
         userRights.put(RIGHTS_STORYBOARD_TEMP_AUDIT, "storyboardTempAudit");
+        userRights.put(RIGHTS_FILE_AUDIT, "fileAudit");
         userRights.put(RIGHTS_ADMIN, "admin");
     }
 
@@ -130,6 +132,19 @@ public class UserManager {
         identityService.saveUser(user);
 
         return user;
+    }
+
+    @Transactional(readOnly = false)
+    public Boolean modifyUserPassword(String userId, String oldPassword, String newPassword) {
+        if (!checkPassword(userId, oldPassword)) {
+            return false;
+        }
+
+        User user = getUserById(userId);
+        user.setPassword(newPassword);
+        identityService.saveUser(user);
+
+        return true;
     }
 
     @Transactional(readOnly = false)

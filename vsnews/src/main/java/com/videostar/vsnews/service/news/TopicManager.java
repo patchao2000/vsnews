@@ -5,6 +5,8 @@ import com.videostar.vsnews.dao.TopicDao;
 import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.util.TimeCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import java.util.List;
 @Component("TopicManager")
 @Transactional(readOnly = true)
 public class TopicManager {
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private TopicDao topicDao;
 
@@ -110,6 +113,7 @@ public class TopicManager {
     public Boolean haveVideoFiles(NewsTopic entity) {
 //        for (NewsFileInfo info : entity.getFiles()) {
         for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
+            logger.debug("found: {}", info.getType());
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL)
                 return true;
         }
@@ -144,7 +148,7 @@ public class TopicManager {
 //        for (NewsFileInfo info : entity.getFiles()) {
         for (NewsFileInfo info : fileInfoDao.findByTopicUuid(entity.getUuid())) {
             if (info.getType() == NewsFileInfo.TYPE_VIDEO_MATERIAL &&
-                info.getStatus() == NewsFileInfo.STATUS_END_EDIT)
+                info.getStatus() != NewsFileInfo.STATUS_BEGIN_EDIT)
                 return info.getFilePath();
         }
 

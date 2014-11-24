@@ -66,7 +66,7 @@
             "s+": this.getSeconds(), //second
             "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
             "S": this.getMilliseconds() //millisecond
-        }
+        };
         if (/(y+)/.test(format))
             format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
         for (var k in o)
@@ -79,6 +79,39 @@
         if (confirm('系统提示，您确定要退出本次登录吗?')) {
             location.href = ctx + '/user/logout';
         }
+    });
+
+    $('#save-password').click(function () {
+        var oldpassword = $('#oldpassword').val();
+        if (oldpassword.length == 0) {
+            alert('原密码为空！');
+//            $('#changePasswordModal').modal('toggle');
+            return;
+        }
+        var password1 = $('#password').val();
+        var password2 = $('#password2').val();
+        if (password1.length == 0) {
+            alert('新密码为空！');
+            return;
+        }
+        if (password1 != password2) {
+            alert('两次密码内容不一致！');
+            return;
+        }
+
+        $.post(ctx + '/user/modify-password/${user.id}/' + oldpassword + '/' + password1,
+                function(resp) {
+                    if (resp == 'success') {
+                        alert('密码已修改!');
+                    } else {
+                        alert('操作失败!');
+                    }
+                    $('#changePasswordModal').modal('toggle');
+                });
+    });
+
+    $('.change-password').click(function() {
+        $('#changePasswordModal').modal('toggle');
     });
 </script>
 <!-- / END - page related files and scripts [optional] -->

@@ -24,7 +24,7 @@ public class VariableCreateListener implements ActivitiEventListener {
 
             case VARIABLE_CREATED:
                 ActivitiVariableEvent variableEvent = (ActivitiVariableEvent) event;
-                System.out.println("创建了变量: " + variableEvent.getVariableName() + ", 值：" + variableEvent.getVariableValue());
+//                System.out.println("创建了变量: " + variableEvent.getVariableName() + ", 值：" + variableEvent.getVariableValue());
                 break;
 
             default:

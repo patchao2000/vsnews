@@ -4,6 +4,7 @@ import com.videostar.vsnews.entity.Role;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.service.news.LogManager;
+import com.videostar.vsnews.service.news.UserSessionManager;
 import com.videostar.vsnews.util.UserUtil;
 import com.videostar.vsnews.util.Variable;
 import org.activiti.engine.identity.Group;
@@ -46,6 +47,9 @@ public class UserController {
     @Autowired
     private LogManager logManager;
 
+    @Autowired
+    private UserSessionManager userSessionManager;
+
     /**
      * 登录系统
      *
@@ -59,19 +63,20 @@ public class UserController {
             // read user from database
             User user = userManager.getUserById(userName);
             UserUtil.saveUserToSession(session, user);
+            userSessionManager.addOnlineUser(user.getId(), session);
 
-            List<Group> groupList = userManager.getGroupListByUserId(userName);
-            session.setAttribute("groups", groupList);
+//            List<Group> groupList = userManager.getGroupListByUserId(userName);
+//            session.setAttribute("groups", groupList);
+//
+//            String[] groupNames = new String[groupList.size()];
+//            for (int i = 0; i < groupNames.length; i++) {
+////                logger.debug("in group: {}", groupList.get(i).getName());
+//                groupNames[i] = groupList.get(i).getName();
+//            }
+//
+//            session.setAttribute("groupNames", ArrayUtils.toString(groupNames));
 
-            String[] groupNames = new String[groupList.size()];
-            for (int i = 0; i < groupNames.length; i++) {
-//                logger.debug("in group: {}", groupList.get(i).getName());
-                groupNames[i] = groupList.get(i).getName();
-            }
-
-            session.setAttribute("groupNames", ArrayUtils.toString(groupNames));
-
-            logManager.addLog(user.getId(), "用户登录", null);
+            logManager.addLog(session, "用户登录", null);
 
             return "redirect:/main/welcome";
         } else {
@@ -85,8 +90,11 @@ public class UserController {
      */
     @RequestMapping(value = "/logout")
     public String logout(HttpSession session) {
+        logManager.addLog(session, "用户注销", null);
+
         session.removeAttribute("user");
-        logger.debug("logout");
+        userSessionManager.removeSession(session);
+//        logger.debug("logout");
         return "/login";
     }
 
@@ -152,7 +160,7 @@ public class UserController {
                           @PathVariable("firstname") String firstName,
                           @PathVariable("password") String password,
                           @PathVariable("email") String email,
-                          @PathVariable("lastname") String lastName) {
+                          @PathVariable("lastname") String lastName, HttpSession session) {
         try {
             UserQuery query = userManager.createUserQuery();
             if (query.userId(userId).count() > 0) {
@@ -162,6 +170,9 @@ public class UserController {
 
             User user = userManager.newUser(userId, firstName, password, email, lastName);
             logger.debug("user created: {}", user.getId());
+
+            logManager.addLog(session, "添加用户", "ID: " + userId);
+
             return "success";
         } catch (Exception e) {
             logger.error("error on create user: {}", userId);
@@ -172,13 +183,16 @@ public class UserController {
     @RequestMapping(value = "modify/user/{id}/{firstname}/{password}/{email}/{lastname}", method = {RequestMethod.POST})
     @ResponseBody
     public String modifyUser(@PathVariable("id") String userId,
-                          @PathVariable("firstname") String firstName,
-                          @PathVariable("password") String password,
-                          @PathVariable("email") String email,
-                          @PathVariable("lastname") String lastName) {
+                             @PathVariable("firstname") String firstName,
+                             @PathVariable("password") String password,
+                             @PathVariable("email") String email,
+                             @PathVariable("lastname") String lastName, HttpSession session) {
         try {
             User user = userManager.modifyUser(userId, firstName, password, email, lastName);
             logger.debug("user modified: {}", user.getId());
+
+            logManager.addLog(session, "修改用户", "ID: " + userId);
+
             return "success";
         } catch (Exception e) {
             logger.error("error on modify user: {}", userId);
@@ -186,12 +200,37 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "modify-password/{id}/{old-password}/{new-password}", method = {RequestMethod.POST})
+    @ResponseBody
+    public String modifyUserPassword(@PathVariable("id") String userId,
+                             @PathVariable("old-password") String oldPassword,
+                             @PathVariable("new-password") String newPassword, HttpSession session) {
+        try {
+            Boolean status = userManager.modifyUserPassword(userId, oldPassword, newPassword);
+            if (status) {
+                logger.debug("user password modified: {}", userId);
+
+                logManager.addLog(session, "修改密码", "ID: " + userId);
+
+                return "success";
+            }
+            else {
+                logger.error("error on modify user password: {}", userId);
+                return "error";
+            }
+        } catch (Exception e) {
+            logger.error("error on modify user password: {}", userId);
+            return "error";
+        }
+    }
+
     @RequestMapping(value = "delete/user/{id}", method = {RequestMethod.POST})
     @ResponseBody
-    public String deleteUser(@PathVariable("id") String userId) {
+    public String deleteUser(@PathVariable("id") String userId, HttpSession session) {
         try {
             userManager.deleteUser(userId);
             logger.debug("user deleted: {}", userId);
+            logManager.addLog(session, "删除用户", "ID: " + userId);
             return "success";
         } catch (Exception e) {
             logger.error("error on delete user: {}", userId);
@@ -332,9 +371,10 @@ public class UserController {
 
     @RequestMapping(value = "modify/user/columns/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String setUserColumns(@PathVariable("id") String userId, Variable var) {
+    public String setUserColumns(@PathVariable("id") String userId, Variable var, HttpSession session) {
         try {
             userManager.setUserGroups(userId, var);
+            logManager.addLog(session, "设置用户栏目", "ID: " + userId);
             return "success";
         } catch (Exception e) {
             logger.error("error on set user columns {}, variables={}", userId, var.getVariableMap());
@@ -345,10 +385,11 @@ public class UserController {
 
     @RequestMapping(value = "add/role/{name}", method = {RequestMethod.POST})
     @ResponseBody
-    public String addRole(@PathVariable("name") String name) {
+    public String addRole(@PathVariable("name") String name, HttpSession session) {
         try {
             Role role = userManager.newRole(name);
             logger.debug("role created: {}", role.getId());
+            logManager.addLog(session, "添加角色", "ID: " + role.getId());
             return role.getId().toString();//"success";
         } catch (Exception e) {
             logger.error("error on create role: {}", name);
@@ -358,10 +399,12 @@ public class UserController {
 
     @RequestMapping(value = "modify/role/{id}/{name}", method = {RequestMethod.POST})
     @ResponseBody
-    public String modifyRole(@PathVariable("id") Long id, @PathVariable("name") String name) {
+    public String modifyRole(@PathVariable("id") Long id, @PathVariable("name") String name,
+                             HttpSession session) {
         try {
             Role role = userManager.modifyRole(id, name);
             logger.debug("role modified: {}", role.getId());
+            logManager.addLog(session, "修改角色", "ID: " + role.getId());
             return role.getId().toString();//"success";
         } catch (Exception e) {
             logger.error("error on modify role: {}", id);
@@ -371,7 +414,7 @@ public class UserController {
 
     @RequestMapping(value = "modify/role/groups/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String setRoleGroups(@PathVariable("id") Long roleId, Variable var) {
+    public String setRoleGroups(@PathVariable("id") Long roleId, Variable var, HttpSession session) {
         try {
             List<String> groupList = new ArrayList<String>();
             Map<String, Object> variables = var.getVariableMap();
@@ -385,6 +428,7 @@ public class UserController {
             }
 
             userManager.setRoleGroups(roleId, groupList);
+            logManager.addLog(session, "修改角色权限", "ID: " + roleId);
             return "success";
         } catch (Exception e) {
             logger.error("error on set role groups {}, variables={}", roleId, var.getVariableMap());
@@ -395,10 +439,11 @@ public class UserController {
 
     @RequestMapping(value = "delete/role/{id}", method = {RequestMethod.POST})
     @ResponseBody
-    public String deleteRole(@PathVariable("id") Long roleId) {
+    public String deleteRole(@PathVariable("id") Long roleId, HttpSession session) {
         try {
             userManager.deleteRole(roleId);
             logger.debug("role deleted: {}", roleId);
+            logManager.addLog(session, "删除角色", "ID: " + roleId);
             return "success";
         } catch (Exception e) {
             logger.error("error on delete role: {}", roleId);
@@ -438,7 +483,7 @@ public class UserController {
 
     @RequestMapping(value = "modify/user/roles/{id}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String setUserRoles(@PathVariable("id") String userId, Variable var) {
+    public String setUserRoles(@PathVariable("id") String userId, Variable var, HttpSession session) {
         try {
             List<Long> roleList = new ArrayList<Long>();
             Map<String, Object> variables = var.getVariableMap();
@@ -452,6 +497,7 @@ public class UserController {
                 }
             }
             userManager.setUserRoles(userId, roleList);
+            logManager.addLog(session, "修改用户角色", "ID: " + userId);
 
             return "success";
         } catch (Exception e) {

@@ -3,7 +3,7 @@
     String uri = request.getRequestURI();
     boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false, inTopicNeedJob = false;
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
-    boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false;
+    boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false, inLogManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
     boolean inMessage = false, inMessageWrite = false, inMessageInbox = false, inMessageSent = false;
     boolean inStoryboard = false, inStoryboardTempApply = false, inStoryboardApply = false, inStoryboardAll = false,
@@ -32,7 +32,7 @@
     if (uri.contains("/main/welcome"))
         inWelcome = true;
 
-    if (uri.contains("/user") || uri.contains("/news/column"))
+    if (uri.contains("/user") || uri.contains("/news/column") || uri.contains("/system"))
         inManage = true;
     if (uri.contains("/list/user"))
         inUserManage = true;
@@ -40,6 +40,8 @@
         inRoleManage = true;
     if (uri.contains("/news/column"))
         inColumnManage = true;
+    if (uri.contains("/news/system"))
+        inLogManage = true;
 
     if (uri.contains("/video"))
         inFileMan = true;
@@ -219,6 +221,7 @@
                     </li>
                 </ul>
             </li>
+            <c:if test="${user.id == 'admin'}">
             <li class='<%=inManage?"active":""%>'>
                 <a class="dropdown-collapse" href="#"><i class='icon-user'></i>
                     <span>系统管理</span>
@@ -243,8 +246,15 @@
                             <span>栏目管理</span>
                         </a>
                     </li>
+                    <li class='<%=inLogManage?"active":""%>'>
+                        <a href='${ctx}/news/system/log/list'>
+                            <i class='icon-caret-right'></i>
+                            <span>系统日志</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
+            </c:if>
             <li class='<%=inFileMan?"active":""%>'>
                 <a class="dropdown-collapse" href="#"><i class='icon-file'></i>
                     <span>文件管理</span>
