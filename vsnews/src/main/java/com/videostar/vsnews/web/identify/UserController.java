@@ -5,8 +5,7 @@ import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.ColumnService;
 import com.videostar.vsnews.service.news.LogManager;
 import com.videostar.vsnews.service.news.UserSessionManager;
-import com.videostar.vsnews.util.UserUtil;
-import com.videostar.vsnews.util.Variable;
+import com.videostar.vsnews.util.*;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
@@ -56,6 +55,14 @@ public class UserController {
      */
     @RequestMapping(value = "/logon")
     public String logon(@RequestParam("username") String userName, @RequestParam("password") String password, HttpSession session) {
+
+        logger.debug("Mac Address: {}", HardwareInfo.getMacAddr());
+        logger.debug("MD5: {}", Md5Encrypt.md5(HardwareInfo.getMacAddr()));
+        if (!Md5Encrypt.md5(HardwareInfo.getMacAddr()).equals(ConfigXmlReader.getMacMd5())) {
+            logger.error("Mac address not valid!");
+            return "redirect:/login?error=true";
+        }
+
         logger.debug("logon request: {username={}}", userName);
         boolean checkPassword = userManager.checkPassword(userName, password);
         if (checkPassword) {

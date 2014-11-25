@@ -33,6 +33,8 @@ public class ConfigXmlReader extends DefaultHandler {
     private static String sambaUserName = "test";
     private static String sambaPassword = "test";
 
+    private static String macMd5 = "xxxx";
+
 
     private static Boolean initParsed = false;
 
@@ -105,6 +107,9 @@ public class ConfigXmlReader extends DefaultHandler {
             sambaPassword = currentValue.toString().trim();
 //            logger.debug("sambaPassword set: {}", sambaPassword);
         }
+        else if (qName.toUpperCase().equals("MACMD5")) {
+            macMd5 = currentValue.toString().trim();
+        }
     }
 
     public static String getNginxUrl() {
@@ -129,5 +134,9 @@ public class ConfigXmlReader extends DefaultHandler {
 
     public static String getSambaPassword() {
         return sambaPassword;
+    }
+
+    public static String getMacMd5() {
+        return macMd5;
     }
 }

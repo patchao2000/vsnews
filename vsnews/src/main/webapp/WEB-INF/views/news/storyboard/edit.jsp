@@ -245,9 +245,9 @@
                                                 <th>文字长度</th>
                                                 <th>视频长度</th>
                                                 <th>总长度</th>
-                                                <c:if test="${storyboard.lockerUserId != null}">
+                                                <%--<c:if test="${storyboard.lockerUserId != null}">--%>
                                                 <th>操作</th>
-                                                </c:if>
+                                                <%--</c:if>--%>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -280,7 +280,6 @@
                                                     <td>${detail.videoLength}</td>
                                                     <td>${detail.totalLength}</td>
 
-                                                    <c:if test="${storyboard.lockerUserId != null}">
                                                     <td>
                                                         <c:if test="${detail.article != null}">
                                                             <a class='view_article btn btn-success btn-xs' href='#'>查看文稿</a>
@@ -288,13 +287,14 @@
                                                         <c:if test="${detail.videoStatus != '剪辑开始'}">
                                                             <a class='view_material_file btn btn-success btn-xs' href='#'>素材文件</a>
                                                         </c:if>
+                                                        <c:if test="${storyboard.lockerUserId != null}">
                                                         <c:if test="${auditMode != true && readonly != true}">
                                                         <a class="up_topic btn btn-primary btn-xs" href="#"><i class="icon-level-up"></i>上移</a>
                                                         <a class="down_topic btn btn-info btn-xs" href="#"><i class="icon-level-down"></i>下移</a>
                                                         <a class="remove_topic btn btn-danger btn-xs" href="#"><i class="icon-remove"></i>删除</a>
                                                         </c:if>
+                                                        </c:if>
                                                     </td>
-                                                    </c:if>
                                                 </tr>
                                             </c:forEach>
                                             </tbody>
