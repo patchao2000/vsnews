@@ -10,7 +10,6 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
@@ -106,7 +104,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "list/user")
-    public ModelAndView userList(HttpServletRequest request) {
+    public ModelAndView userList() {
         ModelAndView mav = new ModelAndView("/user/userList");
         UserQuery query = userManager.createUserQuery();
         GroupQuery groupQuery = userManager.createGroupQuery();
@@ -139,7 +137,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "list/group")
-    public ModelAndView groupList(HttpServletRequest request) {
+    public ModelAndView groupList() {
         ModelAndView mav = new ModelAndView("/user/groupList");
         GroupQuery query = userManager.createGroupQuery();
         ArrayList<Group> list = new ArrayList<Group>();

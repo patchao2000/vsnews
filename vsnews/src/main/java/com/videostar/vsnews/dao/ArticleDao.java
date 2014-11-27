@@ -1,7 +1,6 @@
 package com.videostar.vsnews.dao;
 
 import com.videostar.vsnews.entity.news.NewsArticle;
-import com.videostar.vsnews.entity.news.NewsTopic;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 

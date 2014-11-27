@@ -150,13 +150,13 @@
                         <td>请输入新密码：</td>
                         <td>
                             <%--<label for='password'></label>--%>
-                            <input class='form-control' type="password" name="password" id="password" style="width:260px"></td>
+                            <input class='form-control' type="password" name="newpassword" id="newpassword" style="width:260px"></td>
                     </tr>
                     <tr>
                         <td>请再次输入新密码：</td>
                         <td>
                             <%--<label for='password2'></label>--%>
-                            <input class='form-control' type="password" name="password2" id="password2" style="width:260px"></td>
+                            <input class='form-control' type="password" name="newpassword2" id="newpassword2" style="width:260px"></td>
                     </tr>
                     </tbody>
                 </table>

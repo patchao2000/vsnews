@@ -88,8 +88,8 @@
 //            $('#changePasswordModal').modal('toggle');
             return;
         }
-        var password1 = $('#password').val();
-        var password2 = $('#password2').val();
+        var password1 = $('#newpassword').val();
+        var password2 = $('#newpassword2').val();
         if (password1.length == 0) {
             alert('新密码为空！');
             return;
