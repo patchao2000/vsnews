@@ -47,6 +47,19 @@ public class MessageManager {
         return messageDao.findByReceiverIdOrderBySentDateDesc(receiverId);
     }
 
+    public List<NewsMessage> getUnreadMessagesByReceiverId(String receiverId) {
+        List<NewsMessage> list = new ArrayList<NewsMessage>();
+        list.addAll(messageDao.findByReceiverIdAndMarkRead(receiverId, false));
+        list.addAll(messageDao.findByReceiverIdAndMarkRead(receiverId, null));
+
+        return list;
+    }
+
+    public int getUnreadMessageCountByReceiverId(String receiverId) {
+        return messageDao.findByReceiverIdAndMarkRead(receiverId, false).size() +
+                messageDao.findByReceiverIdAndMarkRead(receiverId, null).size();
+    }
+
     public List<NewsMessage> getMessagesBySenderId(String senderId) {
         return messageDao.findBySenderIdOrderBySentDateDesc(senderId);
     }

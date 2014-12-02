@@ -113,5 +113,104 @@
     $('.change-password').click(function() {
         $('#changePasswordModal').modal('toggle');
     });
+
+    var globalTimer;
+    function timeCount() {
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/message/count/inbox',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp.length < 10) {
+                    $('#message-count').text(resp);
+                }
+            },
+            error: function () {
+//                alert('articleTodo error!!');
+            }
+        });
+
+        var total_jobs = 0;
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/topic/count/task',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == "0")
+                    $('#header-todo-topic').text("没有待办新闻选题任务");
+                else {
+                    $('#header-todo-topic').text("有 " + resp + " 条待办新闻选题任务");
+                    total_jobs = total_jobs + parseInt(resp);
+                }
+            },
+            error: function () {
+//                alert('todo topic error!!');
+            }
+        });
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/article/count/task',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == "0")
+                    $('#header-todo-article').text("没有待办新闻文稿任务");
+                else {
+                    $('#header-todo-article').text("有 " + resp + " 条待办新闻文稿任务");
+                    total_jobs = total_jobs + parseInt(resp);
+                }
+            },
+            error: function () {
+//                alert('todo article error!!');
+            }
+        });
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/storyboard/count/task',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == "0")
+                    $('#header-todo-storyboard').text("没有待办新闻串联单任务");
+                else {
+                    $('#header-todo-storyboard').text("有 " + resp + " 条待办新闻串联单任务");
+                    total_jobs = total_jobs + parseInt(resp);
+                }
+            },
+            error: function () {
+//                alert('todo storyboard error!!');
+            }
+        });
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: ctx + '/news/topic/count/need-job',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+                if (resp == "0")
+                    $('#header-need-job-topic').text("没有需要完善的新闻选题");
+                else {
+                    $('#header-need-job-topic').text("有 " + resp + " 条新闻选题需要完善");
+                    total_jobs = total_jobs + parseInt(resp);
+                }
+            },
+            error: function () {
+//                alert('need job topic error!!');
+            }
+        });
+
+        $("#todo-count").text(total_jobs);
+
+
+        //  query jobs every 30 seconds
+        globalTimer = setTimeout(timeCount, 30000);
+    }
+
+    $(function () {
+        timeCount();
+    });
+
 </script>
 <!-- / END - page related files and scripts [optional] -->

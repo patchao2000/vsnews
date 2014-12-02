@@ -32,7 +32,7 @@ public class MainController {
         ModelAndView mav = new ModelAndView("/main/welcome");
         String userId = UserUtil.getUserFromSession(session).getId();
 
-        List<NewsMessage> list = messageManager.getMessagesByReceiverId(userId);
+        List<NewsMessage> list = messageManager.getUnreadMessagesByReceiverId(userId);
         mav.addObject("list", list);
         if (list.size() == 0)
             mav.addObject("nomessages", true);

@@ -1,6 +1,7 @@
 package com.videostar.vsnews.web.news;
 
 import com.videostar.vsnews.entity.news.NewsMessage;
+import com.videostar.vsnews.entity.news.NewsStoryboard;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.MessageManager;
 import com.videostar.vsnews.util.UserUtil;
@@ -13,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -65,7 +64,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "start", method = RequestMethod.POST)
-    public String startArticleWorkflow(@ModelAttribute("msg") @Valid NewsMessage message, BindingResult bindingResult,
+    public String sendMessage(@ModelAttribute("msg") @Valid NewsMessage message, BindingResult bindingResult,
                                        Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         if (bindingResult.hasErrors()) {
             logger.debug("has bindingResult errors!");
@@ -91,6 +90,7 @@ public class MessageController {
         List<NewsMessage> list = messageManager.getMessagesBySenderId(userId);
         mav.addObject("list", list);
         mav.addObject("title", "我发送的留言");
+        mav.addObject("operation", false);
         return mav;
     }
 
@@ -102,6 +102,38 @@ public class MessageController {
         List<NewsMessage> list = messageManager.getMessagesByReceiverId(userId);
         mav.addObject("list", list);
         mav.addObject("title", "我接收的留言");
+        mav.addObject("operation", true);
         return mav;
     }
+
+    @RequestMapping(value = "count/inbox", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String inboxCount(HttpSession session) {
+        try {
+            String userId = UserUtil.getUserFromSession(session).getId();
+            int count = messageManager.getUnreadMessageCountByReceiverId(userId);
+            logger.debug("unread message count: {}", count);
+
+            return String.valueOf(count);
+        } catch (Exception e) {
+            logger.error("error on count inbox");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "mark-read/{id}")
+    @ResponseBody
+    public String markRead(@PathVariable("id") Long id) {
+        try {
+            NewsMessage message = messageManager.getMessage(id);
+            message.setMarkRead(true);
+            messageManager.saveMessage(message);
+            logger.debug("message mark read {}", message);
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on mark message read");
+            return "error";
+        }
+    }
+
 }

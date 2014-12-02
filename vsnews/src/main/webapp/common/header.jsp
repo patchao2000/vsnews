@@ -90,6 +90,72 @@
                     </li>
                 </ul>
             </li>
+            <li class='dropdown medium only-icon widget'>
+                <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
+                    <i class='icon-pencil'></i>
+                    <div class='label' id='todo-count'>0</div>
+                </a>
+                <ul class='dropdown-menu'>
+                    <li>
+                        <a href='${ctx}/news/topic/list/task'>
+                            <div class='widget-body'>
+                                <div class='pull-left icon'>
+                                    <i class='icon-pencil text-success'></i>
+                                </div>
+                                <div class='pull-left text' id='header-todo-topic'>
+                                    没有待办新闻选题任务
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class='divider'></li>
+                    <li>
+                        <a href='${ctx}/news/article/list/task'>
+                            <div class='widget-body'>
+                                <div class='pull-left icon'>
+                                    <i class='icon-pencil text-success'></i>
+                                </div>
+                                <div class='pull-left text' id='header-todo-article'>
+                                    没有待办新闻文稿任务
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class='divider'></li>
+                    <li>
+                        <a href='${ctx}/news/storyboard/list/task'>
+                            <div class='widget-body'>
+                                <div class='pull-left icon'>
+                                    <i class='icon-pencil text-success'></i>
+                                </div>
+                                <div class='pull-left text' id='header-todo-springboard'>
+                                    没有待办新闻串联单任务
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class='divider'></li>
+                    <li>
+                        <a href='${ctx}/news/topic/count/need-job'>
+                            <div class='widget-body'>
+                                <div class='pull-left icon'>
+                                    <i class='icon-pencil text-success'></i>
+                                </div>
+                                <div class='pull-left text' id='header-need-job-topic'>
+                                    没有需要完善的新闻选题
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class='medium only-icon widget'>
+                <a href='${ctx}/news/message/list/inbox'>
+                    <i class='icon-inbox'></i>
+                    <div class='label' id='message-count'>0</div>
+                </a>
+            </li>
             <li class='dropdown dark user-menu'>
                 <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
                     <img width="23" height="23" alt="${user.id }" src="${ctx}/assets/images/avatar.gif"/>

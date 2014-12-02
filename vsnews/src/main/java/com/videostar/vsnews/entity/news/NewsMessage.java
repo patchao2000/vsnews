@@ -27,12 +27,17 @@ public class NewsMessage extends IdEntity implements Serializable {
     private String receiverId;
     private String title;
     private int type;
+    private Boolean markRead;
 
     @NotBlank(message = "内容不能为空")
     private String content;
 
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
     private Date sentDate;
+
+    public NewsMessage() {
+        this.markRead = false;
+    }
 
     @Column
     public int getType() {
@@ -89,12 +94,12 @@ public class NewsMessage extends IdEntity implements Serializable {
         this.sentDate = sentDate;
     }
 
-//    @Column
-//    public Long getReturnMessageId() {
-//        return returnMessageId;
-//    }
-//
-//    public void setReturnMessageId(Long returnMessageId) {
-//        this.returnMessageId = returnMessageId;
-//    }
+    @Column
+    public Boolean getMarkRead() {
+        return markRead;
+    }
+
+    public void setMarkRead(Boolean markRead) {
+        this.markRead = markRead;
+    }
 }

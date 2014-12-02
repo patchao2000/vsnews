@@ -21,6 +21,7 @@
     <%@ include file="/common/meta.jsp" %>
     <title>${title}</title>
     <%@ include file="/common/allcss.jsp" %>
+    <link rel='stylesheet' href='${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/fullcalendar.css' />
     <style>
         .help-block { color: #ff0000; }
     </style>
@@ -119,16 +120,108 @@
                     </div>
                 </div>
             </div>
+
+            <div class='row'>
+                <div class='col-sm-9'>
+                    <div class='box'>
+                        <div class='box-header'>
+                            <div class='title'>播出时间表</div>
+                        </div>
+                        <div class='box-content'>
+                            <div id='calendar'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
 <%@ include file="/common/alljs.jsp" %>
+<script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/lib/moment.min.js" type="text/javascript"></script>
+<script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/fullcalendar.js" type="text/javascript"></script>
+<script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/lang-all.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+
+    function renderCalendar() {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            defaultDate: '2014-11-12',
+            lang: 'zh-cn',
+            buttonIcons: false, // show the prev/next text
+            weekNumbers: true,
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: [
+                {
+                    title: 'All Day Event',
+                    start: '2014-11-01'
+                },
+                {
+                    title: 'Long Event',
+                    start: '2014-11-07',
+                    end: '2014-11-10'
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: '2014-11-09T16:00:00'
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: '2014-11-16T16:00:00'
+                },
+                {
+                    title: 'Conference',
+                    start: '2014-11-11',
+                    end: '2014-11-13'
+                },
+                {
+                    title: 'Meeting',
+                    start: '2014-11-12T10:30:00',
+                    end: '2014-11-12T12:30:00'
+                },
+                {
+                    title: 'Lunch',
+                    start: '2014-11-12T12:00:00'
+                },
+                {
+                    title: 'Meeting',
+                    start: '2014-11-12T14:30:00'
+                },
+                {
+                    title: 'Happy Hour',
+                    start: '2014-11-12T17:30:00'
+                },
+                {
+                    title: 'Dinner',
+                    start: '2014-11-12T20:00:00'
+                },
+                {
+                    title: 'Birthday Party',
+                    start: '2014-11-13T07:00:00'
+                },
+                {
+                    title: 'Click for Google',
+                    url: 'http://google.com/',
+                    start: '2014-11-28'
+                }
+            ]
+        });
+    }
+
+
     $(function () {
         <c:if test="${readonly == true}">
         $("#storyboard_templateId").select2("readonly", true);
         </c:if>
+
+        renderCalendar();
     });
 
 </script>

@@ -38,11 +38,15 @@
                                 <div class='scrollable-area'>
                                     <table class="data-table table table-bordered table-striped" style='margin-bottom:0;'>
                                         <thead>
+                                        <%--@elvariable id="operation" type="java.lang.Boolean"--%>
                                         <tr>
                                             <th>时间</th>
                                             <th>发送人</th>
                                             <th>接收人</th>
                                             <th>内容</th>
+                                            <c:if test="${operation == true}">
+                                            <th>操作</th>
+                                            </c:if>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -54,6 +58,12 @@
                                                 <td>${msg.senderId }</td>
                                                 <td>${msg.receiverId }</td>
                                                 <td>${msg.content }</td>
+                                                <c:if test="${operation == true}">
+                                                <td><c:if test="${msg.markRead != true}">
+                                                    <a class='mark_read btn btn-success btn-xs' href='#'>已读</a>
+                                                </c:if>
+                                                </td>
+                                                </c:if>
                                             </tr>
                                         </c:forEach>
                                         </tbody>
@@ -70,6 +80,32 @@
 
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
+    var failMessage = '操作失败!', successMessage = '任务完成!';
+
+    <c:if test="${operation == true}">
+    $(".mark_read").live("click",function(){
+        var id = $(this).parents('tr').attr('id');
+        if (id.length > 0) {
+            $.ajax({
+                type: 'post',
+                async: false,
+                url: ctx + '/news/message/mark-read/' + id,
+                contentType: "application/json; charset=utf-8",
+                success: function (resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/news/message/list/inbox';
+                    } else {
+                        alert(failMessage);
+                    }
+                },
+                error: function () {
+                    alert(failMessage);
+                }
+            });
+        }
+    });
+    </c:if>
     $(document).ready(function () {
     });
 </script>
