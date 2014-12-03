@@ -15,6 +15,7 @@
 <%--@elvariable id="templates" type="java.util.List"--%>
 <%--@elvariable id="auditMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="taskId" type="java.lang.String"--%>
+<%--@elvariable id="list" type="java.util.List"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -121,6 +122,7 @@
                 </div>
             </div>
 
+            <c:if test="${createMode == true}">
             <div class='row'>
                 <div class='col-sm-9'>
                     <div class='box'>
@@ -133,16 +135,49 @@
                     </div>
                 </div>
             </div>
+            </c:if>
         </div>
     </section>
 </div>
+
+<c:if test="${createMode == true}">
+<div class="modal fade group-dialog" id="storyboardModal" tabindex="-1" role="dialog" aria-labelledby="storyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="storyboardModalLabel">创建串联单</h4>
+            </div>
+            <div class="modal-body">
+                <label for='sm_template'>模板：</label>
+                <select class='form-control' id="sm_template">
+                </select>
+                <label for='sm_airDate'>播出时间：</label>
+                <%--<input class='form-control' name="airDate" id="sm_airDate">--%>
+                <div class='datepicker input-group' id="sm_airDate_picker">
+                    <input class='form-control' id='sm_airDate' type='text' />
+                        <span class='input-group-addon'>
+                            <span data-date-icon='icon-calendar' data-time-icon='icon-time'></span>
+                        </span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="save_storyboard"><i class='icon-save'></i> 保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+</c:if>
+
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/lib/moment.min.js" type="text/javascript"></script>
 <script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/fullcalendar.js" type="text/javascript"></script>
 <script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/lang-all.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-
+    <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.StoryboardTaskDetail"--%>
+    <c:if test="${createMode == true}">
     function renderCalendar() {
         $('#calendar').fullCalendar({
             header: {
@@ -150,78 +185,101 @@
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
-            defaultDate: '2014-11-12',
+//            defaultDate: '2014-11-12',
             lang: 'zh-cn',
             buttonIcons: false, // show the prev/next text
             weekNumbers: true,
             editable: true,
             eventLimit: true, // allow "more" link when too many events
             events: [
-                {
-                    title: 'All Day Event',
-                    start: '2014-11-01'
-                },
-                {
-                    title: 'Long Event',
-                    start: '2014-11-07',
-                    end: '2014-11-10'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2014-11-09T16:00:00'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2014-11-16T16:00:00'
-                },
-                {
-                    title: 'Conference',
-                    start: '2014-11-11',
-                    end: '2014-11-13'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2014-11-12T10:30:00',
-                    end: '2014-11-12T12:30:00'
-                },
-                {
-                    title: 'Lunch',
-                    start: '2014-11-12T12:00:00'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2014-11-12T14:30:00'
-                },
-                {
-                    title: 'Happy Hour',
-                    start: '2014-11-12T17:30:00'
-                },
-                {
-                    title: 'Dinner',
-                    start: '2014-11-12T20:00:00'
-                },
-                {
-                    title: 'Birthday Party',
-                    start: '2014-11-13T07:00:00'
-                },
-                {
-                    title: 'Click for Google',
-                    url: 'http://google.com/',
-                    start: '2014-11-28'
-                }
-            ]
+                <c:forEach items="${list }" var="detail">
+                    {
+                        title: '${detail.title}',
+                        start: '<fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd" />',
+                        <c:choose>
+                        <c:when test="${detail.storyboard.status == 2}">color: 'green'</c:when>
+                        <c:otherwise>color: 'red'</c:otherwise>
+                        </c:choose>
+                    },
+                </c:forEach>
+            ],
+            dayClick: function(date, jsEvent, view) {
+//                alert('a day has been clicked!');
+//                alert(date.format());
+                $('#sm_airDate').val(date.format());
+                $('#storyboardModal').modal('toggle');
+            }
         });
     }
 
+    <%--@elvariable id="template" type="com.videostar.vsnews.entity.news.NewsStoryboardTemplate"--%>
+    function fillTemplates() {
+        var titles = [], ids = [], i = 0;
+        <c:forEach items="${templates}" var="template">
+        titles[i] = '${template.title }';
+        ids[i++] = '${template.id }';
+        </c:forEach>
+
+        var control = $('#sm_template');
+        control.empty();
+        var content = '', found = false;
+        for (var j = 0; j < ids.length; j++)
+        {
+            var add_content = '<option value="'+ids[j]+'">'+titles[j]+'</option>';
+            var add_selected_content = '<option value="'+ids[j]+'" selected="selected">'+titles[j]+'</option>';
+            if (j == 0) {
+                content = content + add_selected_content;
+            }
+            else {
+                content = content + add_content;
+            }
+        }
+        control.html(content);
+        control.select2();
+    }
+
+    $('#save_storyboard').click(function () {
+        $.ajax({
+            type: 'post',
+            async: true,
+            url: ctx + '/news/storyboard/save-list-args/' + $('#sm_template').val() +'/' + $('#sm_airDate').val(),
+            contentType: "application/json; charset=utf-8",
+//            data : JSON.stringify(map),
+            success: function (resp) {
+                if (resp == 'success') {
+                    alert('任务完成');
+                    location.href = ctx + '${ctx}/news/storyboard/apply-list';
+                } else {
+                    alert('操作失败!');
+                }
+            },
+            error: function () {
+                alert('操作失败!!');
+            }
+        });
+
+        <%--$.post(ctx + '/news/storyboard/save-list-args/' + $('#sm_template').val(),--%>
+                        <%--//+'/' + $('#sm_airDate').val(),--%>
+                <%--function (resp) {--%>
+                    <%--if (resp == 'success') {--%>
+                        <%--alert('任务完成');--%>
+                        <%--location.href = ctx + '${ctx}/news/storyboard/apply-list';--%>
+                    <%--} else {--%>
+                        <%--alert('操作失败!');--%>
+                    <%--}--%>
+                <%--});--%>
+    });
+    </c:if>
 
     $(function () {
         <c:if test="${readonly == true}">
         $("#storyboard_templateId").select2("readonly", true);
         </c:if>
 
+        <c:if test="${createMode == true}">
         renderCalendar();
+        fillTemplates();
+        </c:if>
     });
 
 </script>

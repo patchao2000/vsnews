@@ -26,10 +26,7 @@ import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * StoryboardController
@@ -89,6 +86,8 @@ public class StoryboardController {
         model.addAttribute("storyboard", entity);
         model.addAttribute("title", "创建串联单");
         model.addAttribute("createMode", true);
+
+        model.addAttribute("list", getAllStoryboardList());
     }
 
     @RequestMapping(value = {"apply-template"})
@@ -218,9 +217,9 @@ public class StoryboardController {
 
     @RequestMapping(value = "save-list", method = RequestMethod.POST)
     public String saveStoryboardList(@ModelAttribute("storyboard") @Valid NewsStoryboard entity,
-                                      BindingResult bindingResult,
-                                      Model model,
-                                      RedirectAttributes redirectAttributes, HttpSession session) {
+                                     BindingResult bindingResult,
+                                     Model model,
+                                     RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             User user = UserUtil.getUserFromSession(session);
 
@@ -247,6 +246,28 @@ public class StoryboardController {
         }
 
         return "redirect:/news/storyboard/apply-list";
+    }
+    @RequestMapping(value = "save-list-args/{templateId}/{date}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
+    @ResponseBody
+    public String saveStoryboardListArgs(@PathVariable("templateId") Long templateId,
+                                         @PathVariable("date") String date,
+                                         HttpSession session) {
+        try {
+            User user = UserUtil.getUserFromSession(session);
+            NewsStoryboard entity = new NewsStoryboard();
+            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+            entity.setAirDate(fmt.parse(date));
+            entity.setTemplateId(templateId);
+            entity.setUserId(user.getId());
+            storyboardManager.saveStoryboard(entity);
+            logger.debug("save storyboard list: {}", entity.getId());
+            logManager.addLog(user.getId(), "保存串联单内容", "ID: " + entity.getId());
+
+            return "success";
+        } catch (Exception e) {
+            logger.error("保存串联单失败：", e);
+            return "error";
+        }
     }
 
     @RequestMapping(value = "list/task")
@@ -321,11 +342,7 @@ public class StoryboardController {
         return mav;
     }
 
-    @RequestMapping(value = "list/all")
-    public ModelAndView allStoryboardsList(HttpSession session) {
-        User user = UserUtil.getUserFromSession(session);
-
-        ModelAndView mav = new ModelAndView("/news/storyboard/all-storyboards");
+    private List<StoryboardTaskDetail> getAllStoryboardList() {
         List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
         for (NewsStoryboard entity : workflowService.getAllStoryboards()) {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
@@ -341,7 +358,16 @@ public class StoryboardController {
             detail.setIsTemplateTask(true);
             list.add(detail);
         }
-        mav.addObject("list", list);
+
+        return list;
+    }
+
+    @RequestMapping(value = "list/all")
+    public ModelAndView allStoryboardsList(HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
+
+        ModelAndView mav = new ModelAndView("/news/storyboard/all-storyboards");
+        mav.addObject("list", getAllStoryboardList());
         mav.addObject("userId", user.getId());
         return mav;
     }
