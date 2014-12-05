@@ -14,6 +14,16 @@
     <title>新闻选题相关文件</title>
     <%@ include file="/common/allcss.jsp" %>
     <link href="${ctx }/js/common/bootstrap/css/bootstrap-dialog.min.css" rel="stylesheet">
+    <link href="${ctx }/js/jquery.fileTree/jqueryFileTree.css" rel="stylesheet">
+    <style type="text/css">
+        .filetree1 {
+            width: 560px;
+            height: 200px;
+            background: #FFF;
+            padding: 5px;
+            overflow: auto;
+        }
+    </style>
 </head>
 
 <body class='${defbodyclass}'>
@@ -141,8 +151,42 @@
     </div>
 </div>
 
+<div class="modal fade group-dialog" data-width="630" id="browseFileModal" tabindex="-1" role="dialog" aria-labelledby="browseFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="browseFileModalLabel">添加素材位置</h4>
+            </div>
+            <div class="modal-body">
+                <label for='browse_file_title'>素材名称：</label>
+                <input class='form-control' name="title" id="browse_file_title">
+                <label for='browse_file_path'>素材文件：</label>
+                <input class='form-control' name="path" id="browse_file_path">
+                <label for='browse_file_length'>素材长度：</label>
+                <input class='form-control' name="length" id="browse_file_length">
+                <label>状态： </label>
+                <label class="radio-inline">
+                <input type="radio" name="inlineRadioOptions" id="browse_edit_begin" value="edit_begin"> 剪辑开始
+                </label>
+                <label class="radio-inline">
+                <input type="radio" name="inlineRadioOptions" id="browse_edit_end" value="edit_end"> 剪辑结束
+                </label>
+                <hr class='hr-normal'>
+                <div id="fileTree1" class="filetree1"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <%--<button type="button" class="btn btn-primary" id="savefile"><i class='icon-save'></i> 保存</button>--%>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
+<script src="${ctx }/js/jquery.fileTree/jqueryFileTree.js"></script>
+
 <script type="text/javascript">
 
     var file_sign = '', add_mode = true;
@@ -199,7 +243,8 @@
         add_mode = true;
         fillMaterialFiles();
         $('#edit_begin').prop('checked', true);
-        $('#fileModal').modal('toggle');
+//        $('#fileModal').modal('toggle');
+        $('#browseFileModal').modal('toggle');
     });
 
     $(".remove-file").live("click",function(){
@@ -303,6 +348,19 @@
 
     $(document).ready(function () {
         $("#file_length").mask("99:99:99:99");
+
+//        $('#fileTree1').fileTree({ server: getServer(1), root: getRootDir(1), preset: '1', script: 'SambaConnector.aspx',
+//            folderEvent: 'click', expandSpeed: 750, collapseSpeed: 750, multiFolder: false, dirmode: 'false'
+//        }, function (file) {
+//            fileTreeHit(file);
+//        }, function (dire) {
+//        });
+        $('#fileTree1').fileTree({ server: "192.168.1.3", root: "/Public/Temp/", preset: '1', script: '/util/smb-conn/get',
+            folderEvent: 'click', expandSpeed: 750, collapseSpeed: 750, multiFolder: false, dirmode: 'false'
+        }, function (file) {
+//            fileTreeHit(file);
+        }, function (dire) {
+        });
     });
 </script>
 </body>
