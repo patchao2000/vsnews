@@ -13,12 +13,13 @@
 <%--@elvariable id="editors" type="java.util.List"--%>
 <%--@elvariable id="columns" type="java.util.map"--%>
 <%--@elvariable id="technicians" type="java.util.List"--%>
-<%--@elvariable id="sambaPath" type="java.lang.String"--%>
 <%--@elvariable id="readonly" type="java.lang.Boolean"--%>
 <%--@elvariable id="auditMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="reapplyMode" type="java.lang.Boolean"--%>
 <%--@elvariable id="taskId" type="java.lang.String"--%>
 <%--@elvariable id="canSubmitAudit" type="java.lang.Boolean"--%>
+<%--@elvariable id="sambaServer" type="java.lang.String"--%>
+<%--@elvariable id="sambaDirectory" type="java.lang.String"--%>
 <html lang="en">
 <head>
     <%@ include file="/common/global.jsp" %>
@@ -555,19 +556,25 @@
         }
     });
 
+    //        var isIE = function(ver){
+    //            var b = document.createElement('b');
+    //            b.innerHTML = '<!--[if IE ' + ver + ']><i></i><![endif]-->';
+    //            return b.getElementsByTagName('i').length === 1;
+    //        };
     $(".view_material_file").live("click",function(){
-//        var isIE = function(ver){
-//            var b = document.createElement('b');
-//            b.innerHTML = '<!--[if IE ' + ver + ']><i></i><![endif]-->';
-//            return b.getElementsByTagName('i').length === 1;
-//        };
         var file = $(this).parents('tr').attr('data-material-file');
-//        alert(file);
         if (file.length > 0) {
+            var path = file;
+            if (file.substr(0, 2) != '\\\\') {
+                var dir = '${sambaDirectory}';
+                var b = /\//g;
+                var realdir= dir.replace(b, "\\");
+
+                path = '\\\\' + '${sambaServer}' + realdir + file;
+            }
+            alert('将打开: ' + path);
             var wsh = new ActiveXObject("wscript.shell");
-            var path = '${sambaPath }' + file;
-//            alert(path);
-            wsh.run('"'+path+'"');
+            wsh.run('"' + path + '"');
 //                wsh.run('C:\\Temp\\1.txt');
         }
     });

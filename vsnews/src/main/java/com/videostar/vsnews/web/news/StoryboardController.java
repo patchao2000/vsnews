@@ -3,7 +3,7 @@ package com.videostar.vsnews.web.news;
 import com.videostar.vsnews.entity.news.*;
 import com.videostar.vsnews.service.identify.UserManager;
 import com.videostar.vsnews.service.news.*;
-import com.videostar.vsnews.util.SambaUtil;
+import com.videostar.vsnews.util.ConfigXmlReader;
 import com.videostar.vsnews.util.TimeCode;
 import com.videostar.vsnews.util.UserUtil;
 import org.activiti.engine.ActivitiException;
@@ -407,7 +407,9 @@ public class StoryboardController {
         model.addAttribute("auditMode", true);
         model.addAttribute("taskId", taskId);
         model.addAttribute("alltopics", topicManager.getAllTopics());
-        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
+//        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
+        model.addAttribute("sambaServer", ConfigXmlReader.getSambaServer());
+        model.addAttribute("sambaDirectory", ConfigXmlReader.getSambaDirectory());
 
         model.addAttribute("topics", getTopicsList(entity));
 
@@ -447,7 +449,9 @@ public class StoryboardController {
         model.addAttribute("reapplyMode", true);
         model.addAttribute("taskId", taskId);
         model.addAttribute("alltopics", topicManager.getAllTopics());
-        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
+//        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
+        model.addAttribute("sambaServer", ConfigXmlReader.getSambaServer());
+        model.addAttribute("sambaDirectory", ConfigXmlReader.getSambaDirectory());
 
         model.addAttribute("topics", getTopicsList(entity));
 
@@ -588,7 +592,9 @@ public class StoryboardController {
         List<NewsColumn> userColumns = columnService.getUserColumns(user);
         mav.addObject("columns", userColumns);
         mav.addObject("alltopics", topicManager.getAllTopics());
-        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
+//        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
+        mav.addObject("sambaServer", ConfigXmlReader.getSambaServer());
+        mav.addObject("sambaDirectory", ConfigXmlReader.getSambaDirectory());
 
         //  check topic file's status
         Boolean canSubmitAudit = true;
@@ -616,6 +622,8 @@ public class StoryboardController {
                 break;
             }
         }
+        if (entity.getTopics().size() == 0)
+            canSubmitAudit = false;
         mav.addObject("canSubmitAudit", canSubmitAudit);
 
         mav.addObject("topics", getTopicsList(entity));

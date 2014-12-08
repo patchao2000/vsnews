@@ -94,9 +94,10 @@
                                                     <td>${detail.newsFileInfo.lengthTC }</td>
                                                     <%--<td>${detail.newsFileInfo.filePath }</td>--%>
                                                     <td>
+                                                        <a class="view-file btn btn-primary btn-xs" href="#"><i class="icon-eye-open"></i> 查看</a>
                                                         <c:if test="${detail.newsFileInfo.statusString == '剪辑开始' || isAdmin == true}">
-                                                        <a class="edit-file btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>编辑</a>
-                                                        <a class="remove-file btn btn-primary btn-xs" href="#"><i class="icon-remove"></i>删除</a>
+                                                        <a class="edit-file btn btn-primary btn-xs" href="#"><i class="icon-edit"></i> 编辑</a>
+                                                        <a class="remove-file btn btn-primary btn-xs" href="#"><i class="icon-remove"></i> 删除</a>
                                                         </c:if>
                                                     </td>
                                                 </tr>
@@ -115,41 +116,41 @@
 </div>
 
 <%--@elvariable id="materialFiles" type="java.util.List"--%>
-<div class="modal fade group-dialog" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="fileModalLabel">添加素材位置</h4>
-            </div>
-            <div class="modal-body">
-                <label for='file_title'>素材名称：</label>
-                <input class='form-control' name="title" id="file_title">
-                <label for='file_path'>素材文件：</label>
-                <%--<input class='form-control' name="file_path" id="file_path">--%>
-                <select class='form-control' id="file_path">
-                    <%--<c:forEach items="${materialFiles }" var="file">--%>
-                        <%--<option value="${file }">${file }</option>--%>
-                    <%--</c:forEach>--%>
-                </select>
-                <label for='file_length'>素材长度：</label>
-                <input class='form-control' name="length" id="file_length">
-                <hr class='hr-normal'>
-                <label>状态： </label>
-                <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" id="edit_begin" value="edit_begin"> 剪辑开始
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" id="edit_end" value="edit_end"> 剪辑结束
-                </label>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="savefile"><i class='icon-save'></i> 保存</button>
-            </div>
-        </div>
-    </div>
-</div>
+<%--<div class="modal fade group-dialog" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">--%>
+    <%--<div class="modal-dialog">--%>
+        <%--<div class="modal-content">--%>
+            <%--<div class="modal-header">--%>
+                <%--<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>--%>
+                <%--<h4 class="modal-title" id="fileModalLabel">添加素材位置</h4>--%>
+            <%--</div>--%>
+            <%--<div class="modal-body">--%>
+                <%--<label for='file_title'>素材名称：</label>--%>
+                <%--<input class='form-control' name="title" id="file_title">--%>
+                <%--<label for='file_path'>素材文件：</label>--%>
+                <%--&lt;%&ndash;<input class='form-control' name="file_path" id="file_path">&ndash;%&gt;--%>
+                <%--<select class='form-control' id="file_path">--%>
+                    <%--&lt;%&ndash;<c:forEach items="${materialFiles }" var="file">&ndash;%&gt;--%>
+                        <%--&lt;%&ndash;<option value="${file }">${file }</option>&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;</c:forEach>&ndash;%&gt;--%>
+                <%--</select>--%>
+                <%--<label for='file_length'>素材长度：</label>--%>
+                <%--<input class='form-control' name="length" id="file_length">--%>
+                <%--<hr class='hr-normal'>--%>
+                <%--<label>状态： </label>--%>
+                <%--<label class="radio-inline">--%>
+                    <%--<input type="radio" name="inlineRadioOptions" id="edit_begin" value="edit_begin"> 剪辑开始--%>
+                <%--</label>--%>
+                <%--<label class="radio-inline">--%>
+                    <%--<input type="radio" name="inlineRadioOptions" id="edit_end" value="edit_end"> 剪辑结束--%>
+                <%--</label>--%>
+            <%--</div>--%>
+            <%--<div class="modal-footer">--%>
+                <%--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>--%>
+                <%--<button type="button" class="btn btn-primary" id="savefile"><i class='icon-save'></i> 保存</button>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</div>--%>
+<%--</div>--%>
 
 <div class="modal fade group-dialog" data-width="630" id="browseFileModal" tabindex="-1" role="dialog" aria-labelledby="browseFileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -162,7 +163,7 @@
                 <label for='browse_file_title'>素材名称：</label>
                 <input class='form-control' name="title" id="browse_file_title">
                 <label for='browse_file_path'>素材文件：</label>
-                <input class='form-control' name="path" id="browse_file_path">
+                <input class='form-control' name="path" id="browse_file_path" readonly="readonly">
                 <label for='browse_file_length'>素材长度：</label>
                 <input class='form-control' name="length" id="browse_file_length">
                 <label>状态： </label>
@@ -177,7 +178,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <%--<button type="button" class="btn btn-primary" id="savefile"><i class='icon-save'></i> 保存</button>--%>
+                <button type="button" class="btn btn-primary" id="savefile"><i class='icon-save'></i> 保存</button>
             </div>
         </div>
     </div>
@@ -188,63 +189,27 @@
 <script src="${ctx }/js/jquery.fileTree/jqueryFileTree.js"></script>
 
 <script type="text/javascript">
-
     var file_sign = '', add_mode = true;
     var fileId = '';
-
-    function fillMaterialFiles(exist) {
-        var files = [], i = 0;
-        <c:forEach items="${materialFiles }" var="file">
-        files[i++] = '${file }';
-        </c:forEach>
-
-        var control = $('#file_path');
-        control.empty();
-        var content = '', found = false;
-        for (var j = 0; j < files.length; j++)
-        {
-            var add_content = '<option value="'+files[j]+'">'+files[j]+'</option>';
-            var add_selected_content = '<option value="'+files[j]+'" selected="selected">'+files[j]+'</option>';
-            if (typeof exist == 'undefined' && j == 0) {
-                content = content + add_selected_content;
-            }
-            else {
-                if (typeof exist != 'undefined') {
-                    if (exist == files[j]) {
-                        content = content + add_selected_content;
-                        found = true;
-                    }
-                    else {
-                        content = content + add_content;
-                    }
-                }
-                else {
-                    content = content + add_content;
-                }
-            }
-        }
-        if (typeof exist != 'undefined' && found == false) {
-            content = content + '<option value="'+exist+'" selected="selected">'+exist+'</option>';
-        }
-        control.html(content);
-        control.select2();
-    }
 
     $("#add-video").live("click",function(){
         file_sign = '0';
         add_mode = true;
-        fillMaterialFiles();
-        $('#edit_begin').prop('checked', true);
-        $('#fileModal').modal('toggle');
+        $('#browse_edit_begin').prop('checked', true);
+        $("#browse_file_path").empty();
+        $('#browseFileModal').modal('toggle');
     });
 
     $("#add-audio").live("click",function(){
         file_sign = '1';
         add_mode = true;
-        fillMaterialFiles();
-        $('#edit_begin').prop('checked', true);
-//        $('#fileModal').modal('toggle');
+        $('#browse_edit_begin').prop('checked', true);
+        $("#browse_file_path").empty();
         $('#browseFileModal').modal('toggle');
+    });
+
+    $(".view-file").live("click",function(){
+        alert($(this).parents('tr').attr('data-file-path'));
     });
 
     $(".remove-file").live("click",function(){
@@ -265,100 +230,145 @@
         fileId = $(this).parents('tr').attr('id');
         file_sign = $(this).parents('tr').attr('data-file-sign');
         add_mode = false;
-        fillMaterialFiles($(this).parents('tr').attr('data-file-path'));
-        $('#edit_begin').prop('checked', $(this).parents('tr').attr('data-file-status') == "0");
-        $('#edit_end').prop('checked', $(this).parents('tr').attr('data-file-status') == "1");
-        $('#file_title').val($(this).parents('tr').attr('data-file-title'));
-//        $('#file_path').val($(this).parents('tr').attr('data-file-path'));
-        $('#file_length').val($(this).parents('tr').attr('data-file-length'));
+        $("#browse_file_path").val($(this).parents('tr').attr('data-file-path'));
+        $('#browse_edit_begin').prop('checked', $(this).parents('tr').attr('data-file-status') == "0");
+        $('#browse_edit_end').prop('checked', $(this).parents('tr').attr('data-file-status') == "1");
+        $('#browse_file_title').val($(this).parents('tr').attr('data-file-title'));
+        $('#browse_file_length').val($(this).parents('tr').attr('data-file-length'));
 
-        $('#fileModal').modal('toggle');
+        $('#browseFileModal').modal('toggle');
     });
 
     $('#savefile').click(function () {
-        var file_title = $('#file_title').val();
+        var file_title = $('#browse_file_title').val();
         if (file_title.length == 0) {
             alert('必须输入标题！');
             return;
         }
-        var file_path = $('#file_path').val();
+        var file_path = $('#browse_file_path').val();
         if (file_path.length == 0) {
-            file_path = "null";
+//            file_path = "null";
+            alert('必须选择素材文件！');
+            return;
         }
-        var file_length = $('#file_length').val();
+        var file_length = $('#browse_file_length').val();
         if (file_length.length == 0) {
             file_length = "00:00:00:00";
         }
 
         var checked = $("input[type='radio']:checked").val();
-        var file_status = 0;
+        var file_status = "0";
         if (checked == 'edit_end') {
-            file_status = 1;
+            file_status = "1";
         }
 
+        var map = {};
+        map["type"] = file_sign;
+        map["title"] = file_title;
+        map["status"] = file_status;
+        map["filepath"] = file_path;
+        map["length"] = file_length;
+
         if (add_mode == true) {
-            if (file_status == 1) {
-                $.post(ctx + '/news/topic/start-fileinfo-args/' + ${topic.id} +'/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
-                        function (resp) {
-                            if (resp == 'success') {
-                                alert('任务完成');
-                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                            } else {
-                                alert('操作失败!');
-                            }
-                        });
-            }
-            else {
-                $.post(ctx + '/news/topic/add-file/' + ${topic.id} +'/' + file_sign + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
-                    function (resp) {
+            if (file_status == "1") {
+                $.ajax({
+                    type: 'post',
+                    async: false,
+                    url: ctx + '/news/topic/start-fileinfo-args/${topic.id}',
+                    contentType: "application/json; charset=utf-8",
+                    data : JSON.stringify(map),
+                    success: function (resp) {
                         if (resp == 'success') {
-                                alert('任务完成');
-                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                            alert('任务完成');
+                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
                         } else {
                             alert('操作失败!');
                         }
-                    });
+                    },
+                    error: function () {
+                        alert('操作失败!');
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: 'post',
+                    async: false,
+                    url: ctx + '/news/topic/add-file/${topic.id}',
+                    contentType: "application/json; charset=utf-8",
+                    data : JSON.stringify(map),
+                    success: function (resp) {
+                        if (resp == 'success') {
+                            alert('任务完成');
+                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                        } else {
+                            alert('操作失败!');
+                        }
+                    },
+                    error: function () {
+                        alert('操作失败!');
+                    }
+                });
             }
         }
         else {
-            $.post(ctx + '/news/topic/edit-file/' + ${topic.id} +'/' + fileId + '/' + file_title + '/' + file_status + '/' + file_path + '/' + file_length,
-                    function (resp) {
-                        if (resp == 'success') {
-                            if (file_status == 1) {
-                                $.post(ctx + '/news/topic/start-fileinfo-id/' + fileId,
-                                        function (resp) {
-                                            if (resp == 'success') {
-                                                alert('任务完成');
-                                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                                            } else {
-                                                alert('操作失败!');
-                                            }
-                                        });
-                            }
-                            else {
-                                alert('任务完成');
-                                location.href = ctx + '/news/topic/view/files/' + ${topic.id};
-                            }
-                        } else {
-                            alert('操作失败!');
+            $.ajax({
+                type: 'post',
+                async: false,
+                url: ctx + '/news/topic/edit-file/${topic.id}/' + fileId,
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify(map),
+                success: function (resp) {
+                    if (resp == 'success') {
+                        if (file_status == "1") {
+                            $.post(ctx + '/news/topic/start-fileinfo-id/' + fileId,
+                                    function (resp) {
+                                        if (resp == 'success') {
+                                            alert('任务完成');
+                                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                                        } else {
+                                            alert('操作失败!');
+                                        }
+                                    });
                         }
-                    });
+                        else {
+                            alert('任务完成');
+                            location.href = ctx + '/news/topic/view/files/' + ${topic.id};
+                        }
+                    } else {
+                        alert('操作失败!');
+                    }
+                },
+                error: function () {
+                    alert('操作失败!');
+                }
+            });
         }
     });
 
+    <%--@elvariable id="sambaServer" type="java.lang.String"--%>
+    <%--@elvariable id="sambaDirectory" type="java.lang.String"--%>
     $(document).ready(function () {
-        $("#file_length").mask("99:99:99:99");
+        $("#browse_file_length").mask("99:99:99:99");
 
-//        $('#fileTree1').fileTree({ server: getServer(1), root: getRootDir(1), preset: '1', script: 'SambaConnector.aspx',
-//            folderEvent: 'click', expandSpeed: 750, collapseSpeed: 750, multiFolder: false, dirmode: 'false'
-//        }, function (file) {
-//            fileTreeHit(file);
-//        }, function (dire) {
-//        });
-        $('#fileTree1').fileTree({ server: "192.168.1.3", root: "/Public/Temp/", preset: '1', script: '/util/smb-conn/get',
-            folderEvent: 'click', expandSpeed: 750, collapseSpeed: 750, multiFolder: false, dirmode: 'false'
+        function fileTreeHit(file) {
+            var b = /\//g;
+            var realfile = file.replace(b, "\\");
+            $("#browse_file_path").val(realfile);
+        }
+
+        $('#fileTree1').fileTree({
+            server: "${sambaServer}",
+            root: "${sambaDirectory}",
+            preset: '1',
+            script: '/util/smb-conn/get',
+            folderEvent: 'click',
+            expandSpeed: 750,
+            collapseSpeed: 750,
+            multiFolder: false,
+            dirmode: 'false'
         }, function (file) {
-//            fileTreeHit(file);
+            fileTreeHit(file);
         }, function (dire) {
         });
     });

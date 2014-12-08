@@ -124,9 +124,9 @@ public class ConfigXmlReader extends DefaultHandler {
         return maxUploadSize;
     }
 
-    public static String getSambaPath() {
-        return sambaPath;
-    }
+//    public static String getSambaPath() {
+//        return sambaPath;
+//    }
 
     public static String getSambaUserName() {
         return sambaUserName;
@@ -138,5 +138,19 @@ public class ConfigXmlReader extends DefaultHandler {
 
     public static String getMacMd5() {
         return macMd5;
+    }
+
+    public static String getSambaServer() {
+        int start = sambaPath.indexOf("smb://") + 6;
+        int end = sambaPath.indexOf("/", start);
+//        logger.debug("server: {}", sambaPath.substring(start, end));
+        return sambaPath.substring(start, end);
+    }
+
+    public static String getSambaDirectory() {
+        int start = sambaPath.indexOf("smb://") + 6;
+        int end = sambaPath.indexOf("/", start);
+//        logger.debug("dir: {}", sambaPath.substring(end));
+        return sambaPath.substring(end);
     }
 }

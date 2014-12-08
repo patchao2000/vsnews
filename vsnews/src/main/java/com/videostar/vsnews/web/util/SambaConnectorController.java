@@ -56,7 +56,7 @@ public class SambaConnectorController {
             String[] sortDirs = dirs.toArray(new String[dirs.size()]);
             Arrays.sort(sortDirs, String.CASE_INSENSITIVE_ORDER);
             for (String file : sortDirs) {
-                html += "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + file + "/\">"
+                html += "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + file + "\">"
                         + file + "</a></li>";
             }
 

@@ -201,19 +201,24 @@ public class TopicController {
         return startFileInfoWorkflow(entity, redirectAttributes, session);
     }
 
-    @RequestMapping(value = "start-fileinfo-args/{id}/{type}/{title}/{status}/{filepath}/{length}")
+    @RequestMapping(value = "start-fileinfo-args/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String startFileInfoWorkflowFromArgs(@PathVariable("id") Long id, @PathVariable("type") int type,
-            @PathVariable("title") String title, @PathVariable("status") int status,
-            @PathVariable("filepath") String filepath, @PathVariable("length") String length,
-            RedirectAttributes redirectAttributes, HttpSession session) {
+    public String startFileInfoWorkflowFromArgs(@PathVariable("id") Long id,
+                                                @RequestBody Map<String, Object> map,
+                                                RedirectAttributes redirectAttributes, HttpSession session) {
+
+        String filepath = (String)map.get("filepath");
+        String title = (String)map.get("title");
+        String type = (String)map.get("type");
+        String status = (String)map.get("status");
+        String length = (String)map.get("length");
 
         NewsTopic topic = topicManager.getTopic(id);
         NewsFileInfo info = new NewsFileInfo();
         info.setFilePath(filepath);
-        info.setType(type);
+        info.setType(Integer.parseInt(type));
         info.setTitle(title);
-        info.setStatus(status);
+        info.setStatus(Integer.parseInt(status));
 //        String userId = UserUtil.getUserFromSession(session).getId();
 //        info.setUserId(userId);
         info.setAddedTime(new Date());
@@ -503,19 +508,24 @@ public class TopicController {
         }
     }
 
-    @RequestMapping(value = "add-file/{id}/{type}/{title}/{status}/{filepath}/{length}")
+    @RequestMapping(value = "add-file/{id}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String addFile(@PathVariable("id") Long id, @PathVariable("type") int type,
-                          @PathVariable("title") String title, @PathVariable("status") int status,
-                          @PathVariable("filepath") String filepath, @PathVariable("length") String length,
+    public String addFile(@PathVariable("id") Long id, @RequestBody Map<String, Object> map,
                           HttpSession session) {
+
+        String filepath = (String)map.get("filepath");
+        String title = (String)map.get("title");
+        String type = (String)map.get("type");
+        String status = (String)map.get("status");
+        String length = (String)map.get("length");
+
         try {
             NewsTopic topic = topicManager.getTopic(id);
             NewsFileInfo info = new NewsFileInfo();
             info.setFilePath(filepath);
-            info.setType(type);
+            info.setType(Integer.parseInt(type));
             info.setTitle(title);
-            info.setStatus(status);
+            info.setStatus(Integer.parseInt(status));
             String userId = UserUtil.getUserFromSession(session).getId();
             info.setUserId(userId);
             info.setAddedTime(new Date());
@@ -531,15 +541,22 @@ public class TopicController {
         }
     }
 
-    @RequestMapping(value = "edit-file/{id}/{fileId}/{title}/{status}/{filepath}/{length}")
+    @RequestMapping(value = "edit-file/{id}/{fileId}", method = {RequestMethod.POST, RequestMethod.GET}, consumes="application/json")
     @ResponseBody
-    public String editFile(@PathVariable("id") Long id, @PathVariable("fileId") Long fileId,
-                          @PathVariable("title") String title, @PathVariable("status") int status,
-                          @PathVariable("filepath") String filepath, @PathVariable("length") String length,
-                          HttpSession session) {
+    public String editFile(@PathVariable("id") Long id,
+                           @PathVariable("fileId") Long fileId,
+                           @RequestBody Map<String, Object> map,
+                           HttpSession session) {
+
+        String filepath = (String)map.get("filepath");
+        String title = (String)map.get("title");
+        String type = (String)map.get("type");
+        String status = (String)map.get("status");
+        String length = (String)map.get("length");
+
         try {
             NewsTopic topic = topicManager.getTopic(id);
-            topicManager.editTopicFile(topic, fileId, title, filepath, status, length);
+            topicManager.editTopicFile(topic, fileId, title, filepath, Integer.parseInt(status), length);
 
             logger.debug("topic file edited {}", fileId);
             logManager.addLog(session, "编辑选题文件", "ID: " + topic.getId() + "  描述: " + filepath);
@@ -566,6 +583,7 @@ public class TopicController {
             return "error";
         }
     }
+
     @RequestMapping(value = "view/files/{id}")
     public ModelAndView viewFiles(@PathVariable("id") Long id, HttpSession session) {
         User user = UserUtil.getUserFromSession(session);
@@ -573,9 +591,11 @@ public class TopicController {
         ModelAndView mav = new ModelAndView("/news/topic/fileList");
         NewsTopic topic = topicManager.getTopic(id);
         mav.addObject("topic", topic);
+        mav.addObject("sambaServer", ConfigXmlReader.getSambaServer());
+        mav.addObject("sambaDirectory", ConfigXmlReader.getSambaDirectory());
 
-        List<String> materialFiles = SambaUtil.getFiles();
-        mav.addObject("materialFiles", materialFiles);
+//        List<String> materialFiles = SambaUtil.getFiles();
+//        mav.addObject("materialFiles", materialFiles);
 
         List<FileInfoDetail> list = new ArrayList<FileInfoDetail>();
         int videoCount = 0, audioCount = 0;

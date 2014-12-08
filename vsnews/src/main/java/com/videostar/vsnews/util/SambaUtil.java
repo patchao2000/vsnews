@@ -18,38 +18,38 @@ import java.util.List;
 public class SambaUtil {
     private static Logger logger = LoggerFactory.getLogger(SambaUtil.class);
 
-    public static List<String> getFiles() {
+//    public static List<String> getFiles() {
+//
+//        List<String> files = new ArrayList<String>();
+//
+//        try {
+//            NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", ConfigXmlReader.getSambaUserName(),
+//                    ConfigXmlReader.getSambaPassword());
+//
+//            SmbFile smbFile = new SmbFile(ConfigXmlReader.getSambaPath(), auth);
+//            for (String file : smbFile.list()) {
+//                if (!file.startsWith(".")) {
+//                    files.add(file);
+//                }
+//            }
+//        }
+//        catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//        catch (SmbException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return files;
+//    }
 
-        List<String> files = new ArrayList<String>();
-
-        try {
-            NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", ConfigXmlReader.getSambaUserName(),
-                    ConfigXmlReader.getSambaPassword());
-
-            SmbFile smbFile = new SmbFile(ConfigXmlReader.getSambaPath(), auth);
-            for (String file : smbFile.list()) {
-                if (!file.startsWith(".")) {
-                    files.add(file);
-                }
-            }
-        }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        catch (SmbException e) {
-            e.printStackTrace();
-        }
-
-        return files;
-    }
-
-    public static String getWindowsSambaPath() {
-        String sambaPath = ConfigXmlReader.getSambaPath();
-        if (sambaPath.startsWith("smb:")) {
-            sambaPath = sambaPath.substring(4);
-        }
-        sambaPath = sambaPath.replaceAll("/", "\\\\\\\\");
-//        logger.debug("sambaPath: {}", sambaPath);
-        return sambaPath;
-    }
+//    public static String getWindowsSambaPath() {
+//        String sambaPath = ConfigXmlReader.getSambaPath();
+//        if (sambaPath.startsWith("smb:")) {
+//            sambaPath = sambaPath.substring(4);
+//        }
+//        sambaPath = sambaPath.replaceAll("/", "\\\\\\\\");
+////        logger.debug("sambaPath: {}", sambaPath);
+//        return sambaPath;
+//    }
 }
