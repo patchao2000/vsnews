@@ -1,5 +1,7 @@
 package com.videostar.vsnews.util;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.util.regex.Pattern;
 
 /**
@@ -41,7 +43,9 @@ public class WebUtil {
             p_html = Pattern.compile(regEx_html, Pattern.CASE_INSENSITIVE);
             m_html = p_html.matcher(htmlStr);
             htmlStr = m_html.replaceAll(""); // 过滤html标签
-            textStr = htmlStr;
+
+            textStr = StringEscapeUtils.unescapeHtml4(htmlStr); //  convert &nbsp etc... back to original chars
+
         } catch (Exception e) {
             e.printStackTrace();
         }
