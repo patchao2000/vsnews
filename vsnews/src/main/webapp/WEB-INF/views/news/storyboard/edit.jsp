@@ -215,14 +215,18 @@
                                             </div>
                                         </c:if>
                                         <c:if test="${storyboard.lockerUserId != null}">
-                                            <%--@elvariable id="alltopics" type="java.util.List"--%>
-                                            <%--@elvariable id="topic" type="com.videostar.vsnews.entity.news.NewsTopic"--%>
+                                            <%--@elvariable id="column" type="com.videostar.vsnews.entity.news.NewsColumn"--%>
                                             <label class='col-md-2 control-label' for='storyboard_topic'>新闻选题：</label>
+                                            <div class='col-md-2'>
+                                                <select class='select2 form-control' id="storyboard_topic_column">
+                                                    <option value="All">所有栏目</option>
+                                                    <c:forEach items="${columns }" var="column">
+                                                        <option value="${column.id}">${column.name}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
                                             <div class='col-md-4'>
                                                 <select class='select2 form-control' id="storyboard_topic">
-                                                    <c:forEach items="${alltopics }" var="topic">
-                                                        <option value="${topic.uuid}">${topic.title}</option>
-                                                    </c:forEach>
                                                 </select>
                                             </div>
                                             <a id="add_topic" class="btn btn-success" title='添加新闻选题' href="#"><i class="icon-plus icon-white"></i> 添加</a>
@@ -579,7 +583,47 @@
         }
     });
 
+    function changeTopicList(columnId) {
+        <%--@elvariable id="alltopics" type="java.util.List"--%>
+        <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicInfoDetail"--%>
+        var topic_control = $("#storyboard_topic");
+        topic_control.empty();
+//        if (i == 0) {
+//            html += ' selected="selected" ';
+//        }
+        var html = '';
+        var article = [], colId = [], uuid = [], title = [], i = 0;
+        <c:forEach items="${alltopics }" var="detail">
+        article[i] = '${detail.article}';
+        colId[i] = '${detail.article.columnId}';
+        title[i] = '${detail.topic.title}';
+        uuid[i++] = '${detail.topic.uuid}';
+        </c:forEach>
+
+        <%--<c:forEach items="${alltopics }" var="detail">--%>
+        <%--if (columnId == 'All' || ('${detail.article}' != '' && '${detail.article.columnId}' == columnId)) {--%>
+            <%--html += '<option value="${detail.topic.uuid}">${detail.topic.title}</option>';--%>
+        <%--}--%>
+        <%--</c:forEach>--%>
+        for (i = 0; i < title.length; i++) {
+            if (columnId == 'All' || (article[i] != '' && colId[i] == columnId)) {
+                html += '<option value="'+uuid[i]+'">'+title[i]+'</option>';
+            }
+
+        }
+        topic_control.html(html);
+        topic_control.select2("val", uuid[0]);
+    }
+
+    $("#storyboard_topic_column").on("change", function(e) {
+        changeTopicList(e.val);
+//        log("change "+JSON.stringify({val:e.val, added:e.added, removed:e.removed}));
+    });
+
     $(function () {
+        $("#storyboard_topic_column").select2("val", "${storyboardTemplate.columnId}");
+        changeTopicList('${storyboardTemplate.columnId}');
+
         $("#storyboard_columnId").select2("readonly", true);
         $("#storyboard_editors").select2("readonly", true);
         $("#storyboard_eic").select2("readonly", true);

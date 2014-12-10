@@ -212,7 +212,7 @@ public class StoryboardManager {
         for (NewsStoryboard sb : getAllStoryboards()) {
             for (NewsTopicInfo info : sb.getTopics()) {
                 NewsTopic topic = topicManager.getTopic(info.getTopicUuid());
-                if (topic.getUserId().equals(userId)) {
+                if (topic.getDispatcher().equals(userId)) {
                     if (!topicManager.haveVideoFiles(topic) ||
                         articleManager.findByTopicUuid(info.getTopicUuid()) == null) {
                         hs.add(topic);

@@ -38,11 +38,24 @@ public class ColumnService {
     public List<NewsColumn> getUserColumns(User user) {
         ArrayList<NewsColumn> result = new ArrayList<NewsColumn>();
         for (NewsColumn column : columnManager.getAllColumns()) {
-            if (userManager.isUserInGroup(user.getId(), columnManager.getGroupId(column))) {
+            if (userManager.isUserInGroup(user.getId(), columnManager.getGroupId(column)) ||
+                    userManager.isUserHaveRights(user, UserManager.RIGHTS_ADMIN)) {
                 result.add(column);
             }
         }
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean userHaveColumnRights(User user, Long columnId) {
+        for (NewsColumn column : columnManager.getAllColumns()) {
+            if (userManager.isUserInGroup(user.getId(), columnManager.getGroupId(column))) {
+                if (column.getId().equals(columnId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public Boolean isColumnGroup(Group group) {
