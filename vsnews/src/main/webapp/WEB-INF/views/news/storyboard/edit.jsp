@@ -588,9 +588,7 @@
         <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicInfoDetail"--%>
         var topic_control = $("#storyboard_topic");
         topic_control.empty();
-//        if (i == 0) {
-//            html += ' selected="selected" ';
-//        }
+
         var html = '';
         var article = [], colId = [], uuid = [], title = [], i = 0;
         <c:forEach items="${alltopics }" var="detail">
@@ -600,19 +598,17 @@
         uuid[i++] = '${detail.topic.uuid}';
         </c:forEach>
 
-        <%--<c:forEach items="${alltopics }" var="detail">--%>
-        <%--if (columnId == 'All' || ('${detail.article}' != '' && '${detail.article.columnId}' == columnId)) {--%>
-            <%--html += '<option value="${detail.topic.uuid}">${detail.topic.title}</option>';--%>
-        <%--}--%>
-        <%--</c:forEach>--%>
+        var select = -1;
         for (i = 0; i < title.length; i++) {
             if (columnId == 'All' || (article[i] != '' && colId[i] == columnId)) {
                 html += '<option value="'+uuid[i]+'">'+title[i]+'</option>';
+                if (select == -1) {
+                    select = i;
+                }
             }
-
         }
         topic_control.html(html);
-        topic_control.select2("val", uuid[0]);
+        topic_control.select2("val", uuid[select]);
     }
 
     $("#storyboard_topic_column").on("change", function(e) {
