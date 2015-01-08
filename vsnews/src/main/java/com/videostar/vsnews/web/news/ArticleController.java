@@ -301,22 +301,26 @@ public class ArticleController {
 
     @RequestMapping(value = "list/all")
     public ModelAndView allList(HttpSession session) {
+        User user = UserUtil.getUserFromSession(session);
         ModelAndView mav = new ModelAndView("/news/article/allarticles");
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
         for (NewsArticle article : articleWorkflowService.getAllArticles()) {
-            ArticleDetail detail = new ArticleDetail();
-            detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
-            detail.setArticle(article);
-            detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
-            detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
-            detail.setSendUp(   article.getPrepareSendProvTV() ||
-                                article.getPrepareSendCCTV() ||
-                                article.getSentToProvTV() ||
-                                article.getSentToCCTV() ||
-                                article.getAdoptedByProvTV() ||
-                                article.getAdoptedByCCTV());
+            if (columnService.userHaveColumnRights(user, article.getColumnId()) ||
+                    userManager.isUserHaveRights(user, UserManager.RIGHTS_ADMIN)) {
+                ArticleDetail detail = new ArticleDetail();
+                detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
+                detail.setArticle(article);
+                detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
+                detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
+                detail.setSendUp(article.getPrepareSendProvTV() ||
+                        article.getPrepareSendCCTV() ||
+                        article.getSentToProvTV() ||
+                        article.getSentToCCTV() ||
+                        article.getAdoptedByProvTV() ||
+                        article.getAdoptedByCCTV());
 
-            list.add(detail);
+                list.add(detail);
+            }
         }
         mav.addObject("list", list);
         return mav;

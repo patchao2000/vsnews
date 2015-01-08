@@ -349,6 +349,10 @@ public class StoryboardController {
             detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
             detail.setStoryboard(entity);
             NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
+//            if (!columnService.userHaveColumnRights(user, template.getColumnId()) &&
+//                    !userManager.isUserHaveRights(user, UserManager.RIGHTS_ADMIN)){
+//                continue;
+//            }
             detail.setTemplate(template);
             detail.setColumnName(columnService.getColumn(template.getColumnId()).getName());
             detail.setTask(entity.getTask());
@@ -390,6 +394,18 @@ public class StoryboardController {
         return "/news/storyboard/view-template";
     }
 
+    private List<TopicInfoDetail> getAllTopics() {
+        List<TopicInfoDetail> list = new ArrayList<TopicInfoDetail>();
+        for (NewsTopic topic : topicManager.getAllTopics()) {
+            TopicInfoDetail detail = new TopicInfoDetail();
+            detail.setTopic(topic);
+            NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
+            detail.setArticle(article);
+            list.add(detail);
+        }
+        return list;
+    }
+
     @RequestMapping(value = "audit/{id}/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     public String auditStoryboard(@PathVariable("id") Long id, @PathVariable("taskId") String taskId,
                                   Model model, HttpSession session) {
@@ -406,7 +422,7 @@ public class StoryboardController {
         model.addAttribute("readonly", true);
         model.addAttribute("auditMode", true);
         model.addAttribute("taskId", taskId);
-        model.addAttribute("alltopics", topicManager.getAllTopics());
+        model.addAttribute("alltopics", getAllTopics());
 //        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
         model.addAttribute("sambaServer", ConfigXmlReader.getSambaServer());
         model.addAttribute("sambaDirectory", ConfigXmlReader.getSambaDirectory());
@@ -448,7 +464,7 @@ public class StoryboardController {
         model.addAttribute("title", "修改串联单内容");
         model.addAttribute("reapplyMode", true);
         model.addAttribute("taskId", taskId);
-        model.addAttribute("alltopics", topicManager.getAllTopics());
+        model.addAttribute("alltopics", getAllTopics());
 //        model.addAttribute("sambaPath", SambaUtil.getWindowsSambaPath());
         model.addAttribute("sambaServer", ConfigXmlReader.getSambaServer());
         model.addAttribute("sambaDirectory", ConfigXmlReader.getSambaDirectory());
@@ -591,7 +607,7 @@ public class StoryboardController {
         mav.addObject("technicians", userManager.getGroupMembers(userManager.getUserRightsName(UserManager.RIGHTS_TECHNICIAN)));
         List<NewsColumn> userColumns = columnService.getUserColumns(user);
         mav.addObject("columns", userColumns);
-        mav.addObject("alltopics", topicManager.getAllTopics());
+        mav.addObject("alltopics", getAllTopics());
 //        mav.addObject("sambaPath", SambaUtil.getWindowsSambaPath());
         mav.addObject("sambaServer", ConfigXmlReader.getSambaServer());
         mav.addObject("sambaDirectory", ConfigXmlReader.getSambaDirectory());

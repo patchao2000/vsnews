@@ -469,7 +469,7 @@ public class TopicController {
         }
         else {
             if (userManager.isUserHaveRights(user, UserManager.RIGHTS_ARTICLE_WRITE)) {
-                if (workflowService.isFinished(topic)) {
+                if (workflowService.isFinished(topic) && user.getId().equals(topic.getDispatcher())) {
                     mav.addObject("createArticle", true);
                 }
             }

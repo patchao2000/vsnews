@@ -32,6 +32,8 @@
 <%--@elvariable id="videoCount" type="java.lang.Integer"--%>
 <%--@elvariable id="audioCount" type="java.lang.Integer"--%>
 <%--@elvariable id="isAdmin" type="java.lang.Boolean"--%>
+<%--@elvariable id="sambaServer" type="java.lang.String"--%>
+<%--@elvariable id="sambaDirectory" type="java.lang.String"--%>
 <div id='wrapper'>
     <%@ include file="/common/nav.jsp" %>
     <section id='content'>
@@ -209,7 +211,22 @@
     });
 
     $(".view-file").live("click",function(){
-        alert($(this).parents('tr').attr('data-file-path'));
+//        alert($(this).parents('tr').attr('data-file-path'));
+        var file = $(this).parents('tr').attr('data-file-path');
+        if (file.length > 0) {
+            var path = file;
+            if (file.substr(0, 2) != '\\\\') {
+                var dir = '${sambaDirectory}';
+                var b = /\//g;
+                var realdir= dir.replace(b, "\\");
+
+                path = '\\\\' + '${sambaServer}' + realdir + file;
+            }
+            alert('将打开: ' + path);
+            var wsh = new ActiveXObject("wscript.shell");
+            wsh.run('"' + path + '"');
+//                wsh.run('C:\\Temp\\1.txt');
+        }
     });
 
     $(".remove-file").live("click",function(){
@@ -346,8 +363,6 @@
         }
     });
 
-    <%--@elvariable id="sambaServer" type="java.lang.String"--%>
-    <%--@elvariable id="sambaDirectory" type="java.lang.String"--%>
     $(document).ready(function () {
         $("#browse_file_length").mask("99:99:99:99");
 

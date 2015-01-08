@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,10 +33,13 @@ public class SambaConnectorController {
         String preset = (String)map.get("preset");
         String dirMode = (String)map.get("dirmode");
         String dir = (String)map.get("dir");
-        logger.debug("preset: {}   dir-mode: {}   dir: {}", preset, dirMode, dir);
 
         String html = "<ul class=\"jqueryFileTree\" style=\"display: none;\">";
         try {
+            dir = java.net.URLDecoder.decode(dir, "UTF-8");
+
+            logger.debug("preset: {}   dir-mode: {}   dir: {}", preset, dirMode, dir);
+
             NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", ConfigXmlReader.getSambaUserName(),
                     ConfigXmlReader.getSambaPassword());
 
@@ -56,6 +60,7 @@ public class SambaConnectorController {
             String[] sortDirs = dirs.toArray(new String[dirs.size()]);
             Arrays.sort(sortDirs, String.CASE_INSENSITIVE_ORDER);
             for (String file : sortDirs) {
+//                String utf8File = java.net.URLDecoder.decode(file, "UTF-8");
                 html += "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + file + "\">"
                         + file + "</a></li>";
             }
@@ -76,8 +81,13 @@ public class SambaConnectorController {
         catch (SmbException e) {
             e.printStackTrace();
         }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         html += "</ul>";
+
+//        logger.debug(html);
 
         return html;
     }
