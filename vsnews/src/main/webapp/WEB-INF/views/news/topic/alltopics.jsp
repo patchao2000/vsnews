@@ -51,6 +51,7 @@
                                         <tbody>
                                         <%--@elvariable id="list" type="java.util.List"--%>
                                         <%--@elvariable id="detail" type="com.videostar.vsnews.web.news.TopicTaskDetail"--%>
+                                        <%--@elvariable id="canArchive" type="java.lang.Boolean"--%>
                                         <c:forEach items="${list }" var="detail">
                                             <tr id="${detail.topic.id }">
                                                 <c:set var="task" value="${detail.topic.task }"/>
@@ -68,6 +69,9 @@
                                                 <td>
                                                     <a class="viewtopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>查看</a>
                                                     <a class="topicfiles btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>素材文件</a>
+                                                    <c:if test="${detail.topic.status == 2 && canArchive == true}">
+                                                        <a class="archivetopic btn btn-primary btn-xs" href="#"><i class="icon-edit"></i>存档</a>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -83,11 +87,45 @@
     </section>
 </div>
 <%@ include file="/common/alljs.jsp" %>
+<script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.viewtopic').click(function () {
             var topicId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/topic/view/' + topicId;
+        });
+
+        $('.archivetopic').click(function () {
+            var topicId = $(this).parents('tr').attr('id');
+            var dialog = new BootstrapDialog({
+                type: BootstrapDialog.TYPE_WARNING,
+                title: '存档选题',
+                message: '<div><h3>真要存档该选题吗？</h3></div>',
+                buttons: [{
+                    icon: 'icon-remove',
+                    label: '存档',
+                    cssClass: 'btn-danger',
+                    action: function(){
+                        $.post(ctx + '/news/topic/archive/' + topicId,
+                                function(resp) {
+                                    if (resp == 'success') {
+                                        alert('任务完成');
+                                        location.href = ctx + '/news/topic/list/all';
+                                    } else {
+                                        alert('操作失败!');
+                                    }
+                                });
+                    }
+                }, {
+                    label: '关闭',
+                    action: function(dialog){
+                        dialog.close();
+                    }
+                }]
+            });
+            dialog.realize();
+            dialog.open();
+
         });
 
         $('.topicfiles').click(function () {

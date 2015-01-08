@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     String uri = request.getRequestURI();
-    boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false, inTopicNeedJob = false;
+    boolean inTopic = false, inTopicApply = false, inTopicList = false, inTopicFinished = false, inTopicNeedJob = false,
+        inTopicArchived = false;
     boolean inArticle = false, inArticleEdit = false, inArticleList = false, inArticleAll = false;
     boolean inManage = false, inUserManage = false, inRoleManage = false, inColumnManage = false, inLogManage = false;
     boolean inFileMan = false, inFileUpload = false, inFileList = false;
@@ -17,6 +18,8 @@
         inTopicList = true;
     if (uri.contains("/topic/alltopics"))
         inTopicFinished = true;
+    if (uri.contains("/topic/archived"))
+        inTopicArchived = true;
     if (uri.contains("/topic/need-job"))
         inTopicNeedJob = true;
 
@@ -141,6 +144,12 @@
                         <a href='${ctx}/news/topic/list/all'>
                             <i class='icon-caret-right'></i>
                             <span>所有选题</span>
+                        </a>
+                    </li>
+                    <li class='<%=inTopicArchived?"active":""%>'>
+                        <a href='${ctx}/news/topic/list/archived'>
+                            <i class='icon-caret-right'></i>
+                            <span>已存档选题</span>
                         </a>
                     </li>
                     <li class='<%=inTopicNeedJob?"active":""%>'>

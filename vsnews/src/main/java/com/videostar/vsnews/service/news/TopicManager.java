@@ -53,6 +53,12 @@ public class TopicManager {
     }
 
     @Transactional(readOnly = false)
+    public void setArchived(NewsTopic entity, Boolean archived) {
+        entity.setArchived(archived);
+        saveTopic(entity);
+    }
+
+    @Transactional(readOnly = false)
     public void saveFileInfo(NewsFileInfo entity) {
         Date now = new Date();
         if (entity.getId() == null)
@@ -199,7 +205,13 @@ public class TopicManager {
 
     @Transactional(readOnly = true)
     public Iterable<NewsTopic> getAllTopics() {
-        return topicDao.findAll();
+//        return topicDao.findAll();
+        return topicDao.findByArchived(false);
+    }
+
+    @Transactional(readOnly = true)
+    public Iterable<NewsTopic> getArchivedTopics() {
+        return topicDao.findByArchived(true);
     }
 
     @Autowired

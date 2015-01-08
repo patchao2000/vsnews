@@ -13,6 +13,7 @@
     <%@ include file="/common/meta.jsp" %>
     <title>所有新闻串联单</title>
     <%@ include file="/common/allcss.jsp" %>
+    <link rel='stylesheet' href='${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/fullcalendar.css' />
 </head>
 
 <body class='${defbodyclass}'>
@@ -78,12 +79,77 @@
                     </div>
                 </div>
             </div>
+
+            <div class='row'>
+                <div class='col-sm-9'>
+                    <div class='box'>
+                        <div class='box-header'>
+                            <div class='title'>播出时间表</div>
+                        </div>
+                        <div class='box-content'>
+                            <div id='calendar'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
 <%@ include file="/common/alljs.jsp" %>
+<script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/lib/moment.min.js" type="text/javascript"></script>
+<script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/fullcalendar.js" type="text/javascript"></script>
+<script src="${ctx}/assets/javascripts/plugins/fullcalendar/fullcalendar-2.2.3/lang-all.js" type="text/javascript"></script>
+
 <script type="text/javascript">
+    function renderCalendar() {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            lang: 'zh-cn',
+            buttonIcons: false, // show the prev/next text
+            weekNumbers: true,
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: [
+                <c:forEach items="${list }" var="detail">
+                {
+                    title: '${detail.title}',
+                    start: '<fmt:formatDate value="${detail.storyboard.airDate}" pattern="yyyy-MM-dd" />',
+                    sbid: '${detail.storyboard.id}',
+                    <c:choose>
+                    <c:when test="${detail.storyboard.status == 0 &&
+                    (detail.storyboard.lockerUserId == null || detail.storyboard.lockerUserId == userId)}">
+                    can_edit: true,
+                    </c:when>
+                    <c:otherwise>can_edit: false,</c:otherwise>
+                    </c:choose>
+
+                    <c:choose>
+                    <c:when test="${detail.storyboard.status == 2}">color: 'green'</c:when>
+                    <c:otherwise>color: 'red'</c:otherwise>
+                    </c:choose>
+                },
+                </c:forEach>
+            ],
+            eventClick: function(calEvent, jsEvent, view) {
+
+                if (calEvent.can_edit) {
+                    location.href = ctx + '/news/storyboard/edit/' + calEvent.sbid;
+                }
+                else {
+                    location.href = ctx + '/news/storyboard/view/' + calEvent.sbid;
+                }
+
+            }
+        });
+    }
+
     $(document).ready(function () {
+        renderCalendar();
+
         $('.view-storyboard').click(function () {
             var sbId = $(this).parents('tr').attr('id');
             location.href = ctx + '/news/storyboard/view/' + sbId;

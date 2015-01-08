@@ -180,17 +180,11 @@ public class TopicWorkflowService {
                 getTodoTasks(userId, WorkflowNames.fileInfo).size();
     }
 
-    @Transactional(readOnly = true)
-    public List<NewsTopic> getAllTopics() {
-        ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
-        for (NewsTopic topic : topicManager.getAllTopics()) {
-            result.add(topic);
-        }
-        
+    private void FillRunningTask(List<NewsTopic> result) {
         //  填充running task
         List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
         listRunning.addAll(runtimeService.createProcessInstanceQuery().
-            processDefinitionKey(WorkflowNames.topicNew).active().orderByProcessInstanceId().desc().list());
+                processDefinitionKey(WorkflowNames.topicNew).active().orderByProcessInstanceId().desc().list());
         for (ProcessInstance processInstance : listRunning) {
             String businessKey = processInstance.getBusinessKey();
             if (businessKey == null) {
@@ -207,6 +201,29 @@ public class TopicWorkflowService {
                 }
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsTopic> getAllTopics() {
+        ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
+        for (NewsTopic topic : topicManager.getAllTopics()) {
+            result.add(topic);
+        }
+
+        FillRunningTask(result);
+
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NewsTopic> getArchivedTopics() {
+        ArrayList<NewsTopic> result = new ArrayList<NewsTopic>();
+        for (NewsTopic topic : topicManager.getArchivedTopics()) {
+            result.add(topic);
+        }
+
+        FillRunningTask(result);
+
         return result;
     }
 

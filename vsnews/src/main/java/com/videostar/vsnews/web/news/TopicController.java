@@ -294,6 +294,34 @@ public class TopicController {
         }
 
         mav.addObject("list", list);
+        User user = UserUtil.getUserFromSession(session);
+        if(userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT)) {
+            mav.addObject("canArchive", true);
+        }
+        return mav;
+    }
+
+    @RequestMapping(value = "list/archived")
+    public ModelAndView archivedList(HttpSession session) {
+        ModelAndView mav = new ModelAndView("/news/topic/archived");
+        List<TopicTaskDetail> list = new ArrayList<TopicTaskDetail>();
+        for (NewsTopic topic : workflowService.getArchivedTopics()) {
+            TopicTaskDetail detail = new TopicTaskDetail();
+            detail.setIsFileInfoTask(false);
+            detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
+            detail.setTopic(topic);
+            String dispatcher = topic.getDispatcher();
+            if (dispatcher != null) {
+                detail.setDispatcherName(userManager.getUserById(dispatcher).getFirstName());
+            }
+            list.add(detail);
+        }
+
+        mav.addObject("list", list);
+        User user = UserUtil.getUserFromSession(session);
+        if(userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT)) {
+            mav.addObject("canRestore", true);
+        }
         return mav;
     }
 
@@ -433,6 +461,7 @@ public class TopicController {
         mav.addObject("readonly", true);
         mav.addObject("dispatcherReadonly", true);
 
+        //  如有对应选题UUID的文稿，则不允许创建新的文稿
         NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
         if (article != null) {
             mav.addObject("viewArticle", true);
@@ -447,6 +476,58 @@ public class TopicController {
         }
 
         return mav;
+    }
+
+    @RequestMapping(value = "archive/{id}")
+    @ResponseBody
+    public String archive(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, HttpSession session) {
+        try {
+            User user = UserUtil.getUserFromSession(session);
+
+            //  有审核选题权限才能存档选题
+            if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT)) {
+                redirectAttributes.addFlashAttribute("error", "您没有存档选题权限！");
+                return "redirect:/main/welcome";
+            }
+
+            NewsTopic topic = topicManager.getTopic(id);
+            if (topic.getStatus() != NewsTopic.STATUS_END_AUDIT) {
+                throw new Exception("can't archive topic that not end audit");
+            }
+
+            topicManager.setArchived(topic, true);
+
+            logManager.addLog(session, "存档选题", "ID: " + topic.getId() + "  标题: " + topic.getTitle());
+
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on archive topic {}, {}", id, e.getMessage());
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "restore/{id}")
+    @ResponseBody
+    public String restore(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, HttpSession session) {
+        try {
+            User user = UserUtil.getUserFromSession(session);
+
+            //  有审核选题权限才能存档选题
+            if(!userManager.isUserHaveRights(user, UserManager.RIGHTS_TOPIC_AUDIT)) {
+                redirectAttributes.addFlashAttribute("error", "您没有存档选题权限！");
+                return "redirect:/main/welcome";
+            }
+
+            NewsTopic topic = topicManager.getTopic(id);
+            topicManager.setArchived(topic, false);
+
+            logManager.addLog(session, "还原选题", "ID: " + topic.getId() + "  标题: " + topic.getTitle());
+
+            return "success";
+        } catch (Exception e) {
+            logger.error("error on restore archive topic {}, {}", id, e.getMessage());
+            return "error";
+        }
     }
 
     @RequestMapping(value = "task/claim/{id}")
