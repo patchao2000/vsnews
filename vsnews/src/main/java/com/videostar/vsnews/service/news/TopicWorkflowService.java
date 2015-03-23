@@ -1,5 +1,6 @@
 package com.videostar.vsnews.service.news;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.videostar.vsnews.entity.news.NewsFileInfo;
 import com.videostar.vsnews.entity.news.NewsStoryboardTemplate;
 import org.activiti.engine.*;
@@ -201,6 +202,25 @@ public class TopicWorkflowService {
                 }
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean isRunningUser(String userId) {
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.topicNew).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsTopic topic = topicManager.getTopic(new Long(businessKey));
+            if (topic.getUserId().equals(userId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Transactional(readOnly = true)

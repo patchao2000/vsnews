@@ -284,11 +284,11 @@ public class TopicController {
         for (NewsTopic topic : workflowService.getAllTopics()) {
             TopicTaskDetail detail = new TopicTaskDetail();
             detail.setIsFileInfoTask(false);
-            detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(topic.getUserId()));
             detail.setTopic(topic);
             String dispatcher = topic.getDispatcher();
             if (dispatcher != null) {
-                detail.setDispatcherName(userManager.getUserById(dispatcher).getFirstName());
+                detail.setDispatcherName(userManager.getUserNameById(dispatcher));
             }
             list.add(detail);
         }
@@ -308,11 +308,11 @@ public class TopicController {
         for (NewsTopic topic : workflowService.getArchivedTopics()) {
             TopicTaskDetail detail = new TopicTaskDetail();
             detail.setIsFileInfoTask(false);
-            detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(topic.getUserId()));
             detail.setTopic(topic);
             String dispatcher = topic.getDispatcher();
             if (dispatcher != null) {
-                detail.setDispatcherName(userManager.getUserById(dispatcher).getFirstName());
+                detail.setDispatcherName(userManager.getUserNameById(dispatcher));
             }
             list.add(detail);
         }
@@ -332,7 +332,7 @@ public class TopicController {
             String userId = UserUtil.getUserFromSession(session).getId();
             Integer count = storyboardManager.getTopicsNeedJob(userId).size();
             logger.debug("need job count: {}", count);
-            return count.toString();
+            return String.valueOf(count);
         } catch (Exception e) {
             logger.error("error on get need job count!");
             return "error";
@@ -351,11 +351,11 @@ public class TopicController {
 
             TopicTaskDetail detail = new TopicTaskDetail();
             detail.setIsFileInfoTask(false);
-            detail.setUserName(userManager.getUserById(topic.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(topic.getUserId()));
             detail.setTopic(topic);
             String dispatcher = topic.getDispatcher();
             if (dispatcher != null) {
-                detail.setDispatcherName(userManager.getUserById(dispatcher).getFirstName());
+                detail.setDispatcherName(userManager.getUserNameById(dispatcher));
             }
             detail.setAvFileReady(topicManager.haveVideoFiles(topic) || topicManager.haveAudioFiles(topic));
             NewsArticle article = articleManager.findByTopicUuid(topic.getUuid());
@@ -683,7 +683,7 @@ public class TopicController {
         for (NewsFileInfo info : topicManager.getTopicFiles(topic)) {
             FileInfoDetail detail = new FileInfoDetail();
             detail.setNewsFileInfo(info);
-            detail.setUserName(userManager.getUserById(info.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(info.getUserId()));
             if (info.getType() == 0) {
                 detail.setFileTypeName("视频素材");
                 videoCount++;

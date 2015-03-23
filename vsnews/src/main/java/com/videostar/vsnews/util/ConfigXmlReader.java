@@ -21,7 +21,7 @@ public class ConfigXmlReader extends DefaultHandler {
 
     private static Logger logger = LoggerFactory.getLogger(ConfigXmlReader.class);
 
-    private static StringBuffer currentValue = new StringBuffer();
+    private StringBuffer currentValue = new StringBuffer();
 
     private final static String configFileName = "vsnews.cfg.xml";
 

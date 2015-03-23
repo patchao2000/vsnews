@@ -136,7 +136,7 @@
                     </li>
                     <li class='divider'></li>
                     <li>
-                        <a href='${ctx}/news/topic/count/need-job'>
+                        <a href='${ctx}/news/topic/list/need-job'>
                             <div class='widget-body'>
                                 <div class='pull-left icon'>
                                     <i class='icon-pencil text-success'></i>

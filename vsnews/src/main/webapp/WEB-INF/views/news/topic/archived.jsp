@@ -41,7 +41,7 @@
                     <thead>
                     <tr>
                       <th>申请人</th>
-                      <th>派遣人</th>
+                      <th>被派遣人</th>
                       <th>申请时间</th>
                       <th>标题</th>
                       <th>当前节点</th>

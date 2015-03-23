@@ -224,6 +224,8 @@
                                 if (resp == 'success') {
                                     alert('任务完成');
                                     location.href = ctx + '/user/list/role';
+                                } else if (resp == 'notempty') {
+                                    alert('无法删除含有用户的角色!');
                                 } else {
                                     alert('操作失败!');
                                 }

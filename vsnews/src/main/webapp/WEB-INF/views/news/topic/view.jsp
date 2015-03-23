@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                                 <div class='form-group'>
-                                    <label class='col-md-2 control-label' for='topic_dispatcher'>派遣人：</label>
+                                    <label class='col-md-2 control-label' for='topic_dispatcher'>被派遣人：</label>
                                     <div class='col-md-4'>
                                         <form:select class='select2 form-control' id="topic_dispatcher" path="dispatcher">
                                             <form:options items="${dispatchers}" itemValue="id" itemLabel="firstName" />

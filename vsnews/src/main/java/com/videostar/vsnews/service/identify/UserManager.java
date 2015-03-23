@@ -4,6 +4,7 @@ import com.videostar.vsnews.dao.RoleDao;
 import com.videostar.vsnews.entity.Role;
 import com.videostar.vsnews.util.Variable;
 
+import com.videostar.vsnews.web.identify.UserDetail;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -90,6 +91,11 @@ public class UserManager {
 
     public User getUserById(String userId) {
         return identityService.createUserQuery().userId(userId).singleResult();
+    }
+
+    public String getUserNameById(String userId) {
+        User user = getUserById(userId);
+        return (user != null ? user.getFirstName() : "用户" + userId);
     }
 
     public List<Group> getGroupListByUserId(String userId) {
@@ -300,6 +306,42 @@ public class UserManager {
 
     public Role getRoleById(Long roleId) {
         return roleDao.findOne(roleId);
+    }
+
+    public String getRoleNameById(Long roleId) {
+        Role role = getRoleById(roleId);
+        return (role != null ? role.getName() : "角色" + roleId.toString());
+    }
+
+    public Boolean isRoleEmpty(Long roleId) {
+        UserQuery query = createUserQuery();
+        for (User user : query.list()) {
+            for (Long userRole : getUserRoles(user.getId())) {
+                if (userRole == roleId) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public List<User> getRoleUsers(Long roleId) {
+        List<User> result = new ArrayList<User>();
+        UserQuery query = createUserQuery();
+        for (User user : query.list()) {
+            for (Long userRole : getUserRoles(user.getId())) {
+                if (userRole == roleId) {
+                    result.add(user);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void refreshUserRoles(String userId) {
+        setUserRoles(userId, getUserRoles(userId));
     }
 
     public List<Long> getUserRoles(String userId) {

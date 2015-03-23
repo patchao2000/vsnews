@@ -2,9 +2,7 @@ package com.videostar.vsnews.web.identify;
 
 import com.videostar.vsnews.entity.Role;
 import com.videostar.vsnews.service.identify.UserManager;
-import com.videostar.vsnews.service.news.ColumnService;
-import com.videostar.vsnews.service.news.LogManager;
-import com.videostar.vsnews.service.news.UserSessionManager;
+import com.videostar.vsnews.service.news.*;
 import com.videostar.vsnews.util.*;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
@@ -46,6 +44,15 @@ public class UserController {
 
     @Autowired
     private UserSessionManager userSessionManager;
+
+    @Autowired
+    protected TopicWorkflowService topicService;
+
+    @Autowired
+    protected ArticleWorkflowService articleService;
+
+    @Autowired
+    protected StoryboardWorkflowService storyboardService;
 
     /**
      * 登录系统
@@ -124,7 +131,7 @@ public class UserController {
             for (Long roleId : userManager.getUserRoles(user.getId())) {
                 if (i++ > 0)
                     roleNames += ", ";
-                roleNames += userManager.getRoleById(roleId).getName();
+                roleNames += userManager.getRoleNameById(roleId);
             }
 
             detail.setRoles(roleNames);
@@ -233,6 +240,12 @@ public class UserController {
     @ResponseBody
     public String deleteUser(@PathVariable("id") String userId, HttpSession session) {
         try {
+            if (topicService.isRunningUser(userId) ||
+                articleService.isRunningUser(userId) ||
+                storyboardService.isRunningUser(userId)) {
+                return "running";
+            }
+
             userManager.deleteUser(userId);
             logger.debug("user deleted: {}", userId);
             logManager.addLog(session, "删除用户", "ID: " + userId);
@@ -433,6 +446,10 @@ public class UserController {
             }
 
             userManager.setRoleGroups(roleId, groupList);
+            for (User user : userManager.getRoleUsers(roleId)) {
+                userManager.refreshUserRoles(user.getId());
+            }
+
             logManager.addLog(session, "修改角色权限", "ID: " + roleId);
             return "success";
         } catch (Exception e) {
@@ -446,6 +463,9 @@ public class UserController {
     @ResponseBody
     public String deleteRole(@PathVariable("id") Long roleId, HttpSession session) {
         try {
+            if (!userManager.isRoleEmpty(roleId)) {
+                return "notempty";
+            }
             userManager.deleteRole(roleId);
             logger.debug("role deleted: {}", roleId);
             logManager.addLog(session, "删除角色", "ID: " + roleId);

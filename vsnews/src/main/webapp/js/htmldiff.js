@@ -315,11 +315,11 @@
     /**
      * 针对高级浏览器开启webWorker支持
      */
-//    if(typeof postMessage === "function"){
-//        onmessage = function (evt) {
-//            var data = evt.data;
-//            var diff = getHTMLDiff(data.oldVersion, data.newVersion);
-//            postMessage(diff);
-//        };
-//    }
+    //if(typeof postMessage === "function"){
+    //    onmessage = function (evt) {
+    //        var data = evt.data;
+    //        var diff = getHTMLDiff(data.oldVersion, data.newVersion);
+    //        postMessage(diff);
+    //    };
+    //}
 })();

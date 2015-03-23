@@ -278,7 +278,7 @@ public class StoryboardController {
         List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
         for (NewsStoryboardTemplate entity : workflowService.findTemplateTodoTasks(userId)) {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
-            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(entity.getUserId()));
             detail.setTemplate(entity);
             detail.setColumnName(columnService.getColumn(entity.getColumnId()).getName());
             detail.setTask(entity.getTask());
@@ -290,7 +290,7 @@ public class StoryboardController {
         }
         for (NewsStoryboard entity : workflowService.findListTodoTasks(userId)) {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
-            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(entity.getUserId()));
             detail.setStoryboard(entity);
             NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
             detail.setColumnName(columnService.getColumn(template.getColumnId()).getName());
@@ -328,7 +328,7 @@ public class StoryboardController {
         List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
         for (NewsStoryboardTemplate entity : workflowService.getAllTemplates()) {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
-            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(entity.getUserId()));
             detail.setTemplate(entity);
             detail.setColumnName(columnService.getColumn(entity.getColumnId()).getName());
             detail.setTask(entity.getTask());
@@ -346,7 +346,7 @@ public class StoryboardController {
         List<StoryboardTaskDetail> list = new ArrayList<StoryboardTaskDetail>();
         for (NewsStoryboard entity : workflowService.getAllStoryboards()) {
             StoryboardTaskDetail detail = new StoryboardTaskDetail();
-            detail.setUserName(userManager.getUserById(entity.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(entity.getUserId()));
             detail.setStoryboard(entity);
             NewsStoryboardTemplate template = storyboardManager.getStoryboardTemplate(entity);
 //            if (!columnService.userHaveColumnRights(user, template.getColumnId()) &&

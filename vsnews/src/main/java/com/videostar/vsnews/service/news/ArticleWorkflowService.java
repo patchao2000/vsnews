@@ -3,6 +3,7 @@ package com.videostar.vsnews.service.news;
 import com.videostar.vsnews.constants.WorkflowNames;
 import com.videostar.vsnews.entity.news.NewsArticle;
 import com.videostar.vsnews.entity.news.NewsColumn;
+import com.videostar.vsnews.entity.news.NewsTopic;
 import com.videostar.vsnews.service.identify.UserManager;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
@@ -218,6 +219,25 @@ public class ArticleWorkflowService {
                 break;
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean isRunningUser(String userId) {
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.article123).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsArticle article = articleManager.getArticle(new Long(businessKey));
+            if (article.getUserId().equals(userId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {

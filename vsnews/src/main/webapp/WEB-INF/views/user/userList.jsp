@@ -233,6 +233,8 @@
                                 if (resp == 'success') {
                                     alert('任务完成');
                                     location.href = ctx + '/user/list/user';
+                                } else if (resp == 'running') {
+                                    alert('无法删除流程中用户!');
                                 } else {
                                     alert('操作失败!');
                                 }

@@ -356,7 +356,7 @@
     <c:if test="${auditMode == true || reapplyMode == true}">
     $("#check_article_history").live("click",function(){
         var editor = CKEDITOR.instances['article_content'];
-        if (history_diff_mode) {
+        if (history_diff_mode == true) {
             editor.setReadOnly(false);
             history_diff_mode = false;
             editor.setData(current_content);
@@ -366,15 +366,18 @@
             ckupdate();
 
             current_content = $('#article_content').val();
+//            alert(ctx);
             var selected = $("#article_history").find(" :selected").val();
             $.getJSON(ctx + '/news/article/history/' + selected, function (data) {
                 var history = data.content;
                 var diff = getHTMLDiff(history, current_content);
                 editor.setData(diff);
                 editor.setReadOnly(true);
-                history_diff_mode = true;
-                $("#check_article_history").val("退出比较");
+//                history_diff_mode = true;
+//                $("#check_article_history").val("退出比较");
             });
+            history_diff_mode = true;
+            $("#check_article_history").val("退出比较");
         }
     });
     </c:if>

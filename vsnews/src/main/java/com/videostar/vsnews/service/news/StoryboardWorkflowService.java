@@ -1,6 +1,7 @@
 package com.videostar.vsnews.service.news;
 
 import com.videostar.vsnews.constants.WorkflowNames;
+import com.videostar.vsnews.entity.news.NewsArticle;
 import com.videostar.vsnews.entity.news.NewsStoryboard;
 import com.videostar.vsnews.entity.news.NewsStoryboardTemplate;
 import org.activiti.engine.*;
@@ -233,6 +234,25 @@ public class StoryboardWorkflowService {
             }
         }
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean isRunningUser(String userId) {
+        List<ProcessInstance> listRunning = new ArrayList<ProcessInstance>();
+        listRunning.addAll(runtimeService.createProcessInstanceQuery().
+                processDefinitionKey(WorkflowNames.storyboardList).active().orderByProcessInstanceId().desc().list());
+        for (ProcessInstance processInstance : listRunning) {
+            String businessKey = processInstance.getBusinessKey();
+            if (businessKey == null) {
+                continue;
+            }
+            NewsStoryboard sb = storyboardManager.getStoryboard(new Long(businessKey));
+            if (sb.getUserId().equals(userId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {

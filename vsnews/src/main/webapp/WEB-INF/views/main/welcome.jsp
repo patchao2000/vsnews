@@ -34,17 +34,17 @@
                             <img src="${ctx}/images/oem_logo.jpg"/>
                             <span>欢迎访问VIS News</span>
                         </h1>
-                        <div class='pull-right'>
-                            <div class='btn-group'>
-                                <a class="btn btn-white hidden-xs" href="#">上个月</a>
-                                <a class="btn btn-white" href="#">上周</a>
-                                <a class="btn btn-white " href="#">今天</a>
-                                <%--<a class="btn btn-white" id="daterange" href="#"><i class='icon-calendar'></i>--%>
-                                    <%--<span>Custom</span>--%>
-                                    <%--<b class='caret'></b>--%>
-                                <%--</a>--%>
-                            </div>
-                        </div>
+                        <%--<div class='pull-right'>--%>
+                            <%--<div class='btn-group'>--%>
+                                <%--<a class="btn btn-white hidden-xs" href="#">上个月</a>--%>
+                                <%--<a class="btn btn-white" href="#">上周</a>--%>
+                                <%--<a class="btn btn-white " href="#">今天</a>--%>
+                                <%--&lt;%&ndash;<a class="btn btn-white" id="daterange" href="#"><i class='icon-calendar'></i>&ndash;%&gt;--%>
+                                    <%--&lt;%&ndash;<span>Custom</span>&ndash;%&gt;--%>
+                                    <%--&lt;%&ndash;<b class='caret'></b>&ndash;%&gt;--%>
+                                <%--&lt;%&ndash;</a>&ndash;%&gt;--%>
+                            <%--</div>--%>
+                        <%--</div>--%>
                     </div>
                     <div class='alert alert-info alert-dismissable'>
                         <a class='close' data-dismiss='alert' href='#'>&times;</a>

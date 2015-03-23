@@ -267,7 +267,7 @@ public class ArticleController {
         List<ArticleDetail> list = new ArrayList<ArticleDetail>();
         for (NewsArticle article : articleWorkflowService.findTodoTasks(userId)) {
             ArticleDetail detail = new ArticleDetail();
-            detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
+            detail.setUserName(userManager.getUserNameById(article.getUserId()));
             detail.setArticle(article);
             detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
             detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
@@ -308,7 +308,7 @@ public class ArticleController {
             if (columnService.userHaveColumnRights(user, article.getColumnId()) ||
                     userManager.isUserHaveRights(user, UserManager.RIGHTS_ADMIN)) {
                 ArticleDetail detail = new ArticleDetail();
-                detail.setUserName(userManager.getUserById(article.getUserId()).getFirstName());
+                detail.setUserName(userManager.getUserNameById(article.getUserId()));
                 detail.setArticle(article);
                 detail.setColumnName(columnService.getColumn(article.getColumnId()).getName());
                 detail.setPlainContent(WebUtil.stringMaxLength(WebUtil.htmlRemoveTag(article.getContent()), 20));
