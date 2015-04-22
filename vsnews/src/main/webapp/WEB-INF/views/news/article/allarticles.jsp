@@ -96,28 +96,29 @@
 </div>
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
+    $('.handle').click(function () {
+        var taskKey = $(this).attr('data-taskKey');
+        var articleId = $(this).parents('tr').attr('id');
+        var taskId = $(this).parents('tr').attr('data-tid');
+
+        if (taskKey == 'modifyForAudit1' || taskKey == 'modifyForAudit2' || taskKey == 'modifyForAudit3') {
+            location.href = ctx + '/news/article/reapply/'+articleId+'/'+taskId;
+            return;
+        }
+        else if (taskKey == 'class1Audit' || taskKey == 'class2Audit' || taskKey == 'class3Audit') {
+            location.href = ctx + '/news/article/audit/'+articleId+'/'+taskId+'/'+taskKey;
+            return;
+        }
+
+        alert(taskKey + " ERROR!");
+    });
+
+    $('.viewArticle').click(function () {
+        var articleId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/article/view/' + articleId;
+    });
+
     $(document).ready(function () {
-        $('.handle').click(function () {
-            var taskKey = $(this).attr('data-taskKey');
-            var articleId = $(this).parents('tr').attr('id');
-            var taskId = $(this).parents('tr').attr('data-tid');
-            
-            if (taskKey == 'modifyForAudit1' || taskKey == 'modifyForAudit2' || taskKey == 'modifyForAudit3') {
-                location.href = ctx + '/news/article/reapply/'+articleId+'/'+taskId;
-                return;
-            }
-            else if (taskKey == 'class1Audit' || taskKey == 'class2Audit' || taskKey == 'class3Audit') {
-                location.href = ctx + '/news/article/audit/'+articleId+'/'+taskId+'/'+taskKey;
-                return;
-            }
-
-            alert(taskKey + " ERROR!");
-        });
-
-        $('.viewArticle').click(function () {
-            var articleId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/article/view/' + articleId;
-        });
     });
 </script>
 </body>

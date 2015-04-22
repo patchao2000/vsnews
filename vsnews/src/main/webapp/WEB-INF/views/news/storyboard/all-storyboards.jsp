@@ -147,18 +147,18 @@
         });
     }
 
+    $('.view-storyboard').click(function () {
+        var sbId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/storyboard/view/' + sbId;
+    });
+
+    $('.edit-storyboard').click(function () {
+        var sbId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/storyboard/edit/' + sbId;
+    });
+
     $(document).ready(function () {
         renderCalendar();
-
-        $('.view-storyboard').click(function () {
-            var sbId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/storyboard/view/' + sbId;
-        });
-
-        $('.edit-storyboard').click(function () {
-            var sbId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/storyboard/edit/' + sbId;
-        });
     });
 </script>
 </body>

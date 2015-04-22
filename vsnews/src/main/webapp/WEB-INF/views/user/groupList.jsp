@@ -131,86 +131,87 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        var saveaction = '/user/add/group/';
-        $('#addgroup').click(function () {
-            $('#groupModal').modal('toggle');
-        });
+    var saveaction = '/user/add/group/';
+    $('#addgroup').click(function () {
+        $('#groupModal').modal('toggle');
+    });
 
-        $('.editgroup').click(function () {
-            var groupId = $(this).parents('tr').attr('id');
-            $.getJSON(ctx + '/user/detail/group/' + groupId, function(data) {
-                $.each(data, function(k, v) {
-                    if (k == 'id')
-                        $('#groupid').val(v);
-                    else
-                        $("#" + k.toLowerCase()).val(v);
+    $('.editgroup').click(function () {
+        var groupId = $(this).parents('tr').attr('id');
+        $.getJSON(ctx + '/user/detail/group/' + groupId, function(data) {
+            $.each(data, function(k, v) {
+                if (k == 'id')
+                    $('#groupid').val(v);
+                else
+                    $("#" + k.toLowerCase()).val(v);
+            });
+            if ($.isFunction(callback)) {
+                callback(data);
+            }
+        });
+        $('#groupModalLabel').text('修改角色');
+        $('#groupid').prop('readonly', true);
+        saveaction = '/user/modify/group/';
+
+        $('#groupModal').modal('toggle');
+    });
+
+    $('#savegroup').click(function () {
+        var groupid = $('#groupid').val();
+        if (groupid.length == 0) {
+            alert('角色名为空！');
+            return;
+        }
+        var name = $('#name').val();
+        if (name.length == 0) {
+            name = "null";
+        }
+
+        $.post(ctx + saveaction + groupid + '/' + name,
+                function(resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/user/list/group';
+                    } else {
+                        alert('操作失败!');
+                    }
                 });
-                if ($.isFunction(callback)) {
-                    callback(data);
+    });
+
+    $('.deletegroup').click(function () {
+        var groupId = $(this).parents('tr').attr('id');
+        var dialog = new BootstrapDialog({
+            type: BootstrapDialog.TYPE_WARNING,
+            title: '删除角色',
+            message: '<div><h3>真要删除角色' + groupId + '吗？</h3></div>',
+            buttons: [{
+                icon: 'icon-remove',
+                label: '删除',
+                cssClass: 'btn-danger',
+                action: function(){
+                    $.post(ctx + '/user/delete/group/' + groupId,
+                            function(resp) {
+                                if (resp == 'success') {
+                                    alert('任务完成');
+                                    location.href = ctx + '/user/list/group';
+                                } else {
+                                    alert('操作失败!');
+                                }
+                            });
                 }
-            });
-            $('#groupModalLabel').text('修改角色');
-            $('#groupid').prop('readonly', true);
-            saveaction = '/user/modify/group/';
-
-            $('#groupModal').modal('toggle');
+            }, {
+                label: '关闭',
+                action: function(dialog){
+                    dialog.close();
+                }
+            }]
         });
+        dialog.realize();
+        dialog.open();
 
-        $('#savegroup').click(function () {
-            var groupid = $('#groupid').val();
-            if (groupid.length == 0) {
-                alert('角色名为空！');
-                return;
-            }
-            var name = $('#name').val();
-            if (name.length == 0) {
-                name = "null";
-            }
+    });
 
-            $.post(ctx + saveaction + groupid + '/' + name,
-                    function(resp) {
-                        if (resp == 'success') {
-                            alert('任务完成');
-                            location.href = ctx + '/user/list/group';
-                        } else {
-                            alert('操作失败!');
-                        }
-                    });
-        });
-
-        $('.deletegroup').click(function () {
-            var groupId = $(this).parents('tr').attr('id');
-            var dialog = new BootstrapDialog({
-                type: BootstrapDialog.TYPE_WARNING,
-                title: '删除角色',
-                message: '<div><h3>真要删除角色' + groupId + '吗？</h3></div>',
-                buttons: [{
-                    icon: 'icon-remove',
-                    label: '删除',
-                    cssClass: 'btn-danger',
-                    action: function(){
-                        $.post(ctx + '/user/delete/group/' + groupId,
-                                function(resp) {
-                                    if (resp == 'success') {
-                                        alert('任务完成');
-                                        location.href = ctx + '/user/list/group';
-                                    } else {
-                                        alert('操作失败!');
-                                    }
-                                });
-                    }
-                }, {
-                    label: '关闭',
-                    action: function(dialog){
-                        dialog.close();
-                    }
-                }]
-            });
-            dialog.realize();
-            dialog.open();
-
-        });
+    $(document).ready(function () {
     });
 </script>
 </body>

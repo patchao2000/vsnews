@@ -196,42 +196,43 @@
         $('#columnModal').modal('toggle');
     });
 
+    $('#addcolumn').click(function () {
+        $('#columnModalLabel').text('创建新栏目');
+        $('#name').attr("value", "");
+        $("#level1").prop("checked", false);
+        $("#level2").prop("checked", false);
+        $("#level3").prop("checked", false);
+        saveaction = '/news/column/add/';
+        $('#columnModal').modal('toggle');
+    });
+
+    $('#savecolumn').click(function () {
+        var name = $('#name').val();
+        if (name.length == 0) {
+            alert('栏目名为空！');
+            return;
+        }
+        var level1 = $("#level1").prop('checked');
+        var level2 = $("#level2").prop('checked');
+        var level3 = $("#level3").prop('checked');
+        if (((!level1) && level2) || ((!level2) && level3)) {
+            alert('级别选择错误！');
+            return;
+        }
+        var level = (level1 ? 1 : 0) + (level2 ? 2 : 0) +(level3 ? 4 : 0);
+
+        $.post(ctx + saveaction + name + '/' + level,
+                function(resp) {
+                    if (resp == 'success') {
+                        alert('任务完成');
+                        location.href = ctx + '/news/column/list';
+                    } else {
+                        alert('操作失败!');
+                    }
+                });
+    });
+
     $(document).ready(function () {
-        $('#addcolumn').click(function () {
-            $('#columnModalLabel').text('创建新栏目');
-            $('#name').attr("value", "");
-            $("#level1").prop("checked", false);
-            $("#level2").prop("checked", false);
-            $("#level3").prop("checked", false);
-            saveaction = '/news/column/add/';
-            $('#columnModal').modal('toggle');
-        });
-
-        $('#savecolumn').click(function () {
-            var name = $('#name').val();
-            if (name.length == 0) {
-                alert('栏目名为空！');
-                return;
-            }
-            var level1 = $("#level1").prop('checked');
-            var level2 = $("#level2").prop('checked');
-            var level3 = $("#level3").prop('checked');
-            if (((!level1) && level2) || ((!level2) && level3)) {
-                alert('级别选择错误！');
-                return;
-            }
-            var level = (level1 ? 1 : 0) + (level2 ? 2 : 0) +(level3 ? 4 : 0);
-
-            $.post(ctx + saveaction + name + '/' + level,
-            function(resp) {
-                if (resp == 'success') {
-                    alert('任务完成');
-                    location.href = ctx + '/news/column/list';
-                } else {
-                    alert('操作失败!');
-                }
-            });
-        });
     });
 </script>
 </body>

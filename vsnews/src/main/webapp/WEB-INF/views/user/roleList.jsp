@@ -243,26 +243,23 @@
 
     });
 
-    $(document).ready(function () {
-        fillGroupsCheckBoxes();
+    $('#addRole').click(function () {
+        saveAction = '/user/add/role/';
+        $("#groups").find("input").prop('checked', false);
+        $("#name").attr("value", "");
+        $('#roleModalLabel').text('创建新角色');
 
-        $('#addRole').click(function () {
-            saveAction = '/user/add/role/';
-            $("#groups").find("input").prop('checked', false);
-            $("#name").attr("value", "");
-            $('#roleModalLabel').text('创建新角色');
+        $('#roleModal').modal('toggle');
+    });
 
-            $('#roleModal').modal('toggle');
-        });
+    $('#saveRole').click(function () {
+        var roleName = $('#name').val();
+        if (roleName.length == 0) {
+            alert('角色名为空！');
+            return;
+        }
 
-        $('#saveRole').click(function () {
-            var roleName = $('#name').val();
-            if (roleName.length == 0) {
-                alert('角色名为空！');
-                return;
-            }
-
-            $.post(ctx + saveAction + roleName,
+        $.post(ctx + saveAction + roleName,
                 function(resp) {
                     if (resp == 'error') {
                         alert('操作失败!');
@@ -282,7 +279,11 @@
                         modifyGroups(roleId, variables);
                     }
                 });
-        });
+    });
+
+    $(document).ready(function () {
+        fillGroupsCheckBoxes();
+
     });
 </script>
 </body>

@@ -85,12 +85,13 @@
 </div>
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
-  $(document).ready(function () {
     $('.editstoryboard').click(function () {
-      var sbId = $(this).parents('tr').attr('id');
-      location.href = ctx + '/news/storyboard/view/template/' + sbId;
+        var sbId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/storyboard/view/template/' + sbId;
     });
-  });
+
+    $(document).ready(function () {
+    });
 </script>
 </body>
 </html>

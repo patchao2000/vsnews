@@ -89,49 +89,49 @@
 <%@ include file="/common/alljs.jsp" %>
 <script src="${ctx }/js/common/bootstrap/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
+    $('.viewtopic').click(function () {
+        var topicId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/topic/view/' + topicId;
+    });
+
+    $('.archivetopic').click(function () {
+        var topicId = $(this).parents('tr').attr('id');
+        var dialog = new BootstrapDialog({
+            type: BootstrapDialog.TYPE_WARNING,
+            title: '存档选题',
+            message: '<div><h3>真要存档该选题吗？</h3></div>',
+            buttons: [{
+                icon: 'icon-remove',
+                label: '存档',
+                cssClass: 'btn-danger',
+                action: function(){
+                    $.post(ctx + '/news/topic/archive/' + topicId,
+                            function(resp) {
+                                if (resp == 'success') {
+                                    alert('任务完成');
+                                    location.href = ctx + '/news/topic/list/all';
+                                } else {
+                                    alert('操作失败!');
+                                }
+                            });
+                }
+            }, {
+                label: '关闭',
+                action: function(dialog){
+                    dialog.close();
+                }
+            }]
+        });
+        dialog.realize();
+        dialog.open();
+
+    });
+
+    $('.topicfiles').click(function () {
+        var topicId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/topic/view/files/' + topicId;
+    });
     $(document).ready(function () {
-        $('.viewtopic').click(function () {
-            var topicId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/topic/view/' + topicId;
-        });
-
-        $('.archivetopic').click(function () {
-            var topicId = $(this).parents('tr').attr('id');
-            var dialog = new BootstrapDialog({
-                type: BootstrapDialog.TYPE_WARNING,
-                title: '存档选题',
-                message: '<div><h3>真要存档该选题吗？</h3></div>',
-                buttons: [{
-                    icon: 'icon-remove',
-                    label: '存档',
-                    cssClass: 'btn-danger',
-                    action: function(){
-                        $.post(ctx + '/news/topic/archive/' + topicId,
-                                function(resp) {
-                                    if (resp == 'success') {
-                                        alert('任务完成');
-                                        location.href = ctx + '/news/topic/list/all';
-                                    } else {
-                                        alert('操作失败!');
-                                    }
-                                });
-                    }
-                }, {
-                    label: '关闭',
-                    action: function(dialog){
-                        dialog.close();
-                    }
-                }]
-            });
-            dialog.realize();
-            dialog.open();
-
-        });
-
-        $('.topicfiles').click(function () {
-            var topicId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/topic/view/files/' + topicId;
-        });
     });
 </script>
 </body>

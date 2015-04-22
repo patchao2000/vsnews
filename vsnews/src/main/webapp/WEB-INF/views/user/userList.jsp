@@ -285,6 +285,79 @@
         });
     });
 
+    $('#adduser').click(function () {
+        $('#userModalLabel').text('创建新用户');
+        $('#userid').prop('readonly', false);
+        $("#roles").find("input").prop('checked', false);
+        $("#columns").find("input").prop('checked', false);
+        $('#userid').attr('value', '');
+        $('#firstname').attr('value', '');
+        $('#password').attr('value', '');
+        $('#password2').attr('value', '');
+        $('#email').attr('value', '');
+        $('#lastname').attr('value', '');
+        saveaction = '/user/add/user/';
+        $('#userModal').modal('toggle');
+    });
+
+    $('#saveuser').click(function () {
+        var userid = $('#userid').val();
+        if (userid.length == 0) {
+            alert('用户名为空！');
+            return;
+        }
+        var password1 = $('#password').val();
+        var password2 = $('#password2').val();
+        if (password1.length == 0) {
+            alert('密码为空！');
+            return;
+        }
+        if (password1 != password2) {
+            alert('两次密码内容不一致！');
+            return;
+        }
+        var firstname = $('#firstname').val();
+        if (firstname.length == 0) {
+            firstname = "null";
+        }
+        var email = $('#email').val();
+        if (email.length == 0) {
+            email = "null";
+        }
+        var lastname = $('#lastname').val();
+        if (lastname.length == 0) {
+            lastname = "null";
+        }
+
+        $.post(ctx + saveaction + userid + '/' + firstname + '/' +
+                password1 + '/' + email + '/' + lastname,
+                function(resp) {
+                    if (resp == 'success') {
+//                        alert('任务完成');
+//                        location.href = ctx + '/user/list/user';
+                        var rolesVars = [];
+                        $('#roles').find('input').each(function(){
+                            var id = $(this).attr('id').substr(5);
+                            if ($(this).prop('checked'))
+                                rolesVars.push({key: id, value: true, type: 'B'});
+                            else
+                                rolesVars.push({key: id, value: false, type: 'B'});
+                        });
+                        var columnsVars = [];
+                        $('#columns').find('input').each(function(){
+                            var id = $(this).attr('id').substr(6);
+                            if ($(this).prop('checked'))
+                                columnsVars.push({key: id, value: true, type: 'B'});
+                            else
+                                columnsVars.push({key: id, value: false, type: 'B'});
+                        });
+                        modifyRolesColumns(userid, rolesVars, columnsVars);
+                    } else {
+                        alert('操作失败!');
+                    }
+                });
+    });
+
     $(document).ready(function () {
         $.getJSON(ctx + '/user/objlist/allroles', function(data) {
             var roles = '';
@@ -324,78 +397,6 @@
             $('#columns').html(columns);
         });
 
-        $('#adduser').click(function () {
-            $('#userModalLabel').text('创建新用户');
-            $('#userid').prop('readonly', false);
-            $("#roles").find("input").prop('checked', false);
-            $("#columns").find("input").prop('checked', false);
-            $('#userid').attr('value', '');
-            $('#firstname').attr('value', '');
-            $('#password').attr('value', '');
-            $('#password2').attr('value', '');
-            $('#email').attr('value', '');
-            $('#lastname').attr('value', '');
-            saveaction = '/user/add/user/';
-            $('#userModal').modal('toggle');
-        });
-
-        $('#saveuser').click(function () {
-            var userid = $('#userid').val();
-            if (userid.length == 0) {
-                alert('用户名为空！');
-                return;
-            }
-            var password1 = $('#password').val();
-            var password2 = $('#password2').val();
-            if (password1.length == 0) {
-                alert('密码为空！');
-                return;
-            }
-            if (password1 != password2) {
-                alert('两次密码内容不一致！');
-                return;
-            }
-            var firstname = $('#firstname').val();
-            if (firstname.length == 0) {
-                firstname = "null";
-            }
-            var email = $('#email').val();
-            if (email.length == 0) {
-                email = "null";
-            }
-            var lastname = $('#lastname').val();
-            if (lastname.length == 0) {
-                lastname = "null";
-            }
-
-            $.post(ctx + saveaction + userid + '/' + firstname + '/' +
-                            password1 + '/' + email + '/' + lastname,
-                    function(resp) {
-                        if (resp == 'success') {
-//                        alert('任务完成');
-//                        location.href = ctx + '/user/list/user';
-                            var rolesVars = [];
-                            $('#roles').find('input').each(function(){
-                                var id = $(this).attr('id').substr(5);
-                                if ($(this).prop('checked'))
-                                    rolesVars.push({key: id, value: true, type: 'B'});
-                                else
-                                    rolesVars.push({key: id, value: false, type: 'B'});
-                            });
-                            var columnsVars = [];
-                            $('#columns').find('input').each(function(){
-                                var id = $(this).attr('id').substr(6);
-                                if ($(this).prop('checked'))
-                                    columnsVars.push({key: id, value: true, type: 'B'});
-                                else
-                                    columnsVars.push({key: id, value: false, type: 'B'});
-                            });
-                            modifyRolesColumns(userid, rolesVars, columnsVars);
-                        } else {
-                            alert('操作失败!');
-                        }
-                    });
-        });
     });
 </script>
 </body>

@@ -123,57 +123,58 @@
         }
     }
 
-    $(document).ready(function () {
-        $('.trace').click(function() {
-            var dialog = new BootstrapDialog({
-                title: '123',
-                message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('data-pid') + "' />",
-                buttons: [{
-                    id: 'btn-close',
-                    label: 'Close',
-                    action: function(dialogRef){
-                        dialogRef.close();
+    $('.trace').click(function() {
+        var dialog = new BootstrapDialog({
+            title: '123',
+            message: "<img src='" + ctx + '/workflow/process/trace/auto/' + $(this).attr('data-pid') + "' />",
+            buttons: [{
+                id: 'btn-close',
+                label: 'Close',
+                action: function(dialogRef){
+                    dialogRef.close();
+                }
+            }]
+        });
+        dialog.realize();
+        dialog.open();
+
+    });
+
+    $('.handle').click(function () {
+        var assignee = $(this).attr('data-assignee');
+        // 当前节点的英文名称
+        var tkey = $(this).attr('data-tkey');
+        // 记录ID
+        var entityId = $(this).parents('tr').attr('id');
+        // 任务ID
+        var taskId = $(this).parents('tr').attr('data-tid');
+        var isTempTask = ($(this).parents('tr').attr('data-temp-task') == "true");
+
+        if (assignee.length == 0) {
+            $.ajax({
+                type: 'post',
+                async: true,
+                url: ctx + '/news/storyboard/task/claim/' + taskId,
+                contentType: "application/json; charset=utf-8",
+                success: function (resp) {
+                    if (resp == 'success') {
+                        handle(tkey, entityId, taskId, isTempTask);
+                    } else {
+                        alert('任务签收失败!');
                     }
-                }]
+                },
+                error: function () {
+                    alert('任务签收失败!!');
+                }
             });
-            dialog.realize();
-            dialog.open();
 
-        });
+        }
+        else {
+            handle(tkey, entityId, taskId, isTempTask);
+        }
+    });
 
-        $('.handle').click(function () {
-            var assignee = $(this).attr('data-assignee');
-            // 当前节点的英文名称
-            var tkey = $(this).attr('data-tkey');
-            // 记录ID
-            var entityId = $(this).parents('tr').attr('id');
-            // 任务ID
-            var taskId = $(this).parents('tr').attr('data-tid');
-            var isTempTask = ($(this).parents('tr').attr('data-temp-task') == "true");
-
-            if (assignee.length == 0) {
-                $.ajax({
-                    type: 'post',
-                    async: true,
-                    url: ctx + '/news/storyboard/task/claim/' + taskId,
-                    contentType: "application/json; charset=utf-8",
-                    success: function (resp) {
-                        if (resp == 'success') {
-                            handle(tkey, entityId, taskId, isTempTask);
-                        } else {
-                            alert('任务签收失败!');
-                        }
-                    },
-                    error: function () {
-                        alert('任务签收失败!!');
-                    }
-                });
-
-            }
-            else {
-                handle(tkey, entityId, taskId, isTempTask);
-            }
-        });
+    $(document).ready(function () {
     });
 </script>
 </body>

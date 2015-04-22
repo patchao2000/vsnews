@@ -91,26 +91,26 @@
 </div>
 <%@ include file="/common/alljs.jsp" %>
 <script type="text/javascript">
+    $('.view-topic').click(function () {
+        var topicId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/topic/view/' + topicId;
+    });
+
+    $('.view-article').click(function () {
+        var articleId = $(this).parents('tr').attr('data-article-id');
+        location.href = ctx + '/news/article/view/' + articleId;
+    });
+
+    $('.topic-files').click(function () {
+        var topicId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/topic/view/files/' + topicId;
+    });
+
+    $('.create-article').click(function () {
+        var topicId = $(this).parents('tr').attr('id');
+        location.href = ctx + '/news/article/apply-topic/' + topicId;
+    });
     $(document).ready(function () {
-        $('.view-topic').click(function () {
-            var topicId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/topic/view/' + topicId;
-        });
-
-        $('.view-article').click(function () {
-            var articleId = $(this).parents('tr').attr('data-article-id');
-            location.href = ctx + '/news/article/view/' + articleId;
-        });
-
-        $('.topic-files').click(function () {
-            var topicId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/topic/view/files/' + topicId;
-        });
-
-        $('.create-article').click(function () {
-            var topicId = $(this).parents('tr').attr('id');
-            location.href = ctx + '/news/article/apply-topic/' + topicId;
-        });
     });
 </script>
 </body>
